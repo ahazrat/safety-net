@@ -5,8 +5,8 @@ export default function ToDo(props) {
 
       <div style={{ width: 300, margin: 'auto', textAlign: 'left' }}>
         <ol>
-          <li>Calculator sidebar</li>
-          <li>CalculatorHW</li>
+          <li>Add maps</li>
+          <li>Update Services</li>
           <li>better styles</li>
           <li>nopage design</li>
         </ol>

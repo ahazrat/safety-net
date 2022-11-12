@@ -1,4 +1,7 @@
 
+/* leaflet */
+#map { height: 180px; }
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
