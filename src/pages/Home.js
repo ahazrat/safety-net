@@ -14,16 +14,31 @@ export default function Home(props) {
       container._leaflet_id = null;
     }
     var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      osmAttribution = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
-        ' <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-      osmLayer = new L.TileLayer(osmUrl, { maxZoom: 18, attribution: osmAttribution });
-
-    var map = new L.map('map')
+      osmAttribution = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      osmLayer = new L.TileLayer(osmUrl, { maxZoom: 18, attribution: osmAttribution }),
+      map = new L.map('map')
     map.setView([51.505, -0.09], 13)
-    // map.setView(new L.LatLng(51.505, -0.09), 9 );
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(map)
+
+    var marker = L.marker([51.5, -0.09]).addTo(map)
+    var circle = L.circle([51.508, -0.11], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: 500
+    }).addTo(map);
+    var polygon = L.polygon([
+        [51.509, -0.08],
+        [51.503, -0.06],
+        [51.51, -0.047]
+    ]).addTo(map);
+
+    marker.bindPopup("<b>Hello citizen!</b><br>Protection Agent 2507<br><i>active</i>").openPopup();
+    circle.bindPopup("Alert radius of ongoing event");
+    polygon.bindPopup("Designated safety zone");
+
   })
 
   const setMap = () => {
