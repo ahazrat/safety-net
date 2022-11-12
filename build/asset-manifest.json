@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c2d1a3cf.css",
+    "main.js": "/static/js/main.ca111546.js",
+    "static/js/787.a88fbe8e.chunk.js": "/static/js/787.a88fbe8e.chunk.js",
+    "static/media/k8s-logo.webp": "/static/media/k8s-logo.768852031bf169efec13.webp",
+    "index.html": "/index.html",
+    "main.c2d1a3cf.css.map": "/static/css/main.c2d1a3cf.css.map",
+    "main.ca111546.js.map": "/static/js/main.ca111546.js.map",
+    "787.a88fbe8e.chunk.js.map": "/static/js/787.a88fbe8e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c2d1a3cf.css",
+    "static/js/main.ca111546.js"
+  ]
+}
