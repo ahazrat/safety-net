@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/static/css/main.c2d1a3cf.css",
-    "main.js": "/static/js/main.ca111546.js",
-    "static/js/787.a88fbe8e.chunk.js": "/static/js/787.a88fbe8e.chunk.js",
-    "static/media/k8s-logo.webp": "/static/media/k8s-logo.768852031bf169efec13.webp",
+    "main.js": "/static/js/main.bde10c66.js",
+    "static/js/787.9f2a7666.chunk.js": "/static/js/787.9f2a7666.chunk.js",
+    "static/media/shield-icon.webp": "/static/media/shield-icon.2e34abd2719966eb8091.webp",
     "index.html": "/index.html",
     "main.c2d1a3cf.css.map": "/static/css/main.c2d1a3cf.css.map",
-    "main.ca111546.js.map": "/static/js/main.ca111546.js.map",
-    "787.a88fbe8e.chunk.js.map": "/static/js/787.a88fbe8e.chunk.js.map"
+    "main.bde10c66.js.map": "/static/js/main.bde10c66.js.map",
+    "787.9f2a7666.chunk.js.map": "/static/js/787.9f2a7666.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c2d1a3cf.css",
-    "static/js/main.ca111546.js"
+    "static/js/main.bde10c66.js"
   ]
 }

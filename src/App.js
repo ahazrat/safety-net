@@ -19,8 +19,8 @@ export default function App() {
       color: 'white',
       textAlign: 'center',
     }}>
-      <BrowserRouter>
-      {/* <BrowserRouter basename='/safey-net'> */}
+      {/* <BrowserRouter> */}
+      <BrowserRouter basename='/safety-net'>
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<Home />} />
