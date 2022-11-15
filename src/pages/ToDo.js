@@ -5,14 +5,17 @@ export default function ToDo(props) {
 
       <div style={{ width: 300, margin: 'auto', textAlign: 'left' }}>
         <ol>
-          <li>Revolving map center</li>
+          <li>New Map page</li>
           <li>Calculator -> Listings</li>
-          <li>nopage design</li>
+          <li>More Map icons</li>
+          <li>Convert 'Anatomy of the State' into page</li>
+          <li>better styles</li>
           <li>nopage design</li>
         </ol>
 
         <h2>Done</h2>
         <ul>
+          <li>Revolving map center</li>
           <li>Update Services</li>
           <li>Enable map drag/pan</li>
           <li>Add icons to map</li>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
@@ -9,6 +9,7 @@ import logo from '../images/shield-icon.webp'
 export default function Home(props) {
 
   useEffect(() => {
+    var latlng = [51.505, -0.09]
     var container = L.DomUtil.get('map');
     if (container != null) {
       container._leaflet_id = null;
@@ -17,7 +18,7 @@ export default function Home(props) {
       osmAttribution = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
       osmLayer = new L.TileLayer(osmUrl, { maxZoom: 18, attribution: osmAttribution }),
       map = new L.map('map')
-    map.setView([51.505, -0.09], 13)
+    map.setView(latlng, 13)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(map)
@@ -38,6 +39,13 @@ export default function Home(props) {
     marker.bindPopup("<b>Hello citizen!</b><br>Protection Agent 2507<br><i>active</i>").openPopup();
     circle.bindPopup("Alert radius of ongoing event");
     polygon.bindPopup("Designated safety zone");
+
+    map.setView([latlng[0], latlng[1] + 0.2], map.getZoom(), {
+      "animate": true,
+      "pan": {
+        "duration": 20
+      }
+    });
 
   })
 
