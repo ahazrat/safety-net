@@ -14,9 +14,10 @@ import ListItemText from '@mui/material/ListItemText'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
-import CalculateIcon from '@mui/icons-material/Calculate';
+import MapIcon from '@mui/icons-material/Map'
+import CalculateIcon from '@mui/icons-material/Calculate'
 import TaskIcon from '@mui/icons-material/Task'
-import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported'
 
 // 'right', 'top', 'bottom'
 const drawers = {
@@ -31,6 +32,10 @@ const links1 = {
   'Services': {
     'icon': <SupportAgentIcon />,
     'path': '/services'
+  },
+  'Map': {
+    'icon': <MapIcon />,
+    'path': '/map'
   },
   'Calculator': {
     'icon': <CalculateIcon />,

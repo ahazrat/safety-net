@@ -49,12 +49,6 @@ export default function Home(props) {
 
   })
 
-  const setMap = () => {
-
-    // map = L.map('map').setView([51.505, -0.09], 13)
-    // map.remove()
-  }
-
   return (
     <div>
       <img src={logo} className='App-logo' alt='logo' />

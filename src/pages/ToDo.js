@@ -5,16 +5,20 @@ export default function ToDo(props) {
 
       <div style={{ width: 300, margin: 'auto', textAlign: 'left' }}>
         <ol>
-          <li>New Map page</li>
+          <li>Connect Firebase</li>
           <li>Calculator -> Listings</li>
+          <li>Update Header/Layout</li>
           <li>More Map icons</li>
           <li>Convert 'Anatomy of the State' into page</li>
           <li>better styles</li>
           <li>nopage design</li>
+          <li>connect mongodb</li>
         </ol>
 
         <h2>Done</h2>
         <ul>
+          <li>Remove App.test.js</li>
+          <li>New Map page</li>
           <li>Revolving map center</li>
           <li>Update Services</li>
           <li>Enable map drag/pan</li>
