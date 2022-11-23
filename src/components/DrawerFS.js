@@ -15,7 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import MapIcon from '@mui/icons-material/Map'
-import CalculateIcon from '@mui/icons-material/Calculate'
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import TaskIcon from '@mui/icons-material/Task'
 import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported'
 
@@ -37,9 +37,9 @@ const links1 = {
     'icon': <MapIcon />,
     'path': '/map'
   },
-  'Calculator': {
-    'icon': <CalculateIcon />,
-    'path': '/calculator'
+  'Listings': {
+    'icon': <ContentPasteSearchIcon />,
+    'path': '/listings'
   },
 }
 const links2 = {

@@ -5,7 +5,7 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import Map from './pages/Map'
-import Calculator from './pages/Calculator'
+import Listings from './pages/Listings'
 import ToDo from './pages/ToDo'
 import NoPage from './pages/NoPage'
 
@@ -27,7 +27,7 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path='services' element={<Services />} />
             <Route path='map' element={<Map />} />
-            <Route path='calculator' element={<Calculator />} />
+            <Route path='listings' element={<Listings />} />
             <Route path='todo' element={<ToDo />} />
             <Route path='*' element={<NoPage />} />
           </Route>
