@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { faker } from '@faker-js/faker'
-// import CardActions from '@mui/material/CardActions'
-// import CardContent from '@mui/material/CardContent'
-
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
+import { faker } from '@faker-js/faker'
 
 import { getCollection, createNewDoc, deleteDocument } from '../components/Firebase'
 import RowRadioButtonsGroup from '../components/RadioRow'
+import { calcCrow } from '../utils/GeoUtils'
 
 function createNewListing() {
   const userName = faker.internet.userName()
@@ -21,7 +19,11 @@ function createNewListing() {
     jobTitle: faker.name.jobTitle(),
     userName: userName,
     fullName: faker.name.fullName(),
-    city: faker.address.city(),
+    location: {
+      latLng: faker.address.nearbyGPSCoordinate([51.5, -0.09], 10, true),
+      country: faker.address.country(),
+      city: faker.address.city(),
+    },
     btcAdd: faker.finance.bitcoinAddress(),
   }
   fetch('https://loremflickr.com/640/480/people')
@@ -36,12 +38,13 @@ function validateListing(l) {
   if (!('createdAt' in l)) { return 'red' }
   if (!('userImage' in l)) { return 'red' }
   if (l.userImage === 'https://loremflickr.com/640/480/people') { return 'red' }
+  if (!('location' in l)) { return 'red' }
+  if (!('latLng' in l.location)) { return 'lightred' }
   if (typeof l.createdAt === 'number') { return '#0F8' }
-  if (0) { return 'red' }
   return 'green'
 }
 
-function ListingsArr({ listings }) {
+function ListingsArr({ listings, location }) {
   return (
     <Stack style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', alignContent: 'space-around' }}>
       {listings.map((l, i) => {
@@ -65,6 +68,7 @@ function ListingsArr({ listings }) {
             </div>
             <div style={{ fontSize: 'small' }}>
               <p>{l.jobTitle}</p>
+              <p>Distance: {l.location ? calcCrow(location, l.location.latLng) : 0} km</p>
               <p>ID: {l.id}</p>
               <p>Created at: {createdAt}</p>
             </div>
@@ -83,14 +87,6 @@ function ListingsArr({ listings }) {
 
 export default function Listings(props) {
 
-  const [listings, setListings] = useState([])
-
-  useEffect(() => {
-    // createNewListing()  
-    getCollection('listings').then(ls => setListings(ls))
-  }, [])
-
-
   const profiles = {
     'Neighborhood Watch': {
     },
@@ -101,11 +97,20 @@ export default function Listings(props) {
     'Safe Rides': {
     },
   }
+  const [listings, setListings] = useState([])
   const [profile, setProfile] = useState(Object.keys(profiles)[1])
+  const [location, setLocation] = useState([51.5, -0.09])
+
+  useEffect(() => {
+    // createNewListing()  
+    getCollection('listings').then(ls => setListings(ls))
+  }, [])
 
   return (
     <div style={{ backgroundColor: '#556', padding: 30 }}>
       <h1>Listings</h1>
+
+      <p>Your location: {location}</p>
 
       <RowRadioButtonsGroup
         label='Select Profile'
@@ -119,7 +124,7 @@ export default function Listings(props) {
 
       <p>{listings.length} listings</p>
       {listings instanceof Array && listings.length > 0 ?
-        <ListingsArr listings={listings} /> : null
+        <ListingsArr listings={listings} location={location} /> : null
       }
 
     </div>

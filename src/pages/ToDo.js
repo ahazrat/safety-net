@@ -5,9 +5,14 @@ export default function ToDo(props) {
       <h1>To Do</h1>
       <div style={{ width: 300, margin: 'auto', textAlign: 'left' }}>
         <ol>
-          <li>Organize Listings display</li>
-          <li>Create data model 'Listings'</li>
-          <li>Clear non-conforming data</li>
+          <li>Register</li>
+          <li>Login</li>
+          <li>Logout</li>
+          <li>Profile</li>
+          <li>Settings</li>
+          <li>ChangePassword</li>
+          <li>Show users on Map</li>
+          <li>Move map to Galt's Gulch</li>
           <li>John Galt, Francisco d'Anconia, Ragnar Danneskjold</li>
           <li>Update Header/Layout</li>
           <li>More Map icons</li>
@@ -19,8 +24,13 @@ export default function ToDo(props) {
 
         <h2>Done</h2>
         <ul>
+          <li>Listings: data model</li>
+          <li>Clear non-conforming data</li>
+          <li>Listings: location</li>
+          <li>Listings: proximity</li>
+          <li>Organize Listings display</li>
           <li>Populate dummy data</li>
-          <li>Calculator -> Listings</li>
+          <li>Change Calculator to Listings</li>
           <li>Connect Firebase</li>
           <li>Remove App.test.js</li>
           <li>New Map page</li>
