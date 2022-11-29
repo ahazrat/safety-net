@@ -3,8 +3,8 @@ import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { faker } from '@faker-js/faker'
-import CardActions from '@mui/material/CardActions'
-import CardContent from '@mui/material/CardContent'
+// import CardActions from '@mui/material/CardActions'
+// import CardContent from '@mui/material/CardContent'
 
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
@@ -13,37 +13,52 @@ import { getCollection, createNewDoc, deleteDocument } from '../components/Fireb
 import RowRadioButtonsGroup from '../components/RadioRow'
 
 function createNewListing() {
-  const newListing = {
-    createdAt: faker.datatype.datetime({ min: 1577836800000, max: Date.now() }),
+  const userName = faker.internet.userName()
+  // const newTs1 = faker.datatype.datetime({ min: 1577836800000, max: Date.now() })
+  const newTs2 = new Date(Date.now())
+  let newListing = {
+    createdAt: newTs2,
     jobTitle: faker.name.jobTitle(),
-    userName: faker.internet.userName(),
+    userName: userName,
     fullName: faker.name.fullName(),
-    imgSrc: faker.image.people(),
     city: faker.address.city(),
-    jobTitle: faker.name.jobTitle(),
     btcAdd: faker.finance.bitcoinAddress(),
   }
-  createNewDoc('listings', newListing)
+  fetch('https://loremflickr.com/640/480/people')
+    .then(r => {
+      console.log('fetched userImage url:', r.url)
+      newListing['userImage'] = r.url
+      createNewDoc('listings', newListing)
+    })
 }
 
 function validateListing(l) {
-  if (!('btcAdd' in l)) { return false }
-  if (!('createdTs' in l)) { return false }
-  return true
+  if (!('createdAt' in l)) { return 'red' }
+  if (!('userImage' in l)) { return 'red' }
+  if (l.userImage === 'https://loremflickr.com/640/480/people') { return 'red' }
+  if (typeof l.createdAt === 'number') { return '#0F8' }
+  if (0) { return 'red' }
+  return 'green'
 }
 
 function ListingsArr({ listings }) {
   return (
-    <Stack style={{ height: '170vh', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', alignContent: 'space-around' }}>
+    <Stack style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', alignContent: 'space-around' }}>
       {listings.map((l, i) => {
-        const bgc = validateListing(l) ? 'green' : 'red'
         let createdAt = ''
-        if (l.createdTs) {
-          createdAt = new Date(l.createdTs.seconds).toISOString().substring(0, 19)
+        if (l.createdAt) {
+          if (typeof l.createdAt === 'number') {
+            // createdAt = l.createdAt
+            createdAt = (new Date(l.createdAt)).toISOString().substring(0, 19)
+          }
+          if (typeof l.createdAt === 'object') {
+            createdAt = (new Date(l.createdAt.seconds)).toISOString().substring(0, 19)
+          }
         }
+
         return (
-          <Card key={i} style={{ height: 150, width: '45%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', backgroundColor: bgc }}>
-            <Avatar alt={l.fullName} src={l.imgSrc} style={{ height: 90, width: 90 }} />
+          <Card key={i} style={{ height: 150, width: '45%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', backgroundColor: validateListing(l), margin: 5 }}>
+            <Avatar alt={l.fullName} src={l.userImage} style={{ height: 90, width: 90 }} />
             <div>
               <h5>{l.fullName}</h5>
               <p>{l.city}</p>
@@ -54,12 +69,13 @@ function ListingsArr({ listings }) {
               <p>Created at: {createdAt}</p>
             </div>
             <Button variant='filled' startIcon={<DeleteIcon />} onClick={()=>{
-              console.log(l.id)
+              deleteDocument('listings', l.id)
             }}>
               Delete
             </Button>
           </Card>
         )
+
       })}
     </Stack>
   )
@@ -70,7 +86,7 @@ export default function Listings(props) {
   const [listings, setListings] = useState([])
 
   useEffect(() => {
-    // createNewListing()
+    // createNewListing()  
     getCollection('listings').then(ls => setListings(ls))
   }, [])
 
@@ -97,19 +113,15 @@ export default function Listings(props) {
         value={profile}
       />
 
-
       <p>{profile}</p>
 
       <br />
 
+      <p>{listings.length} listings</p>
       {listings instanceof Array && listings.length > 0 ?
         <ListingsArr listings={listings} /> : null
       }
 
-      <div>
-        <h1>Total Number of Listings</h1>
-        <p>{listings.length} listings</p>
-      </div>
     </div>
   )
 }

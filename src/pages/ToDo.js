@@ -5,9 +5,10 @@ export default function ToDo(props) {
       <h1>To Do</h1>
       <div style={{ width: 300, margin: 'auto', textAlign: 'left' }}>
         <ol>
-          <li>Organize Listing display</li>
+          <li>Organize Listings display</li>
           <li>Create data model 'Listings'</li>
           <li>Clear non-conforming data</li>
+          <li>John Galt, Francisco d'Anconia, Ragnar Danneskjold</li>
           <li>Update Header/Layout</li>
           <li>More Map icons</li>
           <li>Convert 'Anatomy of the State' into page</li>

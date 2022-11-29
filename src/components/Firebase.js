@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
-import { getAnalytics } from "firebase/analytics"
+// import { getAnalytics } from "firebase/analytics"
 import { getFirestore, collection, doc, getDocs, addDoc, deleteDoc } from 'firebase/firestore/lite'
+import { getStorage, ref, uploadBytes } from "firebase/storage"
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,7 +22,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
-const analytics = getAnalytics(app)
+// const analytics = getAnalytics(app)
 
 async function getCollection(col) {
   const c = collection(db, col)
@@ -31,21 +32,34 @@ async function getCollection(col) {
     loadedDoc['id'] = doc.id
     return loadedDoc
   })
-  console.log(docArr)
   return docArr
 }
 
 async function createNewDoc(col, doc) {
   const c = collection(db, col)
   const docRef = await addDoc(c, doc)
-  console.log("Document written with ID: ", docRef.id);
+  console.log("Document written with ID: ", docRef.id)
 }
 
 async function deleteDocument(c, did) {
-  await deleteDoc(doc(db, c, did));
-  console.log('Deleted document ' + did + 'in collection ' + c)
+  await deleteDoc(doc(db, c, did))
+  console.log('Deleted document! collection:', c, '| doc', did)
+}
+
+function uploadFile(firebaseStoragePath, data) {
+  const storage = getStorage()
+  const storageRef = ref(storage, firebaseStoragePath)
+  
+  // 'data' comes from the Blob or File API
+  const dataBlob = new Blob([data], {
+    type: 'image/jpeg'
+  })
+  uploadBytes(storageRef, dataBlob).then((snapshot) => {
+    console.log('Uploaded data: ' + firebaseStoragePath)
+    console.log(snapshot)
+  })
 }
 
 export default app
 
-export { db, getCollection, createNewDoc }
+export { db, getCollection, createNewDoc, deleteDocument, uploadFile }
