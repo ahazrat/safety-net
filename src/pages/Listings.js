@@ -100,9 +100,11 @@ export default function Listings(props) {
   const [listings, setListings] = useState([])
   const [profile, setProfile] = useState(Object.keys(profiles)[1])
   const [location, setLocation] = useState([51.5, -0.09])
+  0 && setProfile('')
+  0 && setLocation([])
 
   useEffect(() => {
-    // createNewListing()  
+    0 && createNewListing()
     getCollection('listings').then(ls => setListings(ls))
   }, [])
 

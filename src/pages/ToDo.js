@@ -9,7 +9,6 @@ export default function ToDo(props) {
           <li>Login</li>
           <li>Logout</li>
           <li>Profile</li>
-          <li>Settings</li>
           <li>ChangePassword</li>
           <li>Show users on Map</li>
           <li>Move map to Galt's Gulch</li>

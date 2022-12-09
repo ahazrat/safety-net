@@ -2,6 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Layout from './components/Layout'
 
+import Register from './pages/admin/Register'
+// import Login from './pages/admin/Login'
+// import Profile from './pages/admin/Profile'
+
 import Home from './pages/Home'
 import Services from './pages/Services'
 import Map from './pages/Map'
@@ -24,11 +28,15 @@ export default function App() {
       <BrowserRouter basename='/safety-net'>
         <Routes>
           <Route path='/' element={<Layout />}>
+
             <Route index element={<Home />} />
+            <Route path='register' element={<Register />} />
+
             <Route path='services' element={<Services />} />
             <Route path='map' element={<Map />} />
             <Route path='listings' element={<Listings />} />
             <Route path='todo' element={<ToDo />} />
+
             <Route path='*' element={<NoPage />} />
           </Route>
         </Routes>

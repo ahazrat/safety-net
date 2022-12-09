@@ -6,22 +6,21 @@ function toRad(Value) {
 function calcCrow(p1, p2) {
   // Takes two points (LatLng)
   // Returns distance between them as the crow flies (in km)
+  const lat1 = p1[0]
+  const lon1 = p1[1]
+  const lat2 = p2[0]
+  const lon2 = p2[1]
 
-  var lat1 = p1[0]
-  var lon1 = p1[1]
-  var lat2 = p2[0]
-  var lon2 = p2[1]
+  const R = 6371 // km
+  const dLat = toRad(lat2-lat1)
+  const dLon = toRad(lon2-lon1)
+  const lat1Rad = toRad(lat1)
+  const lat2Rad = toRad(lat2)
 
-  var R = 6371 // km
-  var dLat = toRad(lat2-lat1)
-  var dLon = toRad(lon2-lon1)
-  var lat1 = toRad(lat1)
-  var lat2 = toRad(lat2)
-
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2) 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) 
-  var d = R * c
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1Rad) * Math.cos(lat2Rad) 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) 
+  const d = R * c
   return d.toFixed(2)
 }
 
