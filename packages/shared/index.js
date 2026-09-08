@@ -4,5 +4,5 @@ export { AuthUserContext, withAuthentication, withAuthorization } from './auth/s
 export * from './utils/GeoUtils'
 export * from './utils/validation'
 export { default as Roles } from './constants/Roles'
-export { default as Badges } from './constants/Badges'
+export { default as Badges, labelForBadge, earnedBadgeIds } from './constants/Badges'
 export * from './constants/Routes'

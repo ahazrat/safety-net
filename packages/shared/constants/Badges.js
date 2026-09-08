@@ -10,3 +10,12 @@ export default [
   'emergency-response',
   'cpr',
 ]
+
+export function labelForBadge(id) {
+  return String(id).replace(/-/g, ' ')
+}
+
+export function earnedBadgeIds(user) {
+  const badges = (user && user.badges) || {}
+  return Object.keys(badges).filter(id => badges[id])
+}

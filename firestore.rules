@@ -21,20 +21,47 @@ service cloud.firestore {
         && hasAdminRole(get(/databases/$(database)/documents/users/$(request.auth.uid)).data);
     }
 
+    function badgesOf(data) {
+      return 'badges' in data ? data.badges : {};
+    }
+
+    function validBadges(data) {
+      return !('badges' in data)
+        || data.badges.keys().hasOnly([
+          'professional-demeanor',
+          'complete-profile',
+          'de-escalation',
+          'self-defense',
+          'personal-defense',
+          'weapons-non-lethal',
+          'weapons-lethal',
+          'emergency-response',
+          'cpr'
+        ]);
+    }
+
+    function badgesUnchanged() {
+      return badgesOf(request.resource.data) == badgesOf(resource.data);
+    }
+
     // Profile docs keyed by Firebase Auth uid.
-    // ADMIN cannot be self-granted: only an existing admin may set or
-    // clear it on someone else's user doc (bootstrap the first admin in
-    // the Firebase console).
+    // ADMIN and badges cannot be self-granted: only an existing admin may
+    // set or clear them on someone else's user doc (bootstrap the first
+    // admin in the Firebase console).
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
       allow list: if isAdmin();
       allow create: if isOwner(userId)
         && request.resource.data.uid == userId
-        && !hasAdminRole(request.resource.data);
+        && !hasAdminRole(request.resource.data)
+        && validBadges(request.resource.data)
+        && badgesOf(request.resource.data).keys().size() == 0;
       allow update: if request.resource.data.uid == resource.data.uid
+        && validBadges(request.resource.data)
         && (
           (isOwner(userId)
-            && hasAdminRole(request.resource.data) == hasAdminRole(resource.data))
+            && hasAdminRole(request.resource.data) == hasAdminRole(resource.data)
+            && badgesUnchanged())
           || (isAdmin() && userId != request.auth.uid)
         );
       allow delete: if isOwner(userId) || isAdmin();

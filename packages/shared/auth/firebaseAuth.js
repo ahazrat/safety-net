@@ -42,7 +42,16 @@ export function createUser(userData) {
     username: userData.username,
     email: userData.email,
     roles: { [Roles.USER]: Roles.USER },
+    badges: {},
   })
+}
+
+export function setUserBadge(uid, badge, grant) {
+  const userRef = doc(db, 'users', uid)
+  if (grant) {
+    return updateDoc(userRef, { [`badges.${badge}`]: badge })
+  }
+  return updateDoc(userRef, { [`badges.${badge}`]: deleteField() })
 }
 
 export function setUserAdminRole(uid, grant) {

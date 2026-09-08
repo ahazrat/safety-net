@@ -298,6 +298,76 @@ test('admin cannot strip their own ADMIN role', async () => {
   )
 })
 
+test('user cannot grant themselves a badge', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+    })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'users', 'alice'), { 'badges.cpr': 'cpr' })
+  )
+})
+
+test('user cannot create a profile with badges', async () => {
+  await assertFails(
+    setDoc(doc(asUser('alice'), 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+      badges: { cpr: 'cpr' },
+    })
+  )
+})
+
+test('admin can grant and revoke a badge on another user', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+    })
+  })
+  const adminDb = asUser('admin')
+  await assertSucceeds(
+    updateDoc(doc(adminDb, 'users', 'alice'), { 'badges.cpr': 'cpr' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(adminDb, 'users', 'alice'), { 'badges.cpr': deleteField() })
+  )
+})
+
+test('admin cannot grant an unknown badge', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+    })
+  })
+  await assertFails(
+    updateDoc(doc(asUser('admin'), 'users', 'alice'), { 'badges.wizard': 'wizard' })
+  )
+})
+
 test('unknown collections are denied', async () => {
   await assertFails(getDoc(doc(asUser('alice'), 'secrets', 'x')))
   await assertFails(setDoc(doc(asUser('alice'), 'secrets', 'x'), { n: 1 }))

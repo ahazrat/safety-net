@@ -59,6 +59,11 @@ filter (`visibility == 'public'` or `ownerUid == auth.uid`) — use
 `listPublicListings` / `listVisibleListings` rather than scanning the
 collection.
 
+Verification badges (`packages/shared/constants/Badges.js`) live on
+`users/{uid}.badges`. Sign-up creates an empty map; only an admin can grant
+or revoke a known badge on someone else (Account shows yours; Admin toggles
+them).
+
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
 - **iOS Simulator not available in this dev environment**: `Xcode.app`
@@ -73,7 +78,6 @@ collection.
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. Badge system (badge list already ported: `packages/shared/constants/Badges.ts`)
 1. User-user messaging
 1. Project-task UI
 1. Live police/fire scanner + published crime & incident statistics feed, layered onto the
