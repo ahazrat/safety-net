@@ -39,4 +39,7 @@ const AdminScreen = ({ navigation }) => {
 
 const condition = authUser => authUser && authUser.roles && !!authUser.roles[ROLES.ADMIN];
 
-export default withAuthorization(condition, props => props.navigation.navigate('SignIn'))(AdminScreen);
+// 'SignIn' only exists in the drawer's route set while signed out (see
+// navigation/index.tsx), so redirecting there is a no-op for a signed-in
+// non-admin user -- send them to 'Home', which always exists.
+export default withAuthorization(condition, props => props.navigation.navigate('Home'))(AdminScreen);
