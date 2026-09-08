@@ -458,6 +458,86 @@ test('admin can grant a badge on another user public profile', async () => {
   )
 })
 
+test('create may include listedPriceCents integer >= 0', async () => {
+  await assertSucceeds(
+    addDoc(
+      collection(asUser('alice'), 'listings'),
+      validListing({ listedPriceCents: 1500, currency: 'usd' })
+    )
+  )
+  await assertSucceeds(
+    addDoc(collection(asUser('alice'), 'listings'), validListing({ listedPriceCents: 0 }))
+  )
+})
+
+test('create rejects paymentStatus captured and stripe ids', async () => {
+  const alice = asUser('alice')
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ paymentStatus: 'captured' }))
+  )
+  await assertFails(
+    addDoc(
+      collection(alice, 'listings'),
+      validListing({ stripePaymentIntentId: 'pi_fake' })
+    )
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ executedPriceCents: 1500 }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ listedPriceCents: 1.5 }))
+  )
+})
+
+test('owner cannot set paymentStatus captured', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing()))
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), { paymentStatus: 'captured' })
+  )
+})
+
+test('admin user cannot set stripe ids on a listing', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(doc(db, 'listings', 'l1'), validListing())
+  })
+  await assertFails(
+    updateDoc(doc(asUser('admin'), 'listings', 'l1'), {
+      stripePaymentIntentId: 'pi_x',
+    })
+  )
+})
+
+test('owner may edit listedPriceCents while open', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'listings', 'l1'), validListing({ listedPriceCents: 1000 }))
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), { listedPriceCents: 2000 })
+  )
+})
+
+test('owner cannot open to done; cannot reopen done', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing({ status: 'open' })))
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), { status: 'done', assigneeUid: 'bob' })
+  )
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'l2'),
+      validListing({ status: 'done', assigneeUid: 'bob' })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l2'), { status: 'accepted' })
+  )
+})
+
 test('admin cannot grant an unknown badge', async () => {
   await seed(async db => {
     await setDoc(doc(db, 'users', 'admin'), {

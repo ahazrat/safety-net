@@ -7,6 +7,7 @@ import {
 	listingStatusOf,
 	acceptListing,
 	setListingStatus,
+	formatListedPrice,
 } from '@safety-net/shared';
 import Map from '../Map';
 import PublicProfile from '../PublicProfile';
@@ -87,6 +88,9 @@ const Listing = ({ route, navigation }) => {
 				</Button>
 			)}
 			<Text style={{ marginBottom: 8 }}>Status: {status.replace('_', ' ')}</Text>
+			<Text style={{ marginBottom: 8 }}>
+				Price: {formatListedPrice(listing) || 'No price set'}
+			</Text>
 			<PublicProfile uid={listing.ownerUid} label='Posted by' />
 			{listing.assigneeUid ? (
 				<PublicProfile uid={listing.assigneeUid} label='Assigned to' />

@@ -35,4 +35,10 @@ export interface Listing {
     country?: string
     city?: string
   }
+  /**
+   * Optional USD cents the requester lists. Omit = no price set.
+   * 0 = volunteer. Not stake. Clients cannot write paymentStatus / Stripe ids.
+   */
+  listedPriceCents?: number
+  currency?: 'usd'
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, HelperText, Switch } from 'react-native-paper';
 
-import { createListing as submitListing } from '@safety-net/shared';
+import { createListing as submitListing, dollarsTextToCents } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -44,6 +44,7 @@ const ListingCreate = ({ navigation }) => {
 	const [latitude, setLatitude] = useState(0);
 	const [longitude, setLongitude] = useState(0);
 	const [isPublic, setIsPublic] = useState(true);
+	const [priceDollars, setPriceDollars] = useState('');
 	const [error, setError] = useState(null);
 
 	const numInput = (text, value, onChange, width='20%') => (
@@ -61,6 +62,11 @@ const ListingCreate = ({ navigation }) => {
 	const onCreate = () => {
 		if (!String(title).trim()) {
 			setError(new Error('Title is required'));
+			return;
+		}
+		const listedPriceCents = dollarsTextToCents(priceDollars);
+		if (listedPriceCents === null) {
+			setError(new Error('Price must be a number of dollars (blank = no price, 0 = volunteer)'));
 			return;
 		}
 		const newListing = {
@@ -104,6 +110,10 @@ const ListingCreate = ({ navigation }) => {
 				lng: Number(longitude),
 			},
 		};
+		if (listedPriceCents !== undefined) {
+			newListing.listedPriceCents = listedPriceCents;
+			newListing.currency = 'usd';
+		}
 		setError(null);
 		submitListing(newListing)
 			.then(() => navigation.navigate('Listings'))
@@ -146,6 +156,13 @@ const ListingCreate = ({ navigation }) => {
 				{numInput('Latitude', latitude, setLatitude, '40%')}
 				{numInput('Longitude', longitude, setLongitude, '40%')}
 			</View>
+			<TextInput
+				style={styles.textInput}
+				label='Listed price USD (optional; 0 = volunteer)'
+				value={priceDollars}
+				onChangeText={setPriceDollars}
+				keyboardType='numeric'
+			/>
 			<View style={styles.inputView}>
 				<Text variant='titleMedium' style={{ marginRight: 12, alignSelf: 'center' }}>
 					{isPublic ? 'Public (visible on the map)' : 'Private (only you)'}

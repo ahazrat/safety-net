@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Card, FAB } from 'react-native-paper';
-import { listVisibleListings, listingStatusOf } from '@safety-net/shared';
+import { listVisibleListings, listingStatusOf, formatListedPrice } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -58,6 +58,7 @@ const Listings = ({ navigation }) => {
 				<Card.Title title={listing.title || 'Legacy listing'} />
 				<Card.Content>
 					<Text>Status: {listingStatusOf(listing).replace('_', ' ')}</Text>
+					<Text>Price: {formatListedPrice(listing) || 'No price set'}</Text>
 					{startDate && <Text>Start: {startDate}</Text>}
 					{endDate && <Text>End: {endDate}</Text>}
 					{listing.requirements && (

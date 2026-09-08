@@ -58,14 +58,33 @@ export async function createListing(data) {
     throw new Error('Must be signed in to create a listing')
   }
   const visibility = data.visibility === 'private' ? 'private' : 'public'
-  const { assigneeUid: _ignored, ...rest } = data
-  return createNewDoc('listings', {
+  const {
+    assigneeUid: _ignored,
+    paymentStatus: _ps,
+    executedPriceCents: _ex,
+    stripePaymentIntentId: _pi,
+    stripeCheckoutSessionId: _cs,
+    stripeConnectAccountId: _ca,
+    btcAdd: _btc,
+    ...rest
+  } = data
+  const listing = {
     ...rest,
     visibility,
     status: 'open',
     ownerUid: uid,
     createdAt: serverTimestamp(),
-  })
+  }
+  if (listing.listedPriceCents != null && listing.listedPriceCents !== '') {
+    const cents = Number(listing.listedPriceCents)
+    if (!Number.isInteger(cents) || cents < 0) {
+      throw new Error('listedPriceCents must be an integer >= 0')
+    }
+    listing.listedPriceCents = cents
+  } else {
+    delete listing.listedPriceCents
+  }
+  return createNewDoc('listings', listing)
 }
 
 export const LISTING_STATUSES = ['open', 'accepted', 'in_progress', 'done']

@@ -150,6 +150,64 @@ service cloud.firestore {
         && validJob(data);
     }
 
+    function paymentStatusOf(data) {
+      return !('paymentStatus' in data) || data.paymentStatus == 'none'
+        ? 'none'
+        : data.paymentStatus;
+    }
+
+    function validListedPrice(data) {
+      return !('listedPriceCents' in data)
+        || (data.listedPriceCents is number
+          && data.listedPriceCents == int(data.listedPriceCents)
+          && data.listedPriceCents >= 0);
+    }
+
+    function noMoneyProcessorFields(data) {
+      return !('executedPriceCents' in data)
+        && !('stripePaymentIntentId' in data)
+        && !('stripeCheckoutSessionId' in data)
+        && !('stripeConnectAccountId' in data);
+    }
+
+    function validCreatePayment(data) {
+      return validListedPrice(data)
+        && paymentStatusOf(data) == 'none'
+        && noMoneyProcessorFields(data)
+        && (!('currency' in data) || data.currency == 'usd');
+    }
+
+    function paymentFieldsUnchanged() {
+      return resource.data.get('listedPriceCents', -1) == request.resource.data.get('listedPriceCents', -1)
+        && resource.data.get('currency', '') == request.resource.data.get('currency', '')
+        && resource.data.get('paymentStatus', 'none') == request.resource.data.get('paymentStatus', 'none')
+        && resource.data.get('executedPriceCents', -1) == request.resource.data.get('executedPriceCents', -1)
+        && resource.data.get('stripePaymentIntentId', '') == request.resource.data.get('stripePaymentIntentId', '')
+        && resource.data.get('stripeCheckoutSessionId', '') == request.resource.data.get('stripeCheckoutSessionId', '')
+        && resource.data.get('stripeConnectAccountId', '') == request.resource.data.get('stripeConnectAccountId', '');
+    }
+
+    function ownerMayEditListedPrice() {
+      return listingStatus(resource.data) == 'open'
+        && paymentStatusOf(resource.data) == 'none'
+        && paymentStatusOf(request.resource.data) == 'none'
+        && validListedPrice(request.resource.data)
+        && (!('currency' in request.resource.data) || request.resource.data.currency == 'usd')
+        && resource.data.get('executedPriceCents', -1) == request.resource.data.get('executedPriceCents', -1)
+        && resource.data.get('stripePaymentIntentId', '') == request.resource.data.get('stripePaymentIntentId', '')
+        && resource.data.get('stripeCheckoutSessionId', '') == request.resource.data.get('stripeCheckoutSessionId', '')
+        && resource.data.get('stripeConnectAccountId', '') == request.resource.data.get('stripeConnectAccountId', '');
+    }
+
+    function jobStatusForwardOnly() {
+      let from = listingStatus(resource.data);
+      let to = listingStatus(request.resource.data);
+      return from == to
+        || (from == 'open' && to == 'accepted')
+        || (from == 'accepted' && (to == 'in_progress' || to == 'done'))
+        || (from == 'in_progress' && to == 'done');
+    }
+
     function canReadListing(data) {
       return isPublicListing(data)
         || isOwner(data.ownerUid)
@@ -173,10 +231,19 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid
         && listingStatus(request.resource.data) == 'open'
-        && validListingShape(request.resource.data);
+        && validListingShape(request.resource.data)
+        && validCreatePayment(request.resource.data);
       allow update: if isSignedIn()
         && request.resource.data.ownerUid == resource.data.ownerUid
         && validListingShape(request.resource.data)
+        && jobStatusForwardOnly()
+        && (
+          paymentFieldsUnchanged()
+          || (
+            resource.data.ownerUid == request.auth.uid
+            && ownerMayEditListedPrice()
+          )
+        )
         && (
           resource.data.ownerUid == request.auth.uid
           || isAdmin()
