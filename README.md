@@ -36,6 +36,12 @@ npm start        # or: npx expo start
 npx expo start --web
 ```
 
+Web routes are declared in `apps/app/navigation/LinkingConfiguration.ts`
+(`/`, `/map`, `/listing/:listingId`, `/signin`, …). Every screen stays
+mounted so those URLs keep working after sign-in or sign-out; the drawer
+only hides items that do not apply. `npx expo start --web` then open
+`http://localhost:8081/map` (port may vary).
+
 The app shares one Firebase project (`safety-net-2022`, config in
 `packages/shared/firebase/config.js`) for auth and Firestore.
 
@@ -101,8 +107,6 @@ Value proposition, GTM, and ordered priorities live in
 
 Next (same order as the roadmap):
 
-1. Publish the job loop (status / assignee) if it is not on `master` yet
-1. Web URLs through all navigation
 1. Domain → web app
 1. Android auth persistence + Map check
 1. Chicago crime overlay on Map/Home
@@ -125,5 +129,6 @@ insurance, blockchain-as-homepage, national station import.
 ### Creating a new screen
 1. Create the screen component under `apps/app/components/`
 1. Add it to `RootStackParamList` in `apps/app/types.tsx`
-1. Register it in `apps/app/navigation/LinkingConfiguration.ts`
-1. Add it to the drawer in `apps/app/navigation/index.tsx`
+1. Add a path in `apps/app/navigation/LinkingConfiguration.ts`
+1. Register it always in the drawer in `apps/app/navigation/index.tsx`
+   (hide with `drawerItemStyle` if it should not appear in the menu)

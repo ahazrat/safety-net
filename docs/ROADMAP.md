@@ -109,11 +109,9 @@ Keep Trello as history; do not copy these into the README priority list.
 
 The loop is: **see map → create or accept a job → message → start → done.**
 
-1. **Web URLs through navigation** (deep links already half-declared in `LinkingConfiguration.ts`). A LinkedIn or domain hit must open the right screen, not a blank drawer route.
-2. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app.
-3. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
-4. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
-5. **Commit the job-lifecycle work** still sitting in the working tree if it is not on `master` yet; keep rules deployed.
+1. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host.
+2. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
+3. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
 
 Optional but high leverage: show **badge chips on listings / jobs**, not only on Account/Admin, so a requester can see who they hired.
 
@@ -211,9 +209,7 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 
 Engineering and GTM are the same list for the next stretch.
 
-1. **Finish and publish the job loop** — listing status/assignee on `master`, rules live (already deployed), Jobs + Listing actions documented.
-2. **Web URLs / deep links** so every drawer route is a real path.
-3. **Domain** (`safety-net.us` or better) → web app.
+1. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
 4. **Android auth persistence** + Map sanity check.
 5. **Chicago crime overlay** (BQ public dataset, cached; design pass).
 6. **Public provider snippet** (username + badges) so trust is visible on a job.

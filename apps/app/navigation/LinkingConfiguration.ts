@@ -1,32 +1,42 @@
 /**
- * Learn more about deep linking with React Navigation
- * https://reactnavigation.org/docs/deep-linking
- * https://reactnavigation.org/docs/configuring-links
+ * Web and native deep links. Paths must stay mounted even when the
+ * matching drawer item is hidden (see navigation/index.tsx) or the URL
+ * 404s after sign-in/out.
  */
-
 import * as Linking from 'expo-linking';
 
+export const linkingScreens = {
+  Home: '',
+  SignIn: 'signin',
+  SignUp: 'signup',
+  ForgotPassword: 'forgot-password',
+  Services: 'services',
+  Map: 'map',
+  Attribution: 'attribution',
+  Listings: 'listings',
+  Listing: 'listing/:listingId',
+  ListingCreate: 'createlisting',
+  Jobs: 'jobs',
+  Messages: 'messages',
+  Conversation: 'conversation/:conversationId',
+  Account: 'account',
+  ChangePassword: 'changepassword',
+  Admin: 'admin',
+  NotFound: '*',
+};
+
+function prefixes() {
+  const list = [Linking.createURL('/')];
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    const origin = window.location.origin;
+    if (list.indexOf(origin) === -1) list.push(origin);
+  }
+  return list;
+}
+
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: prefixes(),
   config: {
-    screens: {
-      SignUp: 'signup',
-      SignIn: 'signin',
-      Home: 'home',
-      Account: 'account',
-      Listings: 'listings',
-      Listing: 'listing',
-      ListingCreate: 'createlisting',
-      Jobs: 'jobs',
-      Services: 'services',
-      Map: 'map',
-      Attribution: 'attribution',
-      ForgotPassword: 'forgotpassword',
-      ChangePassword: 'changepassword',
-      Admin: 'admin',
-      Messages: 'messages',
-      Conversation: 'conversation',
-      NotFound: '*',
-    },
+    screens: linkingScreens,
   },
 };

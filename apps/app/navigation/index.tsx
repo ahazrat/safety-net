@@ -50,6 +50,8 @@ const drawerIcon = (name: IconName) =>
 		<MaterialCommunityIcons name={name} color={color} size={size} />
 	);
 
+const hiddenItem = { display: 'none' as const };
+
 function RootNavigator() {
 	const authUser = React.useContext(AuthUserContext);
 	const { width } = useWindowDimensions();
@@ -59,6 +61,11 @@ function RootNavigator() {
 	// the drawer is only ever shown as a sidebar. `permanent` drops that
 	// backdrop entirely, so use it above the mobile breakpoint.
 	const drawerType = width >= 768 ? 'permanent' : 'front';
+	// Keep every route mounted so /listings, /signin, /listing/:id, etc.
+	// still resolve after auth changes. Hide drawer rows that do not apply.
+	const signedIn = { drawerItemStyle: authUser ? undefined : hiddenItem };
+	const signedOut = { drawerItemStyle: authUser ? hiddenItem : undefined };
+	const neverInDrawer = { drawerItemStyle: hiddenItem };
 
 	return (
 		<Drawer.Navigator
@@ -70,30 +77,26 @@ function RootNavigator() {
 				component={HomeScreen}
 				options={{ title: 'Home', drawerIcon: drawerIcon('home-outline') }}
 			/>
-			{authUser ? (
-				<>
-					<Drawer.Screen
-						name='Listings'
-						component={Listings}
-						options={{ title: 'Listings', drawerIcon: drawerIcon('format-list-bulleted') }}
-					/>
-					<Drawer.Screen
-						name='Listing'
-						component={Listing}
-						options={{ title: 'Listing', drawerIcon: drawerIcon('file-document-outline') }}
-					/>
-					<Drawer.Screen
-						name='ListingCreate'
-						component={ListingCreate}
-						options={{ title: 'Create Listing', drawerIcon: drawerIcon('plus-box-outline') }}
-					/>
-					<Drawer.Screen
-						name='Jobs'
-						component={JobsScreen}
-						options={{ title: 'Jobs', drawerIcon: drawerIcon('briefcase-outline') }}
-					/>
-				</>
-			) : null}
+			<Drawer.Screen
+				name='Listings'
+				component={Listings}
+				options={{ title: 'Listings', drawerIcon: drawerIcon('format-list-bulleted'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name='Listing'
+				component={Listing}
+				options={{ title: 'Listing', ...neverInDrawer }}
+			/>
+			<Drawer.Screen
+				name='ListingCreate'
+				component={ListingCreate}
+				options={{ title: 'Create Listing', drawerIcon: drawerIcon('plus-box-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name='Jobs'
+				component={JobsScreen}
+				options={{ title: 'Jobs', drawerIcon: drawerIcon('briefcase-outline'), ...signedIn }}
+			/>
 			<Drawer.Screen
 				name='Services'
 				component={ServicesScreen}
@@ -109,57 +112,50 @@ function RootNavigator() {
 				component={AttributionScreen}
 				options={{ title: 'Map Attribution', drawerIcon: drawerIcon('information-outline') }}
 			/>
-			{authUser ? (
-				<>
-					<Drawer.Screen
-						name='Messages'
-						component={MessagesScreen}
-						options={{ title: 'Messages', drawerIcon: drawerIcon('message-text-outline') }}
-					/>
-					<Drawer.Screen
-						name='Conversation'
-						component={ConversationScreen}
-						options={{ title: 'Conversation', drawerItemStyle: { display: 'none' } }}
-					/>
-					<Drawer.Screen
-						name='Account'
-						component={AccountScreen}
-						options={{ title: 'Account', drawerIcon: drawerIcon('account-circle-outline') }}
-					/>
-					<Drawer.Screen
-						name="ChangePassword"
-						component={ChangePasswordScreen}
-						options={{ title: 'Change Password', drawerIcon: drawerIcon('lock-reset') }}
-					/>
-					<Drawer.Screen
-						name="Admin"
-						component={AdminScreen}
-						options={{ title: 'Admin', drawerIcon: drawerIcon('shield-account-outline') }}
-					/>
-				</>
-			) : (
-				<>
-					<Drawer.Screen
-						name='SignIn'
-						component={SignIn}
-						options={{ title: 'Sign In', drawerIcon: drawerIcon('login') }}
-					/>
-					<Drawer.Screen
-						name='SignUp'
-						component={SignUp}
-						options={{ title: 'Sign Up', drawerIcon: drawerIcon('account-plus-outline') }}
-					/>
-					<Drawer.Screen
-						name="ForgotPassword"
-						component={ForgotPasswordScreen}
-						options={{ title: 'Forgot Password', drawerIcon: drawerIcon('lock-question') }}
-					/>
-				</>
-			)}
+			<Drawer.Screen
+				name='Messages'
+				component={MessagesScreen}
+				options={{ title: 'Messages', drawerIcon: drawerIcon('message-text-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name='Conversation'
+				component={ConversationScreen}
+				options={{ title: 'Conversation', ...neverInDrawer }}
+			/>
+			<Drawer.Screen
+				name='Account'
+				component={AccountScreen}
+				options={{ title: 'Account', drawerIcon: drawerIcon('account-circle-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name="ChangePassword"
+				component={ChangePasswordScreen}
+				options={{ title: 'Change Password', drawerIcon: drawerIcon('lock-reset'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name="Admin"
+				component={AdminScreen}
+				options={{ title: 'Admin', drawerIcon: drawerIcon('shield-account-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name='SignIn'
+				component={SignIn}
+				options={{ title: 'Sign In', drawerIcon: drawerIcon('login'), ...signedOut }}
+			/>
+			<Drawer.Screen
+				name='SignUp'
+				component={SignUp}
+				options={{ title: 'Sign Up', drawerIcon: drawerIcon('account-plus-outline'), ...signedOut }}
+			/>
+			<Drawer.Screen
+				name="ForgotPassword"
+				component={ForgotPasswordScreen}
+				options={{ title: 'Forgot Password', drawerIcon: drawerIcon('lock-question'), ...signedOut }}
+			/>
 			<Drawer.Screen
 				name="NotFound"
 				component={NotFoundScreen}
-				options={{ title: 'Oops!', drawerIcon: drawerIcon('help-circle-outline') }}
+				options={{ title: 'Oops!', ...neverInDrawer }}
 			/>
 		</Drawer.Navigator>
 	);
