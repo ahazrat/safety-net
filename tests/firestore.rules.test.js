@@ -12,7 +12,9 @@ const {
   getDocs,
   setDoc,
   addDoc,
+  updateDoc,
   deleteDoc,
+  deleteField,
   collection,
 } = require('firebase/firestore')
 
@@ -145,6 +147,69 @@ test('non-admin cannot list users; admin can', async () => {
   })
   await assertFails(getDocs(collection(asUser('alice'), 'users')))
   await assertSucceeds(getDocs(collection(asUser('admin'), 'users')))
+})
+
+test('user cannot create their own profile with ADMIN', async () => {
+  await assertFails(
+    setDoc(doc(asUser('alice'), 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER', ADMIN: 'ADMIN' },
+    })
+  )
+})
+
+test('user cannot grant themselves ADMIN after create', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+    })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'users', 'alice'), { 'roles.ADMIN': 'ADMIN' })
+  )
+})
+
+test('admin can grant and revoke ADMIN on another user', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+    })
+  })
+  const adminDb = asUser('admin')
+  await assertSucceeds(
+    updateDoc(doc(adminDb, 'users', 'alice'), { 'roles.ADMIN': 'ADMIN' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(adminDb, 'users', 'alice'), { 'roles.ADMIN': deleteField() })
+  )
+})
+
+test('admin cannot strip their own ADMIN role', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('admin'), 'users', 'admin'), { 'roles.ADMIN': deleteField() })
+  )
 })
 
 test('unknown collections are denied', async () => {

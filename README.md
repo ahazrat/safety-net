@@ -46,14 +46,13 @@ npm run test:rules     # emulator + tests/firestore.rules.test.js
 npm run deploy:rules   # deploy to safety-net-2022 (needs Firebase CLI login)
 ```
 
+Admin role is not self-serve. Sign-up always creates a `USER`. An existing
+admin can grant or revoke `ADMIN` on other accounts from the Admin screen.
+The first admin has to be bootstrapped in the Firebase console
+(`users/{uid}.roles.ADMIN = "ADMIN"`).
+
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
-- **SignUp's admin-toggle is a security smell**: the `Switch` on the sign-up
-  form lets any new user grant themselves the admin role client-side (see
-  the comment in `apps/app/components/SignUp/index.jsx`). Firestore rules
-  currently still allow that self-write — needs a real server-side
-  role-assignment flow, then a rules change that forbids setting
-  `roles.ADMIN` on your own user doc.
 - **iOS Simulator not available in this dev environment**: `Xcode.app`
   itself isn't installed (only the command-line tools are), so
   `Map.native.tsx`'s WebView-embedded Leaflet map has never actually been
@@ -66,12 +65,6 @@ npm run deploy:rules   # deploy to safety-net-2022 (needs Firebase CLI login)
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. **Fix the SignUp admin-toggle security hole** — replace the client-side
-   `Switch` with a real server-side role-assignment flow (e.g. an admin
-   grants roles after signup, not the user themselves), and stop allowing
-   `roles.ADMIN` on self-writes in `firestore.rules`.
-1. **Verify `Map.native.tsx` on a real iOS Simulator** once Xcode is
-   installed — the WebView/Leaflet path has only been tested on web so far.
 1. Stronger password requirements on sign up
 1. Email string validation
 1. User-specific data access controls beyond the owner/admin rules already
@@ -88,6 +81,8 @@ blockers first, then features:
 1. Read from a blockchain
 1. Get web URL to show properly through all navigation
 1. Shop for domain names around 'safety net'
+1. **Verify `Map.native.tsx` on a real iOS Simulator** once Xcode is
+   installed — the WebView/Leaflet path has only been tested on web so far.
 
 ### Building the mobile app
 - Android emulator: install Android Studio, Tools > AVD Manager, create/launch a device

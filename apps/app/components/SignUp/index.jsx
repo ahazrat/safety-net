@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { doCreateUserWithEmailAndPassword, createUser, Roles as ROLES } from '@safety-net/shared'
+import { doCreateUserWithEmailAndPassword, createUser } from '@safety-net/shared'
 import { SafeAreaView, View } from 'react-native';
-import { Text, TextInput, Switch, Button, HelperText } from 'react-native-paper';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
 const SignUp = ({ navigation }) => {
 
@@ -9,10 +9,6 @@ const SignUp = ({ navigation }) => {
 	const [email, setEmail] = useState('');
 	const [passwordOne, setPasswordOne] = useState('');
 	const [passwordTwo, setPasswordTwo] = useState('');
-	// SECURITY SMELL: this client-side toggle lets any signer-upper grant
-	// themselves the admin role — flagged per the unification plan, not
-	// fixed (out of scope). A real fix needs server-side role assignment.
-	const [isAdmin, setIsAdmin] = useState(false);
 	const [error, setError] = useState(null);
 
 	const isInvalid =
@@ -22,19 +18,12 @@ const SignUp = ({ navigation }) => {
 		passwordOne !== passwordTwo;
 
 	const onSubmit = event => {
-		const roles = {
-			[ROLES.USER]: ROLES.USER,
-		};
-		if (isAdmin) {
-			roles[ROLES.ADMIN] = ROLES.ADMIN;
-		}
 		doCreateUserWithEmailAndPassword(email, passwordOne)
 			.then(authUser => {
 				let userData = {
 					uid: authUser.user.uid,
 					username: username,
 					email: email,
-					roles: roles,
 				};
 				setUsername('');
 				setEmail('');
@@ -82,10 +71,6 @@ const SignUp = ({ navigation }) => {
 					secureTextEntry
 					textContentType='password'
 				/>
-				<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-					<Switch value={isAdmin} onValueChange={setIsAdmin} />
-					<Text style={{ marginLeft: 10 }}>Set Admin</Text>
-				</View>
 				<Button
 					mode='contained'
 					onPress={onSubmit}

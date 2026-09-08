@@ -9,22 +9,34 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    function hasAdminRole(data) {
+      return 'roles' in data
+        && 'ADMIN' in data.roles
+        && data.roles.ADMIN == 'ADMIN';
+    }
+
     function isAdmin() {
       return isSignedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.ADMIN == 'ADMIN';
+        && hasAdminRole(get(/databases/$(database)/documents/users/$(request.auth.uid)).data);
     }
 
     // Profile docs keyed by Firebase Auth uid.
-    // Self-granting roles.ADMIN is still possible (SignUp toggle) — that is
-    // the next roadmap item, not enforced here yet.
+    // ADMIN cannot be self-granted: only an existing admin may set or
+    // clear it on someone else's user doc (bootstrap the first admin in
+    // the Firebase console).
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
       allow list: if isAdmin();
       allow create: if isOwner(userId)
-        && request.resource.data.uid == userId;
-      allow update: if isOwner(userId)
-        && request.resource.data.uid == userId;
+        && request.resource.data.uid == userId
+        && !hasAdminRole(request.resource.data);
+      allow update: if request.resource.data.uid == resource.data.uid
+        && (
+          (isOwner(userId)
+            && hasAdminRole(request.resource.data) == hasAdminRole(resource.data))
+          || (isAdmin() && userId != request.auth.uid)
+        );
       allow delete: if isOwner(userId) || isAdmin();
     }
 

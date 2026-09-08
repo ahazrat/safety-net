@@ -10,8 +10,9 @@ import {
   updatePassword,
   onAuthStateChanged,
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, updateDoc, deleteField } from 'firebase/firestore'
 import { auth, db } from '../firebase/app'
+import Roles from '../constants/Roles'
 
 export function doCreateUserWithEmailAndPassword(email, password) {
   return createUserWithEmailAndPassword(auth, email, password)
@@ -34,12 +35,22 @@ export function doPasswordUpdate(password) {
 }
 
 export function createUser(userData) {
+  // Never write ADMIN here — that role is granted only by an existing
+  // admin (setUserAdminRole) or by a console bootstrap of the first admin.
   return setDoc(doc(db, 'users', userData.uid), {
     uid: userData.uid,
     username: userData.username,
     email: userData.email,
-    roles: userData.roles,
+    roles: { [Roles.USER]: Roles.USER },
   })
+}
+
+export function setUserAdminRole(uid, grant) {
+  const userRef = doc(db, 'users', uid)
+  if (grant) {
+    return updateDoc(userRef, { [`roles.${Roles.ADMIN}`]: Roles.ADMIN })
+  }
+  return updateDoc(userRef, { [`roles.${Roles.ADMIN}`]: deleteField() })
 }
 
 export async function getUser(uid) {
