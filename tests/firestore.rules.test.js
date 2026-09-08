@@ -391,6 +391,73 @@ test('admin can grant and revoke a badge on another user', async () => {
   )
 })
 
+test('anyone can get a public profile; they cannot list or read the private user doc', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'alice'), {
+      uid: 'alice',
+      username: 'alice',
+      email: 'alice@example.com',
+      roles: { USER: 'USER' },
+      badges: { cpr: 'cpr' },
+    })
+    await setDoc(doc(db, 'publicProfiles', 'alice'), {
+      username: 'alice',
+      badges: { cpr: 'cpr' },
+    })
+  })
+  await assertSucceeds(getDoc(doc(unauth(), 'publicProfiles', 'alice')))
+  await assertSucceeds(getDoc(doc(asUser('bob'), 'publicProfiles', 'alice')))
+  await assertFails(getDoc(doc(asUser('bob'), 'users', 'alice')))
+  await assertFails(getDocs(collection(asUser('bob'), 'publicProfiles')))
+})
+
+test('user can create their public profile without badges or email', async () => {
+  const alice = asUser('alice')
+  await assertSucceeds(
+    setDoc(doc(alice, 'publicProfiles', 'alice'), {
+      username: 'alice',
+      badges: {},
+    })
+  )
+  await assertFails(
+    setDoc(doc(alice, 'publicProfiles', 'alice'), {
+      username: 'alice',
+      email: 'alice@example.com',
+      badges: {},
+    })
+  )
+})
+
+test('user cannot grant themselves a badge on the public profile', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'publicProfiles', 'alice'), {
+      username: 'alice',
+      badges: {},
+    })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'publicProfiles', 'alice'), { 'badges.cpr': 'cpr' })
+  )
+})
+
+test('admin can grant a badge on another user public profile', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(doc(db, 'publicProfiles', 'alice'), {
+      username: 'alice',
+      badges: {},
+    })
+  })
+  await assertSucceeds(
+    updateDoc(doc(asUser('admin'), 'publicProfiles', 'alice'), { 'badges.cpr': 'cpr' })
+  )
+})
+
 test('admin cannot grant an unknown badge', async () => {
   await seed(async db => {
     await setDoc(doc(db, 'users', 'admin'), {

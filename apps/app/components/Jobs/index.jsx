@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList } from 'react-native';
 import { Text, Card, Chip, HelperText } from 'react-native-paper';
-import { listMyJobs, listingStatusOf, withAuthorization } from '@safety-net/shared';
+import { listMyJobs, listingStatusOf, withAuthorization, getPublicProfile } from '@safety-net/shared';
 
 const JobsScreen = ({ navigation }) => {
 	const [jobs, setJobs] = useState([]);
+	const [names, setNames] = useState({});
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		listMyJobs()
-			.then(setJobs)
+			.then(async items => {
+				setJobs(items);
+				const uids = [...new Set(items.flatMap(j => [j.ownerUid, j.assigneeUid].filter(Boolean)))];
+				const entries = await Promise.all(
+					uids.map(async uid => {
+						const profile = await getPublicProfile(uid).catch(() => null);
+						return [uid, (profile && profile.username) || uid];
+					})
+				);
+				setNames(Object.fromEntries(entries));
+			})
 			.catch(setError)
 			.finally(() => setLoading(false));
 	}, []);
@@ -34,6 +45,12 @@ const JobsScreen = ({ navigation }) => {
 						<Card.Title title={item.title || 'Legacy listing'} />
 						<Card.Content>
 							<Chip compact>{listingStatusOf(item).replace('_', ' ')}</Chip>
+							<Text style={{ marginTop: 8 }}>
+								Posted by {names[item.ownerUid] || item.ownerUid || 'unknown'}
+							</Text>
+							{item.assigneeUid ? (
+								<Text>Assigned to {names[item.assigneeUid] || item.assigneeUid}</Text>
+							) : null}
 						</Card.Content>
 					</Card>
 				)}

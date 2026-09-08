@@ -9,6 +9,7 @@ import {
 	setListingStatus,
 } from '@safety-net/shared';
 import Map from '../Map';
+import PublicProfile from '../PublicProfile';
 
 const Listing = ({ route, navigation }) => {
 	const authUser = useContext(AuthUserContext);
@@ -86,8 +87,9 @@ const Listing = ({ route, navigation }) => {
 				</Button>
 			)}
 			<Text style={{ marginBottom: 8 }}>Status: {status.replace('_', ' ')}</Text>
+			<PublicProfile uid={listing.ownerUid} label='Posted by' />
 			{listing.assigneeUid ? (
-				<Text style={{ marginBottom: 8 }}>Assignee: {listing.assigneeUid}</Text>
+				<PublicProfile uid={listing.assigneeUid} label='Assigned to' />
 			) : (
 				<Text style={{ marginBottom: 8 }}>No assignee yet</Text>
 			)}

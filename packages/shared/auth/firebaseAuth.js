@@ -35,24 +35,49 @@ export function doPasswordUpdate(password) {
   return updatePassword(auth.currentUser, password)
 }
 
-export function createUser(userData) {
+function publicProfilePayload(userData, badges = {}) {
+  return {
+    username: userData.username,
+    badges,
+  }
+}
+
+export async function createUser(userData) {
   // Never write ADMIN here — that role is granted only by an existing
   // admin (setUserAdminRole) or by a console bootstrap of the first admin.
-  return setDoc(doc(db, 'users', userData.uid), {
+  await setDoc(doc(db, 'users', userData.uid), {
     uid: userData.uid,
     username: userData.username,
     email: userData.email,
     roles: { [Roles.USER]: Roles.USER },
     badges: {},
   })
+  await setDoc(doc(db, 'publicProfiles', userData.uid), publicProfilePayload(userData, {}))
 }
 
-export function setUserBadge(uid, badge, grant) {
+export async function setUserBadge(uid, badge, grant) {
   const userRef = doc(db, 'users', uid)
-  if (grant) {
-    return updateDoc(userRef, { [`badges.${badge}`]: badge })
+  const publicRef = doc(db, 'publicProfiles', uid)
+  const badgeUpdate = grant
+    ? { [`badges.${badge}`]: badge }
+    : { [`badges.${badge}`]: deleteField() }
+  await updateDoc(userRef, badgeUpdate)
+  try {
+    await updateDoc(publicRef, badgeUpdate)
+  } catch (err) {
+    const snap = await getDoc(userRef)
+    const username = (snap.data() && snap.data().username) || uid
+    const badges = { ...((snap.data() && snap.data().badges) || {}) }
+    if (grant) badges[badge] = badge
+    else delete badges[badge]
+    await setDoc(publicRef, { username, badges })
   }
-  return updateDoc(userRef, { [`badges.${badge}`]: deleteField() })
+}
+
+export async function getPublicProfile(uid) {
+  if (!uid) return null
+  const snap = await getDoc(doc(db, 'publicProfiles', uid))
+  return snap.exists() ? { uid, ...snap.data() } : null
 }
 
 export function setUserAdminRole(uid, grant) {

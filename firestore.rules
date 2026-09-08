@@ -67,6 +67,32 @@ service cloud.firestore {
       allow delete: if isOwner(userId) || isAdmin();
     }
 
+    // Public subset of a user: username + badges only. Email and roles
+    // stay on users/{uid}. Get-by-id is open so a listing can show who
+    // posted or accepted; list is denied so this is not a user directory.
+    function publicProfileShape(data) {
+      return data.username is string
+        && data.username.size() > 0
+        && data.username.size() < 80
+        && validBadges(data)
+        && !('email' in data)
+        && !('roles' in data);
+    }
+
+    match /publicProfiles/{userId} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if isOwner(userId)
+        && publicProfileShape(request.resource.data)
+        && badgesOf(request.resource.data).keys().size() == 0;
+      allow update: if publicProfileShape(request.resource.data)
+        && (
+          (isOwner(userId) && badgesUnchanged())
+          || (isAdmin() && userId != request.auth.uid)
+        );
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
     // Marketplace listings.
     // visibility: 'public' (default) is readable by anyone; 'private' is
     // owner/admin only. List queries must constrain to public or to the

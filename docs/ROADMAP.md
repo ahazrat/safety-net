@@ -70,6 +70,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Message owner from a listing | Shipped |
 | Firestore rules + `npm run deploy:rules` | Shipped |
 | Teams of providers | Copy only |
+| Public username + badges on jobs | Shipped (`publicProfiles/{uid}`) |
 | Payments / stake / BTC | Not built |
 | Live scanner audio on the map | Not built |
 | Crime stats overlay | Shipped: 30-day community-area counts from Chicago Data Portal (SODA). Not raw incidents. |
@@ -129,7 +130,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 1. **Teams** (Services copy): a listing can require N people; a captain assigns a roster (Minneapolis model).
 2. **Offerings as listing types** (watch / event / defense) instead of a free-text title only.
 3. **Price signal:** show requirement scores and, later, last-done rates. No in-app payment until a rail is chosen (BTC was on old web listings; do not pretend it works).
-4. **Provider profile that others can read** — today `users/{uid}` is owner/admin-only, so badges are invisible to counterparties except via admin. A **public subset** (username + badges) is required for trust.
+4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
 5. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host. Ops (buy + DNS), not app code.
 
 ### Later — civil stack (Trello Concepts)
@@ -210,8 +211,7 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 Engineering and GTM are the same list for the next stretch.
 
 1. **Android auth persistence** + Map sanity check.
-2. **Public provider snippet** (username + badges) so trust is visible on a job.
-3. **Scanner catalogue** for Chicago (links, not full audio).
+2. **Scanner catalogue** for Chicago (links, not full audio).
 5. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
 6. **Hand-seeded Chicago station pins.**
 7. **LinkedIn + one neighborhood roster** (ops, not code).
