@@ -24,6 +24,8 @@ apps/
   mobile/   Expo/React Native app — same auth + listings, native shell
 packages/
   shared/   Firebase config, auth logic, domain constants and types used by both apps
+docs/
+  design-reference/   Early mockups and mood-board imagery (no code)
 ```
 
 ## Development
