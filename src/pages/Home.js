@@ -57,8 +57,8 @@ export default function Home(props) {
       <p>A decentralized marketplace for security</p>
 
       <Stack spacing={2} direction='row' style={{ justifyContent: 'center', marginTop: 40 }}>
-        <Link to='/services'><Button variant='contained'>Request</Button></Link>
-        <Link to='/services'><Button variant='outlined'>Provide</Button></Link>
+        <Link to='/services' style={{ textDecoration: 'none' }}><Button variant='contained'>Request</Button></Link>
+        <Link to='/services' style={{ textDecoration: 'none' }}><Button variant='outlined'>Provide</Button></Link>
       </Stack>
 
       <div id='map' style={{ height: 400, marginTop: 30 }}></div>
