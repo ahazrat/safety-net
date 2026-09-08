@@ -2,10 +2,24 @@ export type MapPin = {
 	lat: number;
 	lng: number;
 	title?: string;
+	kind?: 'listing' | 'crime';
+	count?: number;
+	radius?: number;
 };
 
-const DEFAULT_CENTER: [number, number] = [51.505, -0.09];
-const DEFAULT_ZOOM = 13;
+const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
+const DEFAULT_ZOOM = 11;
+
+function pinJs(pin: MapPin): string {
+	const lat = Number(pin.lat);
+	const lng = Number(pin.lng);
+	const popup = pin.title ? `.bindPopup(${JSON.stringify(pin.title)})` : '';
+	if (pin.kind === 'crime') {
+		const radius = Number(pin.radius) || 400;
+		return `L.circle([${lat}, ${lng}], { radius: ${radius}, color: '#922b21', fillColor: '#c0392b', fillOpacity: 0.28, weight: 1 })${popup}.addTo(map);`;
+	}
+	return `L.marker([${lat}, ${lng}])${popup}.addTo(map);`;
+}
 
 // Builds a standalone HTML document that renders an OSM/Leaflet map with the
 // given pins, loading Leaflet from a CDN. Used by Map.native.tsx inside a
@@ -15,13 +29,7 @@ export function buildLeafletHtml(
 	center: [number, number] = DEFAULT_CENTER,
 	zoom: number = DEFAULT_ZOOM
 ): string {
-	const markers = pins
-		.map(
-			pin => `L.marker([${pin.lat}, ${pin.lng}])${
-				pin.title ? `.bindPopup(${JSON.stringify(pin.title)})` : ''
-			}.addTo(map);`
-		)
-		.join('\n');
+	const markers = pins.map(pinJs).join('\n');
 
 	return `<!DOCTYPE html>
 <html>

@@ -11,8 +11,8 @@ type MapProps = {
 	style?: ViewStyle;
 };
 
-const DEFAULT_CENTER: [number, number] = [51.505, -0.09];
-const DEFAULT_ZOOM = 13;
+const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
+const DEFAULT_ZOOM = 11;
 
 export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style }: MapProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -32,6 +32,17 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 		}).addTo(map);
 
 		pins.forEach(pin => {
+			if (pin.kind === 'crime') {
+				const circle = L.circle([pin.lat, pin.lng], {
+					radius: pin.radius || 400,
+					color: '#922b21',
+					fillColor: '#c0392b',
+					fillOpacity: 0.28,
+					weight: 1,
+				}).addTo(map);
+				if (pin.title) circle.bindPopup(pin.title);
+				return;
+			}
 			const marker = L.marker([pin.lat, pin.lng]).addTo(map);
 			if (pin.title) marker.bindPopup(pin.title);
 		});

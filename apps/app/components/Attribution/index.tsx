@@ -17,6 +17,16 @@ export default function AttributionScreen() {
 			<Button mode='text' onPress={() => Linking.openURL('https://www.openstreetmap.org/copyright')}>
 				View full OpenStreetMap copyright &amp; license
 			</Button>
+			<Text variant='titleMedium' style={{ marginTop: 24, marginBottom: 8 }}>Chicago crime overlay</Text>
+			<Text style={{ marginBottom: 12 }}>
+				Reported-incident counts by community area come from the City of Chicago
+				Data Portal (Chicago Police Department, Crimes 2001 to Present). The
+				city withholds the most recent seven days. This app shows 30-day
+				aggregates, not individual incident pins.
+			</Text>
+			<Button mode='text' onPress={() => Linking.openURL('https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2')}>
+				City of Chicago crimes dataset
+			</Button>
 		</ScrollView>
 	);
 }

@@ -72,7 +72,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Teams of providers | Copy only |
 | Payments / stake / BTC | Not built |
 | Live scanner audio on the map | Not built |
-| Crime stats overlay | Trello research only (BQ Chicago) |
+| Crime stats overlay | Shipped: 30-day community-area counts from Chicago Data Portal (SODA). Not raw incidents. |
 | Station directory | Not built |
 | Blockchain reads | Not built |
 | Store listings / iOS EAS production | Trello: Android EAS tested; iOS not |
@@ -118,7 +118,7 @@ Optional but high leverage: show **badge chips on listings / jobs**, not only on
 
 This is the README item that was next after jobs, and it matches Trello Data Sources + Radio Scanner.
 
-1. **Crime layer (Chicago first).** `bigquery-public-data.chicago_crime` + [CPD statistics](https://home.chicagopolice.org/statistics-data/). Cache aggregates (Jacob’s Cloud Functions card: weekly BQ rollup). Pins or heat on Map/Home. Design pass before dumping raw incidents.
+1. **Crime layer (Chicago first).** Done as 30-day **community-area counts** from the [City of Chicago Data Portal](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2) (same CPD source as `bigquery-public-data.chicago_crime`). Circles on Map/Home; toggle on Map. In-memory 6h cache. Later: weekly Cloud Function rollup if SODA rate-limits.
 2. **Scanner.** Catalogue feeds (Broadcastify / OpenMHz). **Do not** autoplay audio in v1; a “feeds for this area” list plus optional link is enough. Streaming into the map is a later pass.
 3. **Stations.** Seed **Chicago** police/fire houses as map pins, by hand, not a national bulk import.
 
@@ -210,9 +210,8 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 Engineering and GTM are the same list for the next stretch.
 
 1. **Android auth persistence** + Map sanity check.
-2. **Chicago crime overlay** (BQ public dataset, cached; design pass).
-3. **Public provider snippet** (username + badges) so trust is visible on a job.
-4. **Scanner catalogue** for Chicago (links, not full audio).
+2. **Public provider snippet** (username + badges) so trust is visible on a job.
+3. **Scanner catalogue** for Chicago (links, not full audio).
 5. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
 6. **Hand-seeded Chicago station pins.**
 7. **LinkedIn + one neighborhood roster** (ops, not code).
