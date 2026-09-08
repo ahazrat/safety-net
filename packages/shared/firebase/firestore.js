@@ -1,10 +1,15 @@
-import { collection, doc, getDocs, addDoc, deleteDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, addDoc, deleteDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { db, app } from './app'
 
 export async function getCollection(col) {
   const snapshot = await getDocs(collection(db, col))
   return snapshot.docs.map(d => ({ ...d.data(), id: d.id }))
+}
+
+export async function getDocument(col, id) {
+  const snapshot = await getDoc(doc(db, col, id))
+  return snapshot.exists() ? { ...snapshot.data(), id: snapshot.id } : null
 }
 
 export async function createNewDoc(col, data) {
