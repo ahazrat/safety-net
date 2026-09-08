@@ -20,64 +20,33 @@ boilerplate).
 
 ```
 apps/
-  web/      React (CRA) web app — MUI, Leaflet map, Firestore-backed listings
-  mobile/   Expo/React Native app — same auth + listings, native shell
+  app/      Expo/React Native app (react-native-web) — single codebase for web + iOS + Android
 packages/
-  shared/   Firebase config, auth logic, domain constants and types used by both apps
+  shared/   Firebase config, auth logic, domain constants and types used by the app
 docs/
   design-reference/   Early mockups and mood-board imagery (no code)
 ```
 
 ## Development
 
-### Web
 ```
-cd apps/web
-npm start
-```
-
-### Mobile
-```
-cd apps/mobile
+cd apps/app
 npm start        # or: npx expo start
+npx expo start --web
 ```
 
-Both apps share one Firebase project (config in
+The app shares one Firebase project (config in
 `packages/shared/firebase/config.js`) for auth and Firestore.
 
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
-- **Framework versions are now aligned**: both apps target React 18
-  (web: 18.3.1 via CRA 5; mobile: 18.2.0, exact — required as a peer by
-  `react-native@0.72.10` on Expo SDK 49, up from the original 2021-era
-  React 16.13 / RN 0.63 / Expo 42). The root `package.json` pins
-  `react`/`react-dom`/`react-native` explicitly so npm hoists a single
-  consistent set to the workspace root; mobile still resolves its own
-  nested `react@18.2.0` (react-native's exact peer requirement prevents a
-  single fully-deduped React instance across both apps, but both are now
-  React 18 rather than a major-version split). Because the two apps still
-  use physically different React instances, `packages/shared` continues to
-  hold only React-*free* code (Firebase calls, constants, types); the small
-  hooks/context auth adapter (`withAuthentication`/`withAuthorization`/
-  `AuthUserContext`) stays duplicated once per app
-  (`apps/web/src/auth/session.js`, `apps/mobile/auth/session.js`) rather
-  than shared, since a hooks-based module resolving a different React
-  instance than its consumer breaks hooks outright.
-- **`expo start --web` shows a benign console error** ("Cannot find module
-  `react-native/Libraries/Image/AssetRegistry`") caused by
-  `react-native-calendars`'s `recyclerlistview` dependency bundling its own
-  much newer nested `react-native` copy that restructured that internal
-  file. It doesn't block rendering (the app compiles and works in the
-  browser preview) and doesn't affect native builds or Expo Go, since
-  Metro resolves modules differently there. Fixing it for real means
-  either patching/pinning `react-native-calendars` or replacing its Agenda
-  view.
-- **Listing data shape differs between apps**: web writes a provider-profile
-  shape (`jobTitle`/`fullName`/`userImage`, demo data via faker); mobile
-  writes a scheduled-service-request shape (`dateRange`/`requirements`) modeled
-  on the old Mongoose schema. Both are read defensively (see
-  `packages/shared/types/Listing.ts`), but they're not the same shape yet —
-  unifying them is a product decision, not a repo-cleanup one.
+- **SignUp's admin-toggle is a security smell**: the `Switch` on the sign-up
+  form lets any new user grant themselves the admin role client-side (see
+  the comment in `apps/app/components/SignUp/index.jsx`). Flagged, not
+  fixed — needs a real server-side role-assignment flow.
+- **Firebase Email/Password auth isn't enabled** on the project used for
+  local dev, so SignUp currently fails with `auth/configuration-not-found`
+  until that's turned on in the Firebase console.
 
 ## Roadmap / Todo
 
@@ -104,8 +73,8 @@ Carried over from the pre-monorepo README:
 - Local build: `expo run:android --variant release`
 - Cloud build: `expo build:android -t apk`
 
-### Creating a new mobile screen
-1. Create the screen component under `apps/mobile/components/`
-1. Add it to `RootStackParamList` in `apps/mobile/types.tsx`
-1. Register it in `apps/mobile/navigation/LinkingConfiguration.ts`
-1. Add it to the stack in `apps/mobile/navigation/index.tsx`
+### Creating a new screen
+1. Create the screen component under `apps/app/components/`
+1. Add it to `RootStackParamList` in `apps/app/types.tsx`
+1. Register it in `apps/app/navigation/LinkingConfiguration.ts`
+1. Add it to the drawer in `apps/app/navigation/index.tsx`
