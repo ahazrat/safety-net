@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
-import { db, app, auth } from './app'
+import { db, app } from './app'
+import { auth } from './auth'
 
 export async function getCollection(col) {
   const snapshot = await getDocs(collection(db, col))

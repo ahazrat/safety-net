@@ -107,11 +107,11 @@ Value proposition, GTM, and ordered priorities live in
 
 Next (same order as the roadmap):
 
-1. Domain → web app
 1. Android auth persistence + Map check
 1. Chicago crime overlay on Map/Home
 1. Public username + badges on jobs
 1. Scanner catalogue (Chicago, links first)
+1. Domain → web app
 1. Hand-seeded Chicago station pins
 1. One neighborhood roster (ops)
 1. EAS iOS / stores once Xcode exists

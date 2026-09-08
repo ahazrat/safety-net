@@ -11,7 +11,8 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, collection, getDocs, updateDoc, deleteField } from 'firebase/firestore'
-import { auth, db } from '../firebase/app'
+import { db } from '../firebase/app'
+import { auth } from '../firebase/auth'
 import Roles from '../constants/Roles'
 
 export function doCreateUserWithEmailAndPassword(email, password) {

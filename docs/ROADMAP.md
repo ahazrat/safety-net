@@ -109,9 +109,8 @@ Keep Trello as history; do not copy these into the README priority list.
 
 The loop is: **see map → create or accept a job → message → start → done.**
 
-1. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host.
-2. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
-3. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
+1. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
+2. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
 
 Optional but high leverage: show **badge chips on listings / jobs**, not only on Account/Admin, so a requester can see who they hired.
 
@@ -131,6 +130,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 2. **Offerings as listing types** (watch / event / defense) instead of a free-text title only.
 3. **Price signal:** show requirement scores and, later, last-done rates. No in-app payment until a rail is chosen (BTC was on old web listings; do not pretend it works).
 4. **Provider profile that others can read** — today `users/{uid}` is owner/admin-only, so badges are invisible to counterparties except via admin. A **public subset** (username + badges) is required for trust.
+5. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host. Ops (buy + DNS), not app code.
 
 ### Later — civil stack (Trello Concepts)
 
@@ -166,10 +166,10 @@ The Trello slideshow and LinkedIn company page ([safety-net-marketplace](https:/
 
 ### Beachhead motion
 
-1. **Ship a public web URL** (domain + working deep links). Neighborhood organizers will not install TestFlight to “look at a map.”
-2. **Chicago overlay** so the map is not an empty Leaflet.
-3. **One real roster:** find a street-captain style group (the GoldandBlack / Minneapolis pattern, or a Chicago watch). Onboard 5–10 providers with **manually granted badges**. Seed 5 listings.
-4. **Walk the loop on a call:** create → appear on map → accept → DM → start → done.
+1. **Chicago overlay** so the map is not an empty Leaflet (shareable even on Expo web).
+2. **One real roster:** find a street-captain style group (the GoldandBlack / Minneapolis pattern, or a Chicago watch). Onboard 5–10 providers with **manually granted badges**. Seed 5 listings.
+3. **Walk the loop on a call:** create → appear on map → accept → DM → start → done.
+4. **Public web URL** (domain + existing deep links) once the overlay and a roster exist. Neighborhood organizers still will not install TestFlight to “look at a map.”
 5. **Only then** talk App Store. Android EAS already had a test; iOS is still blocked on Xcode / store assets.
 
 ### Channels (in order)
@@ -209,16 +209,16 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 
 Engineering and GTM are the same list for the next stretch.
 
-1. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
-4. **Android auth persistence** + Map sanity check.
-5. **Chicago crime overlay** (BQ public dataset, cached; design pass).
-6. **Public provider snippet** (username + badges) so trust is visible on a job.
-7. **Scanner catalogue** for Chicago (links, not full audio).
-8. **Hand-seeded Chicago station pins.**
-9. **LinkedIn + one neighborhood roster** (ops, not code).
-10. **EAS iOS** once Xcode is installed; then store listing.
-11. **Teams** and listing types.
-12. **Payments / stake** only after (9) produced real completed jobs.
+1. **Android auth persistence** + Map sanity check.
+2. **Chicago crime overlay** (BQ public dataset, cached; design pass).
+3. **Public provider snippet** (username + badges) so trust is visible on a job.
+4. **Scanner catalogue** for Chicago (links, not full audio).
+5. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
+6. **Hand-seeded Chicago station pins.**
+7. **LinkedIn + one neighborhood roster** (ops, not code).
+8. **EAS iOS** once Xcode is installed; then store listing.
+9. **Teams** and listing types.
+10. **Payments / stake** only after a roster produced real completed jobs.
 
 iOS Simulator verification stays last among *dev-environment* tasks; it should not block web GTM.
 
