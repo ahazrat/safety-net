@@ -16,6 +16,7 @@ import AccountScreen from '../components/Account';
 import Listings from '../components/Listings';
 import Listing from '../components/Listing';
 import ListingCreate from '../components/ListingCreate';
+import JobsScreen from '../components/Jobs';
 import ServicesScreen from '../components/Services';
 import MapScreen from '../components/MapScreen';
 import AttributionScreen from '../components/Attribution';
@@ -85,6 +86,11 @@ function RootNavigator() {
 						name='ListingCreate'
 						component={ListingCreate}
 						options={{ title: 'Create Listing', drawerIcon: drawerIcon('plus-box-outline') }}
+					/>
+					<Drawer.Screen
+						name='Jobs'
+						component={JobsScreen}
+						options={{ title: 'Jobs', drawerIcon: drawerIcon('briefcase-outline') }}
 					/>
 				</>
 			) : null}

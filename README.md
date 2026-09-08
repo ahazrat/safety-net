@@ -25,6 +25,7 @@ packages/
   shared/   Firebase config, auth logic, domain constants and types used by the app
 docs/
   design-reference/   Early mockups and mood-board imagery (no code)
+  trello/             Snapshot of the SafetyNet Trello board (ideas, not code)
 ```
 
 ## Development
@@ -62,9 +63,16 @@ Listings are public or private (`visibility`). Public listings are readable
 by anyone (Home/Map pins). Private listings are owner/admin only. Creates
 require a non-empty title, a `location.lat`/`lng`, and `ownerUid` matching
 the signed-in user; `ownerUid` cannot be changed later. List queries must
-filter (`visibility == 'public'` or `ownerUid == auth.uid`) — use
-`listPublicListings` / `listVisibleListings` rather than scanning the
-collection.
+filter (`visibility == 'public'`, `ownerUid == auth.uid`, or
+`assigneeUid == auth.uid`) — use `listPublicListings` /
+`listVisibleListings` / `listMyJobs` rather than scanning the collection.
+
+A listing is also a job: `status` is `open`, `accepted`, `in_progress`, or
+`done` (legacy docs without it are open). Creates start open with no
+assignee. Anyone signed in except the owner can accept an open job
+(sets `assigneeUid` to themselves). The assignee can move it to
+`in_progress` / `done`; the owner can mark it done. Jobs screen lists
+listings you own or are assigned to.
 
 Verification badges (`packages/shared/constants/Badges.js`) live on
 `users/{uid}.badges`. Sign-up creates an empty map; only an admin can grant
@@ -85,23 +93,29 @@ from a listing's "Message owner" button.
   then `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`,
   then re-run the native check.
 
-## Priorities
+## Product plan
 
-Roughly in the order they should be tackled — infrastructure/security
-blockers first, then features:
+Value proposition, GTM, and ordered priorities live in
+[`docs/ROADMAP.md`](docs/ROADMAP.md). Trello dump:
+[`docs/trello/`](docs/trello/README.md).
 
-1. Project-task UI
-1. Live police/fire scanner + published crime & incident statistics feed, layered onto the
-   Map/Home views to enrich a user's live risk profile (needs a data-source decision — e.g.
-   Broadcastify/OpenMHz for scanner audio, a crime-stats API like data.police.uk-style municipal
-   feeds — plus a design pass before implementation)
-1. Police & fire station directory, mapped by state/county/town — seeded gradually over time
-   (not a single bulk import), overlaid as pins on the Map component alongside listings
-1. Read from a blockchain
-1. Get web URL to show properly through all navigation
-1. Shop for domain names around 'safety net'
-1. **Verify `Map.native.tsx` on a real iOS Simulator** once Xcode is
-   installed — the WebView/Leaflet path has only been tested on web so far.
+Next (same order as the roadmap):
+
+1. Publish the job loop (status / assignee) if it is not on `master` yet
+1. Web URLs through all navigation
+1. Domain → web app
+1. Android auth persistence + Map check
+1. Chicago crime overlay on Map/Home
+1. Public username + badges on jobs
+1. Scanner catalogue (Chicago, links first)
+1. Hand-seeded Chicago station pins
+1. One neighborhood roster (ops)
+1. EAS iOS / stores once Xcode exists
+1. Teams + listing types
+1. Payments only after real completed jobs
+
+Parked (still in Trello, not next): Django/second backend, title plant/MLS,
+insurance, blockchain-as-homepage, national station import.
 
 ### Building the mobile app
 - Android emulator: install Android Studio, Tools > AVD Manager, create/launch a device

@@ -57,12 +57,58 @@ export async function createListing(data) {
     throw new Error('Must be signed in to create a listing')
   }
   const visibility = data.visibility === 'private' ? 'private' : 'public'
+  const { assigneeUid: _ignored, ...rest } = data
   return createNewDoc('listings', {
-    ...data,
+    ...rest,
     visibility,
+    status: 'open',
     ownerUid: uid,
     createdAt: serverTimestamp(),
   })
+}
+
+export const LISTING_STATUSES = ['open', 'accepted', 'in_progress', 'done']
+
+export function listingStatusOf(listing) {
+  const status = listing && listing.status
+  return LISTING_STATUSES.includes(status) ? status : 'open'
+}
+
+export async function listAssignedListings() {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) return []
+  const snapshot = await getDocs(
+    query(collection(db, 'listings'), where('assigneeUid', '==', uid))
+  )
+  return mapDocs(snapshot)
+}
+
+export async function listMyJobs() {
+  const mine = await listMyListings()
+  const assigned = await listAssignedListings()
+  const byId = new Map()
+  for (const listing of mine.concat(assigned)) {
+    byId.set(listing.id, listing)
+  }
+  return Array.from(byId.values())
+}
+
+export async function acceptListing(listingId) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Must be signed in to accept a job')
+  await updateDoc(doc(db, 'listings', listingId), {
+    status: 'accepted',
+    assigneeUid: uid,
+  })
+}
+
+export async function setListingStatus(listingId, status) {
+  if (!LISTING_STATUSES.includes(status)) {
+    throw new Error('Unknown job status')
+  }
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Must be signed in')
+  await updateDoc(doc(db, 'listings', listingId), { status })
 }
 
 export async function deleteDocument(col, id) {

@@ -1,7 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text, Card, ActivityIndicator, Button } from 'react-native-paper';
-import { AuthUserContext, getDocument } from '@safety-net/shared';
+import {
+	AuthUserContext,
+	getDocument,
+	listingStatusOf,
+	acceptListing,
+	setListingStatus,
+} from '@safety-net/shared';
 import Map from '../Map';
 
 const Listing = ({ route, navigation }) => {
@@ -9,16 +15,22 @@ const Listing = ({ route, navigation }) => {
 	const listingId = route?.params?.listingId;
 	const [listing, setListing] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [jobError, setJobError] = useState(null);
+	const [jobBusy, setJobBusy] = useState(false);
 
-	useEffect(() => {
+	const load = () => {
 		if (!listingId) {
 			setLoading(false);
-			return;
+			return Promise.resolve();
 		}
-		getDocument('listings', listingId)
+		return getDocument('listings', listingId)
 			.then(setListing)
 			.catch(err => console.log(err))
 			.finally(() => setLoading(false));
+	};
+
+	useEffect(() => {
+		load();
 	}, [listingId]);
 
 	if (loading) {
@@ -36,6 +48,23 @@ const Listing = ({ route, navigation }) => {
 			</View>
 		);
 	}
+
+	const status = listingStatusOf(listing);
+	const uid = authUser && authUser.uid;
+	const isOwner = uid && listing.ownerUid === uid;
+	const isAssignee = uid && listing.assigneeUid === uid;
+	const canAccept = uid && !isOwner && status === 'open';
+	const canStart = uid && isAssignee && status === 'accepted';
+	const canComplete = uid && (isAssignee || isOwner) && (status === 'accepted' || status === 'in_progress');
+
+	const runJob = (fn) => {
+		setJobBusy(true);
+		setJobError(null);
+		fn()
+			.then(load)
+			.catch(setJobError)
+			.finally(() => setJobBusy(false));
+	};
 
 	const startDate = listing.dateRange
 		? `${listing.dateRange.start.year}-${listing.dateRange.start.month}-${listing.dateRange.start.day}`
@@ -56,6 +85,28 @@ const Listing = ({ route, navigation }) => {
 					Message owner
 				</Button>
 			)}
+			<Text style={{ marginBottom: 8 }}>Status: {status.replace('_', ' ')}</Text>
+			{listing.assigneeUid ? (
+				<Text style={{ marginBottom: 8 }}>Assignee: {listing.assigneeUid}</Text>
+			) : (
+				<Text style={{ marginBottom: 8 }}>No assignee yet</Text>
+			)}
+			{canAccept && (
+				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => acceptListing(listingId))}>
+					Accept job
+				</Button>
+			)}
+			{canStart && (
+				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => setListingStatus(listingId, 'in_progress'))}>
+					Start job
+				</Button>
+			)}
+			{canComplete && (
+				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => setListingStatus(listingId, 'done'))}>
+					Mark done
+				</Button>
+			)}
+			{jobError && <Text style={{ color: '#b00020', marginBottom: 8 }}>{jobError.message}</Text>}
 			{startDate && <Text>Start: {startDate}</Text>}
 			{endDate && <Text>End: {endDate}</Text>}
 			{listing.requirements && (

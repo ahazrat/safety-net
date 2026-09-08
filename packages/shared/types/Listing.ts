@@ -9,6 +9,10 @@ export interface Listing {
   createdAt?: unknown
   /** 'public' (map/listings) or 'private' (owner/admin only). Defaults to public. */
   visibility?: 'public' | 'private'
+  /** Job lifecycle. Missing on legacy docs is treated as 'open'. */
+  status?: 'open' | 'accepted' | 'in_progress' | 'done'
+  /** Provider who accepted the job. Empty while status is 'open'. */
+  assigneeUid?: string
   title: string
   dateRange: {
     start: { year: number; month: number; day: number }

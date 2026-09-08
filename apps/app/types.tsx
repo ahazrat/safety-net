@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Listings: undefined;
   Listing: { listingId: string } | undefined;
   ListingCreate: undefined;
+  Jobs: undefined;
   Services: undefined;
   Map: undefined;
   Attribution: undefined;

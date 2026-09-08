@@ -151,6 +151,49 @@ test('owner can list their own listings including private', async () => {
   )
 })
 
+test('non-owner can accept an open listing as themselves', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing({ status: 'open' })))
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), {
+      status: 'accepted',
+      assigneeUid: 'bob',
+    })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('carol'), 'listings', 'l1'), {
+      status: 'accepted',
+      assigneeUid: 'carol',
+    })
+  )
+})
+
+test('assignee can move an accepted job to in_progress and done', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'l1'),
+      validListing({ status: 'accepted', assigneeUid: 'bob' })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('carol'), 'listings', 'l1'), { status: 'in_progress' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), { status: 'in_progress' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), { status: 'done' })
+  )
+})
+
+test('create cannot start as accepted', async () => {
+  await assertFails(
+    addDoc(
+      collection(asUser('alice'), 'listings'),
+      validListing({ status: 'accepted', assigneeUid: 'alice' })
+    )
+  )
+})
+
 test('owner cannot change ownerUid on update', async () => {
   await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing()))
   await assertFails(

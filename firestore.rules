@@ -88,6 +88,29 @@ service cloud.firestore {
       return listingVisibility(data) in ['public', 'private'];
     }
 
+    function listingStatus(data) {
+      return !('status' in data) || data.status == 'open'
+        ? 'open'
+        : data.status;
+    }
+
+    function validStatus(data) {
+      return listingStatus(data) in ['open', 'accepted', 'in_progress', 'done'];
+    }
+
+    function assigneeOf(data) {
+      return 'assigneeUid' in data ? data.assigneeUid : '';
+    }
+
+    function validJob(data) {
+      return validStatus(data)
+        && (
+          listingStatus(data) == 'open'
+            ? assigneeOf(data).size() == 0
+            : assigneeOf(data) is string && assigneeOf(data).size() > 0
+        );
+    }
+
     function validListingShape(data) {
       return data.ownerUid is string
         && data.ownerUid.size() > 0
@@ -97,13 +120,21 @@ service cloud.firestore {
         && 'location' in data
         && data.location.lat is number
         && data.location.lng is number
-        && validVisibility(data);
+        && validVisibility(data)
+        && validJob(data);
     }
 
     function canReadListing(data) {
       return isPublicListing(data)
         || isOwner(data.ownerUid)
-        || isAdmin();
+        || isAdmin()
+        || (isSignedIn() && assigneeOf(data) == request.auth.uid);
+    }
+
+    function jobContentUnchanged() {
+      return request.resource.data.title == resource.data.title
+        && listingVisibility(request.resource.data) == listingVisibility(resource.data)
+        && request.resource.data.location == resource.data.location;
     }
 
     match /listings/{listingId} {
@@ -111,17 +142,31 @@ service cloud.firestore {
       // List must not call isAdmin()/get() — that makes queries
       // unconstrained. Admins still get() any listing by id.
       allow list: if isPublicListing(resource.data)
-        || isOwner(resource.data.ownerUid);
+        || isOwner(resource.data.ownerUid)
+        || (isSignedIn() && assigneeOf(resource.data) == request.auth.uid);
       allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid
+        && listingStatus(request.resource.data) == 'open'
         && validListingShape(request.resource.data);
       allow update: if isSignedIn()
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && validListingShape(request.resource.data)
         && (
           resource.data.ownerUid == request.auth.uid
           || isAdmin()
-        )
-        && request.resource.data.ownerUid == resource.data.ownerUid
-        && validListingShape(request.resource.data);
+          || (
+            jobContentUnchanged()
+            && listingStatus(resource.data) == 'open'
+            && listingStatus(request.resource.data) == 'accepted'
+            && request.resource.data.assigneeUid == request.auth.uid
+          )
+          || (
+            jobContentUnchanged()
+            && assigneeOf(resource.data) == request.auth.uid
+            && assigneeOf(request.resource.data) == request.auth.uid
+            && listingStatus(request.resource.data) in ['accepted', 'in_progress', 'done']
+          )
+        );
       allow delete: if isSignedIn()
         && (
           resource.data.ownerUid == request.auth.uid

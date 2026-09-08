@@ -17,6 +17,7 @@ export default {
       Listings: 'listings',
       Listing: 'listing',
       ListingCreate: 'createlisting',
+      Jobs: 'jobs',
       Services: 'services',
       Map: 'map',
       Attribution: 'attribution',
