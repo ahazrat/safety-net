@@ -65,8 +65,6 @@ The first admin has to be bootstrapped in the Firebase console
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. Stronger password requirements on sign up
-1. Email string validation
 1. User-specific data access controls beyond the owner/admin rules already
    in `firestore.rules` (e.g. listing visibility, field-level constraints)
 1. Badge system (badge list already ported: `packages/shared/constants/Badges.ts`)

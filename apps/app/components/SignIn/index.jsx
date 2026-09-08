@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
-import { doSignInWithEmailAndPassword } from '@safety-net/shared';
+import { doSignInWithEmailAndPassword, validateEmail } from '@safety-net/shared';
 import { SignUpLink } from '../SignUp';
 import { ForgotPasswordLink } from '../PasswordForget';
 
@@ -10,12 +10,12 @@ const SignIn = ({ navigation }) => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState(null);
 
-	const isInvalid =
-		email === '' ||
-		password === '';
+	const emailError = validateEmail(email);
+	const isInvalid = !!emailError || password === '';
 
 	const onSubmit = () => {
-		doSignInWithEmailAndPassword(email, password)
+		if (isInvalid) return;
+		doSignInWithEmailAndPassword(email.trim(), password)
 			.then(() => {
 				setEmail('');
 				setPassword('');
@@ -29,12 +29,18 @@ const SignIn = ({ navigation }) => {
 		<View style={{ padding: 16 }}>
 			<Text variant='headlineMedium' style={{ textAlign: 'center', marginBottom: 20 }}>Sign In</Text>
 			<TextInput
-				style={{ marginBottom: 12 }}
+				style={{ marginBottom: 4 }}
 				value={email}
 				onChangeText={setEmail}
 				label='Email'
 				autoComplete='email'
+				autoCapitalize='none'
+				keyboardType='email-address'
+				textContentType='emailAddress'
 			/>
+			<HelperText type='error' visible={email.length > 0 && !!emailError}>
+				{emailError}
+			</HelperText>
 			<TextInput
 				style={{ marginBottom: 12 }}
 				value={password}

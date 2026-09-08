@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { doCreateUserWithEmailAndPassword, createUser } from '@safety-net/shared'
+import {
+	doCreateUserWithEmailAndPassword,
+	createUser,
+	validateEmail,
+	validatePassword,
+	validatePasswordConfirm,
+	PASSWORD_REQUIREMENTS,
+} from '@safety-net/shared'
 import { SafeAreaView, View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
@@ -11,19 +18,21 @@ const SignUp = ({ navigation }) => {
 	const [passwordTwo, setPasswordTwo] = useState('');
 	const [error, setError] = useState(null);
 
+	const emailError = validateEmail(email);
+	const passwordError = validatePasswordConfirm(passwordOne, passwordTwo);
 	const isInvalid =
 		username === '' ||
-		email === '' ||
-		passwordOne === '' ||
-		passwordOne !== passwordTwo;
+		!!emailError ||
+		!!passwordError;
 
 	const onSubmit = event => {
-		doCreateUserWithEmailAndPassword(email, passwordOne)
+		if (isInvalid) return;
+		doCreateUserWithEmailAndPassword(email.trim(), passwordOne)
 			.then(authUser => {
 				let userData = {
 					uid: authUser.user.uid,
 					username: username,
-					email: email,
+					email: email.trim(),
 				};
 				setUsername('');
 				setEmail('');
@@ -47,30 +56,42 @@ const SignUp = ({ navigation }) => {
 					autoComplete='username'
 				/>
 				<TextInput
-					style={{ marginBottom: 12 }}
+					style={{ marginBottom: 4 }}
 					value={email}
 					onChangeText={setEmail}
 					label='Email'
 					autoComplete='email'
+					autoCapitalize='none'
+					keyboardType='email-address'
+					textContentType='emailAddress'
 				/>
+				<HelperText type='error' visible={email.length > 0 && !!emailError}>
+					{emailError}
+				</HelperText>
 				<TextInput
-					style={{ marginBottom: 12 }}
+					style={{ marginBottom: 4 }}
 					value={passwordOne}
 					onChangeText={setPasswordOne}
 					label='Password'
 					autoComplete='password'
 					secureTextEntry
-					textContentType='password'
+					textContentType='newPassword'
 				/>
+				<HelperText type={passwordOne && validatePassword(passwordOne) ? 'error' : 'info'} visible>
+					{PASSWORD_REQUIREMENTS}
+				</HelperText>
 				<TextInput
-					style={{ marginBottom: 12 }}
+					style={{ marginBottom: 4 }}
 					value={passwordTwo}
 					onChangeText={setPasswordTwo}
 					label='Confirm Password'
 					autoComplete='password'
 					secureTextEntry
-					textContentType='password'
+					textContentType='newPassword'
 				/>
+				<HelperText type='error' visible={passwordTwo.length > 0 && passwordOne !== passwordTwo}>
+					Passwords do not match
+				</HelperText>
 				<Button
 					mode='contained'
 					onPress={onSubmit}

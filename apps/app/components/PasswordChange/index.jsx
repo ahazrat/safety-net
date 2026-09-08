@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { doPasswordUpdate } from '@safety-net/shared';
+import { doPasswordUpdate, validatePassword, validatePasswordConfirm, PASSWORD_REQUIREMENTS } from '@safety-net/shared';
 import { View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
@@ -9,11 +9,11 @@ const ChangePasswordScreen = ({ navigation }) => {
 	const [passwordTwo, setPasswordTwo] = useState('');
 	const [error, setError] = useState(null);
 
-	const isInvalid =
-		passwordOne === '' ||
-		passwordOne !== passwordTwo;
+	const passwordError = validatePasswordConfirm(passwordOne, passwordTwo);
+	const isInvalid = !!passwordError;
 
 	const onSubmit = () => {
+		if (isInvalid) return;
 		doPasswordUpdate(passwordOne)
 			.then(() => {
 				setPasswordOne('');
@@ -28,23 +28,29 @@ const ChangePasswordScreen = ({ navigation }) => {
 		<View style={{ padding: 16 }}>
 			<Text variant='headlineMedium' style={{ textAlign: 'center', marginBottom: 20 }}>Change Password</Text>
 			<TextInput
-				style={{ marginBottom: 12 }}
+				style={{ marginBottom: 4 }}
 				value={passwordOne}
 				onChangeText={setPasswordOne}
 				label='New Password'
 				autoComplete='password'
 				secureTextEntry
-				textContentType='password'
+				textContentType='newPassword'
 			/>
+			<HelperText type={passwordOne && validatePassword(passwordOne) ? 'error' : 'info'} visible>
+				{PASSWORD_REQUIREMENTS}
+			</HelperText>
 			<TextInput
-				style={{ marginBottom: 12 }}
+				style={{ marginBottom: 4 }}
 				value={passwordTwo}
 				onChangeText={setPasswordTwo}
 				label='Confirm New Password'
 				autoComplete='password'
 				secureTextEntry
-				textContentType='password'
+				textContentType='newPassword'
 			/>
+			<HelperText type='error' visible={passwordTwo.length > 0 && passwordOne !== passwordTwo}>
+				Passwords do not match
+			</HelperText>
 			<Button
 				mode='contained'
 				disabled={isInvalid}
