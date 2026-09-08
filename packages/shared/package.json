@@ -1,0 +1,9 @@
+{
+  "name": "@safety-net/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "firebase": "^9.14.0"
+  }
+}

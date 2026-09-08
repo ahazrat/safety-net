@@ -1,123 +1,93 @@
 # safety-net
-A decentralized marketplace for security,
-in pursuit of a bottom-up libertarian revolution in ideology and civil government.
 
-## Political and Economic Theory
+A decentralized marketplace for security.
 
-A social system free of monopoly and taxation
 <details>
-<summary>Descriptive Terms</summary>
-Terms which may be used to describe the system include, but are not limited to:
-- Natural Order
-- Ordered Anarchy
-- Private Property Anarchism
-- Free Market Anarchism
-- Anarcho-Capitalism
-- Auto-Government
-- Private Law Society
-- Pure Capitalism
+<summary>Mission</summary>
+
+A social system free of monopoly and taxation. Also described as: Natural
+Order, Ordered Anarchy, Private Property Anarchism, Free Market Anarchism,
+Anarcho-Capitalism, Auto-Government, Private Law Society, Pure Capitalism.
 </details>
 
+This is a monorepo. It consolidates what used to be four separate repos
+(`safety-net`, `safety-net-expo`, `safety-net-db`, `polis`) into one, keeping
+every feature that was actually working and dropping the rest (dead code,
+tutorial scaffolding, an unused second backend, duplicate starter-template
+boilerplate).
+
+## Layout
+
+```
+apps/
+  web/      React (CRA) web app — MUI, Leaflet map, Firestore-backed listings
+  mobile/   Expo/React Native app — same auth + listings, native shell
+packages/
+  shared/   Firebase config, auth logic, domain constants and types used by both apps
+```
+
 ## Development
-### Get Started
-- npm start (expo start)
-- Run in web browser
 
-### Express Server
-- Run `node server.js`
+### Web
+```
+cd apps/web
+npm start
+```
 
-### Android App Emulator
-1. Install Android Studio
-1. Tools > AVD (Android Virtual Device) Manager
-1. Create a device if one doesn't exist (~7.5GB)
-1. Launch AVD in emulator
+### Mobile
+```
+cd apps/mobile
+npm start        # or: npx expo start
+```
 
-### Build Android App
-#### Local Build (testing)
-1. Configure `app.json`
-1. `export ANDROID_SDK_ROOT=~/Library/Android/sdk`
-1. expo run:android --variant release
+Both apps share one Firebase project (config in
+`packages/shared/firebase/config.js`) for auth and Firestore.
 
-#### Cloud Build
-1. Configure `app.json`
-1. expo build:android -t apk
-- might want to `expo fetch:android:keystore`
-1. Follow the link to see the built artifact
-1. Download to computer/phone
-1. Install & Enjoy!
+## Known gaps (not solved by this consolidation, left as follow-ups)
 
-#### Other Builds (not tried yet)
-1. expo build:android -t app-bundle
-1. eas build -p android --profile preview
+- **Framework versions differ**: web is React 18 + CRA 5; mobile is React
+  16.13 + RN 0.63 + Expo 42 (2021-era). Upgrading mobile's toolchain is a
+  separate project. The root `package.json` pins `react`/`react-dom` to
+  `^18.2.0` deliberately, so npm hoists React 18 to the workspace root and
+  gives mobile its own nested 16.13 copy instead — without this, CRA's
+  tooling (which resolves `react` from the workspace root) detects React
+  16.13, which predates the `react/jsx-runtime` automatic JSX transform, and
+  silently falls back to the classic transform everywhere in web. Because
+  the two apps need different React instances, `packages/shared` only holds
+  React-*free* code (Firebase calls, constants, types); the small
+  hooks/context auth adapter (`withAuthentication`/`withAuthorization`/
+  `AuthUserContext`) is duplicated once per app (`apps/web/src/auth/session.js`,
+  `apps/mobile/auth/session.js`) rather than shared, since a hooks-based
+  module resolving a different React instance than its consumer breaks
+  hooks outright.
+- **Listing data shape differs between apps**: web writes a provider-profile
+  shape (`jobTitle`/`fullName`/`userImage`, demo data via faker); mobile
+  writes a scheduled-service-request shape (`dateRange`/`requirements`) modeled
+  on the old Mongoose schema. Both are read defensively (see
+  `packages/shared/types/Listing.ts`), but they're not the same shape yet —
+  unifying them is a product decision, not a repo-cleanup one.
 
-## Todo
-1. Instructions page on how to get started running `safetynet-db`
+## Roadmap / Todo
+
+Carried over from the pre-monorepo README:
+
 1. Read from a blockchain
-1. user-specific data access
+1. User-specific data access
 1. Project-task UI
-1. Get web url to show properly through all navigation
-    - https://medium.com/@purujit.bansal9/url-integration-in-react-native-web-apps-using-react-navigation-f53d4cef0b30
-    - https://reactnavigation.org/docs/nesting-navigators
-    - https://reactnavigation.org/docs/configuring-links/
-1. shop for domain names around 'safety net'
-1. Find source code with more developed readme and components
-1. Remove un-necessary files from git repo (inside .expo)
-
-### Cleanup Tasks
-1. Ensure all users have roles
-1. Clean up SignUp navigational clutter
-1. SignIn 'return' key executes submit
-1. All files consistently jsx or tsx
-
-### Nice to haves
+1. Get web URL to show properly through all navigation
+1. Shop for domain names around 'safety net'
+1. Badge system (badge list already ported: `packages/shared/constants/Badges.ts`)
+1. User-user messaging
+1. Stronger password requirements on sign up
 1. Email string validation
-1. Stronger password requirements in SignUp
-1. Timers on page components
-1. Feedback system
-1. Read more about on a tab with its own navigation stack
-1. Add 'Screen' suffix from screen object names
-1. All screens have their own button
-1. Themed styles
-1. Firebase reconciliation tools
-1. Badge System
-1. User-User Messaging
-1. Animated objects overlay
-1. voice transcription mapped to actions
-1. use firefoo https://firefoo.app/
 
-### Creating a new screen
-1. Create screen component
-1. Update `types.tsx` > RootStackParamList
-1. Update `navigation/LinkingConfiguration.ts`
-1. Import and add screen to `navigation/index.tsx`
+### Building the mobile app
+- Android emulator: install Android Studio, Tools > AVD Manager, create/launch a device
+- Local build: `expo run:android --variant release`
+- Cloud build: `expo build:android -t apk`
 
-### Create a new API resource
-Backend focused
-1. Create mongodb collection (ensure plural naming)
-1. Create mongoose model in `models/` (ensure singular naming)
-1. Include new model in `models/index.js`
-1. Create new controller in `controllers/`
-1. Create new routes in `routes/`
-1. Update `server.js` to use new routes
-1. Restart backend server and test with Postman
-Don't need to check:
-- `database/db.config.js`
-
-### Connect to API resource
-F = Frontend
-B = Backend
-1. (F) Use Effect and State to hold data
-1. (F) Call a function describing what you would like to do (resulting in error)
-1. (F) Add to or create a service in `services/<model>`
-1. (F) Import service into rendered page
-1. (B) Create new route in `routes/<model>`
-1. (B) Create new controller in `controllers/`
-1. Restart API server and test to see if it works!
-
-### safetynet-db (macOS)
-1. brew tap mongodb/brew
-1. brew install mongodb-community@5.0
-1. start mongo `brew services start mongodb-community@5.0` or `mongod --config /usr/local/etc/mongod.conf --fork`
-1. verify that MongoDB is running `brew services list` or `ps aux | grep -v grep | grep mongod`
-1. connect to the running instance `mongosh`
-1. stop mongo `brew services stop mongodb-community@5.0` or `mongosh` > `shutdown`
+### Creating a new mobile screen
+1. Create the screen component under `apps/mobile/components/`
+1. Add it to `RootStackParamList` in `apps/mobile/types.tsx`
+1. Register it in `apps/mobile/navigation/LinkingConfiguration.ts`
+1. Add it to the stack in `apps/mobile/navigation/index.tsx`

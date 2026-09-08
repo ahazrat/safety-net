@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "SafetyNet",
+    "slug": "safety-net",
+    "version": "1.0.220116",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "safety-net",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fractalstrategies.safetynet2112",
+      "buildNumber": "1.0.21.12"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.fractalstrategies.safetynet2112",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    }
+  }
+}

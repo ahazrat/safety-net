@@ -1,0 +1,76 @@
+// Ported from safety-net-expo's components/Firebase/firebase.js (Firebase v8
+// namespaced class) to the v9 modular SDK, matching what the web app already
+// uses. Platform-agnostic: no react-native or DOM imports, usable from both
+// apps/web and apps/mobile.
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  updatePassword,
+  onAuthStateChanged,
+} from 'firebase/auth'
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
+import { auth, db } from '../firebase/app'
+
+export function doCreateUserWithEmailAndPassword(email, password) {
+  return createUserWithEmailAndPassword(auth, email, password)
+}
+
+export function doSignInWithEmailAndPassword(email, password) {
+  return signInWithEmailAndPassword(auth, email, password)
+}
+
+export function doSignOut() {
+  return signOut(auth)
+}
+
+export function doPasswordReset(email) {
+  return sendPasswordResetEmail(auth, email)
+}
+
+export function doPasswordUpdate(password) {
+  return updatePassword(auth.currentUser, password)
+}
+
+export function createUser(userData) {
+  return setDoc(doc(db, 'users', userData.uid), {
+    uid: userData.uid,
+    username: userData.username,
+    email: userData.email,
+    roles: userData.roles,
+  })
+}
+
+export async function getUser(uid) {
+  const snap = await getDoc(doc(db, 'users', uid))
+  return snap.data()
+}
+
+export async function getUsersArr() {
+  const snapshot = await getDocs(collection(db, 'users'))
+  return snapshot.docs.map(d => ({ ...d.data(), id: d.id }))
+}
+
+// Subscribes to auth state, enriching the Firebase auth user with the
+// matching Firestore user doc (roles, username). Calls `next(authUser)` when
+// signed in, `fallback()` when signed out. Returns the unsubscribe function.
+export function onAuthUserListener(next, fallback) {
+  return onAuthStateChanged(auth, async firebaseUser => {
+    if (firebaseUser) {
+      const userDoc = (await getUser(firebaseUser.uid)) || {}
+      if (!userDoc.roles) userDoc.roles = {}
+      next({
+        authUser: {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          creationTime: firebaseUser.metadata.creationTime,
+          lastSignInTime: firebaseUser.metadata.lastSignInTime,
+          ...userDoc,
+        },
+      })
+    } else {
+      fallback()
+    }
+  })
+}
