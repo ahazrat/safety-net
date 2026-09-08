@@ -19,6 +19,7 @@ export default {
       ListingCreate: 'createlisting',
       Services: 'services',
       Map: 'map',
+      Attribution: 'attribution',
       ForgotPassword: 'forgotpassword',
       ChangePassword: 'changepassword',
       Admin: 'admin',

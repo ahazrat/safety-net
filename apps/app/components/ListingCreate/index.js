@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button } from 'react-native-paper';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
 import { createNewDoc } from '@safety-net/shared';
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-const ListingCreate = () => {
+const ListingCreate = ({ navigation }) => {
 	const [title, setTitle] = useState('My new listing');
 	const [startYear, setStartYear] = useState(2021);
 	const [startMonth, setStartMonth] = useState(12);
@@ -43,6 +43,7 @@ const ListingCreate = () => {
 	const [repeatDays, setRepeatDays] = useState('MWF');
 	const [latitude, setLatitude] = useState(0);
 	const [longitude, setLongitude] = useState(0);
+	const [error, setError] = useState(null);
 
 	const numInput = (text, value, onChange, width='20%') => (
 		<View style={[styles.numInput, { width: width }]}>
@@ -97,7 +98,10 @@ const ListingCreate = () => {
 				lng: Number(longitude),
 			},
 		};
-		createNewDoc('listings', newListing);
+		setError(null);
+		createNewDoc('listings', newListing)
+			.then(() => navigation.navigate('Listings'))
+			.catch(setError);
 	};
 
 	return (
@@ -143,6 +147,7 @@ const ListingCreate = () => {
 			>
 				Create Listing
 			</Button>
+			{error && <HelperText type='error' visible>{error.message}</HelperText>}
 		</View>
 	);
 };

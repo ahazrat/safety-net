@@ -7,6 +7,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
 import { ColorSchemeName, Text, useWindowDimensions } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import SignUp from '../components/SignUp';
 import SignIn from '../components/SignIn';
@@ -17,6 +18,7 @@ import Listing from '../components/Listing';
 import ListingCreate from '../components/ListingCreate';
 import ServicesScreen from '../components/Services';
 import MapScreen from '../components/MapScreen';
+import AttributionScreen from '../components/Attribution';
 import ForgotPasswordScreen from '../components/PasswordForget';
 import ChangePasswordScreen from '../components/PasswordChange';
 import AdminScreen from '../components/Admin';
@@ -39,6 +41,12 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
 const Drawer = createDrawerNavigator<RootStackParamList>();
 
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+const drawerIcon = (name: IconName) =>
+	({ color, size }: { color: string; size: number }) => (
+		<MaterialCommunityIcons name={name} color={color} size={size} />
+	);
+
 function RootNavigator() {
 	const authUser = React.useContext(AuthUserContext);
 	const { width } = useWindowDimensions();
@@ -57,53 +65,58 @@ function RootNavigator() {
 			<Drawer.Screen
 				name='Home'
 				component={HomeScreen}
-				options={{ title: 'SafetyNet: Home' }}
+				options={{ title: 'Home', drawerIcon: drawerIcon('home-outline') }}
 			/>
 			{authUser ? (
 				<>
 					<Drawer.Screen
 						name='Listings'
 						component={Listings}
-						options={{ title: 'SafetyNet: Listings' }}
+						options={{ title: 'Listings', drawerIcon: drawerIcon('format-list-bulleted') }}
 					/>
 					<Drawer.Screen
 						name='Listing'
 						component={Listing}
-						options={{ title: 'SafetyNet: Listing' }}
+						options={{ title: 'Listing', drawerIcon: drawerIcon('file-document-outline') }}
 					/>
 					<Drawer.Screen
 						name='ListingCreate'
 						component={ListingCreate}
-						options={{ title: 'SafetyNet: Create Listing' }}
+						options={{ title: 'Create Listing', drawerIcon: drawerIcon('plus-box-outline') }}
 					/>
 				</>
 			) : null}
 			<Drawer.Screen
 				name='Services'
 				component={ServicesScreen}
-				options={{ title: 'SafetyNet: Services' }}
+				options={{ title: 'Services', drawerIcon: drawerIcon('store-outline') }}
 			/>
 			<Drawer.Screen
 				name='Map'
 				component={MapScreen}
-				options={{ title: 'SafetyNet: Map' }}
+				options={{ title: 'Map', drawerIcon: drawerIcon('map-outline') }}
+			/>
+			<Drawer.Screen
+				name='Attribution'
+				component={AttributionScreen}
+				options={{ title: 'Map Attribution', drawerIcon: drawerIcon('information-outline') }}
 			/>
 			{authUser ? (
 				<>
 					<Drawer.Screen
 						name='Account'
 						component={AccountScreen}
-						options={{ title: 'SafetyNet: Account' }}
+						options={{ title: 'Account', drawerIcon: drawerIcon('account-circle-outline') }}
 					/>
 					<Drawer.Screen
 						name="ChangePassword"
 						component={ChangePasswordScreen}
-						options={{ title: 'SafetyNet: Change Password' }}
+						options={{ title: 'Change Password', drawerIcon: drawerIcon('lock-reset') }}
 					/>
 					<Drawer.Screen
 						name="Admin"
 						component={AdminScreen}
-						options={{ title: 'SafetyNet: Admin' }}
+						options={{ title: 'Admin', drawerIcon: drawerIcon('shield-account-outline') }}
 					/>
 				</>
 			) : (
@@ -111,24 +124,24 @@ function RootNavigator() {
 					<Drawer.Screen
 						name='SignIn'
 						component={SignIn}
-						options={{ title: 'SafetyNet: Sign In' }}
+						options={{ title: 'Sign In', drawerIcon: drawerIcon('login') }}
 					/>
 					<Drawer.Screen
 						name='SignUp'
 						component={SignUp}
-						options={{ title: 'SafetyNet: Sign Up!' }}
+						options={{ title: 'Sign Up', drawerIcon: drawerIcon('account-plus-outline') }}
 					/>
 					<Drawer.Screen
 						name="ForgotPassword"
 						component={ForgotPasswordScreen}
-						options={{ title: 'SafetyNet: Forgot Password' }}
+						options={{ title: 'Forgot Password', drawerIcon: drawerIcon('lock-question') }}
 					/>
 				</>
 			)}
 			<Drawer.Screen
 				name="NotFound"
 				component={NotFoundScreen}
-				options={{ title: 'Oops!' }}
+				options={{ title: 'Oops!', drawerIcon: drawerIcon('help-circle-outline') }}
 			/>
 		</Drawer.Navigator>
 	);

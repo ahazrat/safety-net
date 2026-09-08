@@ -21,12 +21,14 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 	useEffect(() => {
 		if (!containerRef.current) return;
 
-		const map = L.map(containerRef.current).setView(center, zoom);
+		// OSM's license (ODbL) requires attribution, but not necessarily on the
+		// map itself — it's surfaced instead via the Attribution screen
+		// (navigation/index.tsx), reachable from the drawer.
+		const map = L.map(containerRef.current, { attributionControl: false }).setView(center, zoom);
 		mapRef.current = map;
 
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
 		}).addTo(map);
 
 		pins.forEach(pin => {

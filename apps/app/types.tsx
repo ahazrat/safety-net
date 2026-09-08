@@ -13,6 +13,7 @@ export type RootStackParamList = {
   ListingCreate: undefined;
   Services: undefined;
   Map: undefined;
+  Attribution: undefined;
   ForgotPassword: undefined;
   ChangePassword: undefined;
   Admin: undefined;

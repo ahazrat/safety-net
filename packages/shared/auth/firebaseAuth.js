@@ -58,7 +58,15 @@ export async function getUsersArr() {
 export function onAuthUserListener(next, fallback) {
   return onAuthStateChanged(auth, async firebaseUser => {
     if (firebaseUser) {
-      const userDoc = (await getUser(firebaseUser.uid)) || {}
+      // getUser reads packages/shared/firebase/firestore.js `users/{uid}`, which
+      // can fail (missing doc, security rules) independently of a successful
+      // sign-in — don't let that failure hide a real auth state from the app.
+      let userDoc = {}
+      try {
+        userDoc = (await getUser(firebaseUser.uid)) || {}
+      } catch (err) {
+        console.warn('onAuthUserListener: failed to load user doc', err)
+      }
       if (!userDoc.roles) userDoc.roles = {}
       next({
         authUser: {

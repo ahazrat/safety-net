@@ -35,10 +35,11 @@ export function buildLeafletHtml(
 	<div id="map"></div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 	<script>
-		var map = L.map('map').setView([${center[0]}, ${center[1]}], ${zoom});
+		// OSM's license (ODbL) requires attribution, but not necessarily on the
+		// map itself -- it's surfaced instead via the app's Attribution screen.
+		var map = L.map('map', { attributionControl: false }).setView([${center[0]}, ${center[1]}], ${zoom});
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+			maxZoom: 19
 		}).addTo(map);
 		${markers}
 	</script>
