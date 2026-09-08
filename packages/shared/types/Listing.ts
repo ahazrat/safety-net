@@ -5,6 +5,7 @@
 // legacy and read defensively where they still appear, not modeled here.
 export interface Listing {
   id?: string
+  ownerUid?: string
   createdAt?: unknown
   title: string
   dateRange: {

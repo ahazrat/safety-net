@@ -35,22 +35,25 @@ npm start        # or: npx expo start
 npx expo start --web
 ```
 
-The app shares one Firebase project (config in
+The app shares one Firebase project (`safety-net-2022`, config in
 `packages/shared/firebase/config.js`) for auth and Firestore.
+
+Firestore Security Rules live in `firestore.rules` (project
+`firebase.json` / `.firebaserc`). After editing rules:
+
+```
+npm run test:rules     # emulator + tests/firestore.rules.test.js
+npm run deploy:rules   # deploy to safety-net-2022 (needs Firebase CLI login)
+```
 
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
 - **SignUp's admin-toggle is a security smell**: the `Switch` on the sign-up
   form lets any new user grant themselves the admin role client-side (see
-  the comment in `apps/app/components/SignUp/index.jsx`). Flagged, not
-  fixed — needs a real server-side role-assignment flow.
-- **Firestore Security Rules are blocking reads/writes** for signed-in
-  users — creating a listing fails with `FirebaseError: Missing or
-  insufficient permissions` (`permission-denied`), and the same rule gap
-  can mask other authenticated reads. This is a Firebase Console change
-  (Firestore Database → Rules), not something fixable from the code —
-  needs someone with console access to update the rules to allow
-  authenticated users to read/write their own data.
+  the comment in `apps/app/components/SignUp/index.jsx`). Firestore rules
+  currently still allow that self-write — needs a real server-side
+  role-assignment flow, then a rules change that forbids setting
+  `roles.ADMIN` on your own user doc.
 - **iOS Simulator not available in this dev environment**: `Xcode.app`
   itself isn't installed (only the command-line tools are), so
   `Map.native.tsx`'s WebView-embedded Leaflet map has never actually been
@@ -63,17 +66,16 @@ The app shares one Firebase project (config in
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. **Fix Firestore Security Rules** (see Known gaps above) — this currently
-   blocks Create Listing and likely other authenticated writes/reads. No
-   code change needed, just a console update.
 1. **Fix the SignUp admin-toggle security hole** — replace the client-side
    `Switch` with a real server-side role-assignment flow (e.g. an admin
-   grants roles after signup, not the user themselves).
+   grants roles after signup, not the user themselves), and stop allowing
+   `roles.ADMIN` on self-writes in `firestore.rules`.
 1. **Verify `Map.native.tsx` on a real iOS Simulator** once Xcode is
    installed — the WebView/Leaflet path has only been tested on web so far.
 1. Stronger password requirements on sign up
 1. Email string validation
-1. User-specific data access controls beyond the admin role
+1. User-specific data access controls beyond the owner/admin rules already
+   in `firestore.rules` (e.g. listing visibility, field-level constraints)
 1. Badge system (badge list already ported: `packages/shared/constants/Badges.ts`)
 1. User-user messaging
 1. Project-task UI

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
-import { createNewDoc } from '@safety-net/shared';
+import { createListing } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -99,7 +99,7 @@ const ListingCreate = ({ navigation }) => {
 			},
 		};
 		setError(null);
-		createNewDoc('listings', newListing)
+		createListing(newListing)
 			.then(() => navigation.navigate('Listings'))
 			.catch(setError);
 	};
