@@ -27,6 +27,11 @@ export default function AttributionScreen() {
 			<Button mode='text' onPress={() => Linking.openURL('https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2')}>
 				City of Chicago crimes dataset
 			</Button>
+			<Text variant='titleMedium' style={{ marginTop: 24, marginBottom: 8 }}>Scanner links</Text>
+			<Text style={{ marginBottom: 12 }}>
+				The Scanners screen links to Broadcastify and OpenMHz. Those sites
+				host the audio. SafetyNet does not embed or autoplay streams.
+			</Text>
 		</ScrollView>
 	);
 }

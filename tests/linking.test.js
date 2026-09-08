@@ -14,4 +14,6 @@ test('public and auth routes are absolute paths', () => {
   assert.equal(Routes.JOBS, '/jobs')
   assert.equal(Routes.MESSAGES, '/messages')
   assert.equal(Routes.MAP, '/map')
+  assert.equal(Routes.SCANNERS, '/scanners')
 })
+

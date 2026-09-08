@@ -5,6 +5,7 @@ export const SIGN_IN = '/signin'
 export const FORGOT_PASSWORD = '/forgot-password'
 export const SERVICES = '/services'
 export const MAP = '/map'
+export const SCANNERS = '/scanners'
 export const ATTRIBUTION = '/attribution'
 export const LISTINGS = '/listings'
 export const listingPath = (id) => `/listing/${id}`

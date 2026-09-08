@@ -14,6 +14,7 @@ export type RootStackParamList = {
   Jobs: undefined;
   Services: undefined;
   Map: undefined;
+  Scanners: undefined;
   Attribution: undefined;
   ForgotPassword: undefined;
   ChangePassword: undefined;

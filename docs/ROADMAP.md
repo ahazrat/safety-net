@@ -72,7 +72,8 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Teams of providers | Copy only |
 | Public username + badges on jobs | Shipped (`publicProfiles/{uid}`) |
 | Payments / stake / BTC | Not built |
-| Live scanner audio on the map | Not built |
+| Live scanner audio on the map | Not built (streaming) |
+| Scanner catalogue (Chicago links) | Shipped: Broadcastify official CPD zones + OpenMHz, no autoplay |
 | Crime stats overlay | Shipped: 30-day community-area counts from Chicago Data Portal (SODA). Not raw incidents. |
 | Station directory | Not built |
 | Blockchain reads | Not built |
@@ -120,7 +121,7 @@ Optional but high leverage: show **badge chips on listings / jobs**, not only on
 This is the README item that was next after jobs, and it matches Trello Data Sources + Radio Scanner.
 
 1. **Crime layer (Chicago first).** Done as 30-day **community-area counts** from the [City of Chicago Data Portal](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2) (same CPD source as `bigquery-public-data.chicago_crime`). Circles on Map/Home; toggle on Map. In-memory 6h cache. Later: weekly Cloud Function rollup if SODA rate-limits.
-2. **Scanner.** Catalogue feeds (Broadcastify / OpenMHz). **Do not** autoplay audio in v1; a “feeds for this area” list plus optional link is enough. Streaming into the map is a later pass.
+2. **Scanner.** Catalogue shipped (`/scanners`): Broadcastify official CPD zones, CFD, Cook County directory, OpenMHz CPD. Links only, no autoplay. Streaming into the map is a later pass.
 3. **Stations.** Seed **Chicago** police/fire houses as map pins, by hand, not a national bulk import.
 
 This layer is the **unsigned-in homepage value**: you can open SafetyNet and see risk and presence without posting a job.
@@ -211,13 +212,12 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 Engineering and GTM are the same list for the next stretch.
 
 1. **Android auth persistence** + Map sanity check.
-2. **Scanner catalogue** for Chicago (links, not full audio).
-5. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
-6. **Hand-seeded Chicago station pins.**
-7. **LinkedIn + one neighborhood roster** (ops, not code).
-8. **EAS iOS** once Xcode is installed; then store listing.
-9. **Teams** and listing types.
-10. **Payments / stake** only after a roster produced real completed jobs.
+2. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
+3. **Hand-seeded Chicago station pins.**
+4. **LinkedIn + one neighborhood roster** (ops, not code).
+5. **EAS iOS** once Xcode is installed; then store listing.
+6. **Teams** and listing types.
+7. **Payments / stake** only after a roster produced real completed jobs.
 
 iOS Simulator verification stays last among *dev-environment* tasks; it should not block web GTM.
 

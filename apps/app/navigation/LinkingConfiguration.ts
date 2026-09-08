@@ -12,6 +12,7 @@ export const linkingScreens = {
   ForgotPassword: 'forgot-password',
   Services: 'services',
   Map: 'map',
+  Scanners: 'scanners',
   Attribution: 'attribution',
   Listings: 'listings',
   Listing: 'listing/:listingId',

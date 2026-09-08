@@ -11,6 +11,7 @@
     "test:linking": "node --test tests/linking.test.js",
     "test:auth": "node --test tests/auth.persistence.test.js",
     "test:crime": "node --test tests/chicago.crime.test.js",
+    "test:scanners": "node --test tests/chicago.scanners.test.js",
     "deploy:rules": "bash scripts/firebase-gcloud-user.sh deploy --only firestore:rules --project safety-net-2022"
   },
   "devDependencies": {

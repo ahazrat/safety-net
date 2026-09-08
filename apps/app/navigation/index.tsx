@@ -19,6 +19,7 @@ import ListingCreate from '../components/ListingCreate';
 import JobsScreen from '../components/Jobs';
 import ServicesScreen from '../components/Services';
 import MapScreen from '../components/MapScreen';
+import ScannersScreen from '../components/Scanners';
 import AttributionScreen from '../components/Attribution';
 import ForgotPasswordScreen from '../components/PasswordForget';
 import ChangePasswordScreen from '../components/PasswordChange';
@@ -106,6 +107,11 @@ function RootNavigator() {
 				name='Map'
 				component={MapScreen}
 				options={{ title: 'Map', drawerIcon: drawerIcon('map-outline') }}
+			/>
+			<Drawer.Screen
+				name='Scanners'
+				component={ScannersScreen}
+				options={{ title: 'Scanners', drawerIcon: drawerIcon('radio') }}
 			/>
 			<Drawer.Screen
 				name='Attribution'
