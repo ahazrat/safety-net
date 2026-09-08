@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Button } from 'react-native';
+import { View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { doSignOut } from '@safety-net/shared';
-import { styles } from '../Themed';
 
 const SignOutButton = () => (
-    <View style={styles.button}>
-        <Button
-            title='SignOut'
-            onPress={() => doSignOut()}
-        />
+    <View style={{ marginVertical: 8 }}>
+        <Button mode='outlined' onPress={() => doSignOut()}>
+            Sign Out
+        </Button>
     </View>
 );
 

@@ -6,7 +6,7 @@
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
-import { ColorSchemeName, Text } from 'react-native';
+import { ColorSchemeName, Text, useWindowDimensions } from 'react-native';
 
 import SignUp from '../components/SignUp';
 import SignIn from '../components/SignIn';
@@ -24,7 +24,7 @@ import NotFoundScreen from '../components/NotFound';
 
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import { AuthUserContext } from '../auth/session';
+import { AuthUserContext } from '@safety-net/shared';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 	return (
@@ -41,11 +41,18 @@ const Drawer = createDrawerNavigator<RootStackParamList>();
 
 function RootNavigator() {
 	const authUser = React.useContext(AuthUserContext);
+	const { width } = useWindowDimensions();
+	// The bundled Drawer falls back to its "legacy" (reanimated v1 API)
+	// implementation under react-native-reanimated v3, whose backdrop
+	// overlay stays mounted full-screen and intercepts clicks even when
+	// the drawer is only ever shown as a sidebar. `permanent` drops that
+	// backdrop entirely, so use it above the mobile breakpoint.
+	const drawerType = width >= 768 ? 'permanent' : 'front';
 
 	return (
 		<Drawer.Navigator
 			initialRouteName="Home"
-			screenOptions={{ headerShown: true }}
+			screenOptions={{ headerShown: true, drawerType }}
 		>
 			<Drawer.Screen
 				name='Home'

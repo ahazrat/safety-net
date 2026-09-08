@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text, Card, FAB } from 'react-native-paper';
 import { getCollection } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
-		backgroundColor: 'white',
 		height: '100%',
 		padding: 20,
 	},
 	title: {
 		textAlign: 'center',
-		fontSize: 30,
-		fontWeight: 'bold',
 		marginBottom: 10,
 	},
 	singleListing: {
-		borderWidth: 1,
-		padding: 10,
 		marginBottom: 10,
-		display: 'flex',
-		flexDirection: 'row',
+	},
+	fab: {
+		position: 'absolute',
+		margin: 16,
+		right: 0,
+		bottom: 0,
 	},
 });
 
@@ -34,9 +34,9 @@ const Listings = ({ navigation }) => {
 
 	useEffect(getListings, []);
 
-	// Firestore's `listings` collection holds both mobile's shape (title/
-	// dateRange/requirements) and web's shape (jobTitle/fullName/location) —
-	// see packages/shared/types/Listing.ts. Render defensively.
+	// Firestore's `listings` collection may still hold documents from before
+	// the Listing shape was canonicalized (title/dateRange/requirements) —
+	// see packages/shared/types/Listing.ts. Render defensively for those.
 	const singleListing = (listing, i) => {
 		const startDate = listing.dateRange
 			? `${listing.dateRange.start.year}-${listing.dateRange.start.month}-${listing.dateRange.start.day}`
@@ -46,17 +46,19 @@ const Listings = ({ navigation }) => {
 			: null;
 
 		return (
-			<TouchableOpacity key={i} onPress={() => {
-				navigation.navigate('Listing', {
-					listingId: listing.id,
-				})
-			}}>
-				<View style={styles.singleListing}>
-					<View style={{ marginRight: 20 }}>
-						<Text style={{ fontWeight: 'bold' }}>{listing.title || listing.jobTitle}</Text>
-						{startDate && <Text>Start: {startDate}</Text>}
-						{endDate && <Text>End: {endDate}</Text>}
-					</View>
+			<Card
+				key={i}
+				style={styles.singleListing}
+				onPress={() => {
+					navigation.navigate('Listing', {
+						listingId: listing.id,
+					})
+				}}
+			>
+				<Card.Title title={listing.title || 'Legacy listing'} />
+				<Card.Content>
+					{startDate && <Text>Start: {startDate}</Text>}
+					{endDate && <Text>End: {endDate}</Text>}
 					{listing.requirements && (
 						<View>
 							<Text>Authentication: {listing.requirements.authentication}</Text>
@@ -65,17 +67,19 @@ const Listings = ({ navigation }) => {
 							<Text>Stake: {listing.requirements.stake}</Text>
 						</View>
 					)}
-				</View>
-			</TouchableOpacity>
+				</Card.Content>
+			</Card>
 		);
 	};
 
 	return (
 		<View style={styles.view}>
-			<Text style={styles.title}>Listings</Text>
+			<Text variant='headlineMedium' style={styles.title}>Listings</Text>
 			{listings.map(singleListing)}
-			<Button
-				title='Create a listing'
+			<FAB
+				icon='plus'
+				label='Create a listing'
+				style={styles.fab}
 				onPress={() => navigation.navigate('ListingCreate')}
 			/>
 		</View>

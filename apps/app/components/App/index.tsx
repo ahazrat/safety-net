@@ -5,7 +5,7 @@ import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Navigation from '../../navigation';
 import { StatusBar } from 'expo-status-bar';
-import { withAuthentication } from '../../auth/session';
+import { withAuthentication } from '@safety-net/shared';
 import Colors from '../../constants/Colors';
 
 const paperIconSettings = {

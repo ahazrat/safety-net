@@ -1,5 +1,6 @@
 export * from './firebase/firestore'
 export * from './auth/firebaseAuth'
+export { AuthUserContext, withAuthentication, withAuthorization } from './auth/session'
 export { default as Roles } from './constants/Roles'
 export { default as Badges } from './constants/Badges'
 export * from './constants/Routes'

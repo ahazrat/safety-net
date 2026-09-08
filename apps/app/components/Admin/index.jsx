@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { styles } from '../Themed';
-import { getUsersArr, Roles as ROLES } from '@safety-net/shared';
-import { withAuthorization } from '../../auth/session';
+import { View, FlatList } from 'react-native';
+import { Text, List } from 'react-native-paper';
+import { getUsersArr, Roles as ROLES, withAuthorization } from '@safety-net/shared';
 import { HomeButton } from '../Home';
 
 const AdminScreen = ({ navigation }) => {
@@ -18,22 +17,19 @@ const AdminScreen = ({ navigation }) => {
 	}, []);
 
 	return (
-		<View>
-			<Text style={styles.title}>Admin</Text>
-			<Text style={styles.textCenter}>The Admin screen is accessible only by signed in admin users.</Text>
-			<Text style={styles.textCenter}>User List</Text>
-			{loading && <Text style={styles.textCenter}>Loading..</Text>}
+		<View style={{ padding: 16, flex: 1 }}>
+			<Text variant='headlineMedium'>Admin</Text>
+			<Text style={{ marginBottom: 12 }}>The Admin screen is accessible only by signed in admin users.</Text>
+			<Text variant='titleMedium'>User List</Text>
+			{loading && <Text>Loading..</Text>}
 			<FlatList
 				data={users}
+				keyExtractor={item => item.uid}
 				renderItem={({ item }) => (
-					<View style={styles.itemView}>
-						<Text style={styles.textBold}>UID</Text>
-						<Text style={styles.text}>{item.uid}</Text>
-						<Text style={styles.textBold}>Email</Text>
-						<Text style={styles.text}>{item.email}</Text>
-						<Text style={styles.textBold}>Username</Text>
-						<Text style={styles.text}>{item.username}</Text>
-					</View>
+					<List.Item
+						title={item.username}
+						description={`UID: ${item.uid}\nEmail: ${item.email}`}
+					/>
 				)}
 			/>
 		<HomeButton navigation={navigation} />

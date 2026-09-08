@@ -2,18 +2,9 @@
 // withAuthentication.jsx, withAuthorization.jsx). withAuthentication was
 // previously stubbed out (its body was commented out, never wired up); this
 // implements it for real. Navigation is left to the caller via
-// `onUnauthorized`, since web (react-router) and mobile (react-navigation)
-// navigate differently.
-//
-// This file is intentionally duplicated in apps/web and apps/mobile rather
-// than living in packages/shared: web and mobile pin incompatible React
-// majors (18 vs 16.13, see README "Known gaps"), and npm workspaces hoists
-// one React copy to the repo root — so a shared module using hooks/context
-// would resolve a different React instance than whichever app didn't get
-// the hoisted copy, breaking hooks ("Invalid hook call"). Everything
-// React-free (firebaseAuth.js, constants, types) is still shared normally.
+// `onUnauthorized`, since different navigators navigate differently.
 import React from 'react'
-import { onAuthUserListener } from '@safety-net/shared'
+import { onAuthUserListener } from './firebaseAuth'
 
 export const AuthUserContext = React.createContext(null)
 

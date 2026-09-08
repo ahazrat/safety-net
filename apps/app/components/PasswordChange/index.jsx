@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { doPasswordUpdate } from '@safety-net/shared';
-import { View, Text, TextInput, Button } from 'react-native';
-import { styles } from '../Themed';
+import { View } from 'react-native';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 
 const ChangePasswordScreen = ({ navigation }) => {
 
@@ -25,34 +25,35 @@ const ChangePasswordScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View>
-			<Text style={styles.title}>Change Password</Text>
+		<View style={{ padding: 16 }}>
+			<Text variant='headlineMedium' style={{ textAlign: 'center', marginBottom: 20 }}>Change Password</Text>
 			<TextInput
-				style={styles.input}
+				style={{ marginBottom: 12 }}
 				value={passwordOne}
 				onChangeText={setPasswordOne}
-				placeholder='New Password'
-				autoCompleteType='password'
-				secureTextEntry='true'
+				label='New Password'
+				autoComplete='password'
+				secureTextEntry
 				textContentType='password'
 			/>
 			<TextInput
-				style={styles.input}
+				style={{ marginBottom: 12 }}
 				value={passwordTwo}
 				onChangeText={setPasswordTwo}
-				placeholder='Confirm New Password'
-				autoCompleteType='password'
-				secureTextEntry='true'
+				label='Confirm New Password'
+				autoComplete='password'
+				secureTextEntry
 				textContentType='password'
 			/>
-			<View style={styles.margin20}>
-				<Button
-					title='Change Password'
-					disabled={isInvalid}
-					onPress={onSubmit}
-				/>
-			</View>
-			{error && <Text style={styles.errorText}>{error.message}</Text>}
+			<Button
+				mode='contained'
+				disabled={isInvalid}
+				onPress={onSubmit}
+				style={{ marginBottom: 12 }}
+			>
+				Change Password
+			</Button>
+			{error && <HelperText type='error' visible>{error.message}</HelperText>}
 		</View>
 	);
 };

@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
-// import { SNCalendar } from '../Calendar';
+import { StyleSheet, View } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
 
 import { createNewDoc } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
-		backgroundColor: 'white',
 		height: '100%',
 		padding: 20,
 	},
 	title: {
 		textAlign: 'center',
-		fontSize: 30,
-		fontWeight: 'bold',
 		marginBottom: 10,
 	},
 	textInput: {
-		margin: 10,
-		padding: 10,
-		borderWidth: 1
+		marginVertical: 10,
 	},
 	inputView: {
 		display: 'flex',
@@ -27,8 +22,6 @@ const styles = StyleSheet.create({
 	},
 	numInput: {
 		margin: 10,
-		padding: 10,
-		borderWidth: 1,
 	},
 	createButton: {
 		marginTop: 20,
@@ -52,12 +45,12 @@ const ListingCreate = () => {
 	const [longitude, setLongitude] = useState(0);
 
 	const numInput = (text, value, onChange, width='20%') => (
-		<View style={{ width: width }}>
-			<Text>{text}</Text>
+		<View style={[styles.numInput, { width: width }]}>
 			<TextInput
-				style={styles.numInput}
-				value={value}
+				label={text}
+				value={String(value)}
 				onChangeText={onChange}
+				keyboardType='numeric'
 				returnKeyType='next'
 			/>
 		</View>
@@ -68,25 +61,25 @@ const ListingCreate = () => {
 			title: title,
 			dateRange: {
 				start: {
-					year: startYear,
-					month: startMonth,
-					day: startDay,
+					year: Number(startYear),
+					month: Number(startMonth),
+					day: Number(startDay),
 				},
 				end: {
-					year: endYear,
-					month: endMonth,
-					day: endDay,
+					year: Number(endYear),
+					month: Number(endMonth),
+					day: Number(endDay),
 				},
 			},
 			timeSchedule: [
 				{
 					start: {
-						hour: startHour,
-						minute: startMinute,
+						hour: Number(startHour),
+						minute: Number(startMinute),
 					},
 					end: {
-						hour: endHour,
-						minute: endMinute,
+						hour: Number(endHour),
+						minute: Number(endMinute),
 					},
 					repeat: {
 						daysOfWeek: repeatDays,
@@ -99,21 +92,24 @@ const ListingCreate = () => {
 				reputation: 75,
 				stake: 15,
 			},
+			location: {
+				lat: Number(latitude),
+				lng: Number(longitude),
+			},
 		};
-		console.log(newListing)
 		createNewDoc('listings', newListing);
 	};
 
 	return (
 		<View style={styles.view}>
-			<Text style={styles.title}>Create Listing</Text>
-			<Text>Title</Text>
+			<Text variant='headlineMedium' style={styles.title}>Create Listing</Text>
 			<TextInput
 				style={styles.textInput}
+				label='Title'
 				value={title}
 				onChangeText={setTitle}
 			/>
-			<Text>Start</Text>
+			<Text variant='titleMedium'>Start</Text>
 			<View style={styles.inputView}>
 				{numInput('Year', startYear, setStartYear)}
 				{numInput('Month', startMonth, setStartMonth)}
@@ -121,7 +117,7 @@ const ListingCreate = () => {
 				{numInput('Hour', startHour, setStartHour)}
 				{numInput('Minute', startMinute, setStartMinute)}
 			</View>
-			<Text>End</Text>
+			<Text variant='titleMedium'>End</Text>
 			<View style={styles.inputView}>
 				{numInput('Year', endYear, setEndYear)}
 				{numInput('Month', endMonth, setEndMonth)}
@@ -129,23 +125,24 @@ const ListingCreate = () => {
 				{numInput('Hour', endHour, setEndHour)}
 				{numInput('Minute', endMinute, setEndMinute)}
 			</View>
-			<Text>Repeat Days of Week</Text>
+			<Text variant='titleMedium'>Repeat Days of Week</Text>
 			<TextInput
 				style={styles.textInput}
 				value={repeatDays}
 				onChangeText={setRepeatDays}
 			/>
-			<Text>Location</Text>
+			<Text variant='titleMedium'>Location</Text>
 			<View style={styles.inputView}>
 				{numInput('Latitude', latitude, setLatitude, '40%')}
 				{numInput('Longitude', longitude, setLongitude, '40%')}
 			</View>
-			<View style={styles.createButton}>
-				<Button
-					title='Create Listing'
-					onPress={createListing}
-				/>
-			</View>
+			<Button
+				mode='contained'
+				onPress={createListing}
+				style={styles.createButton}
+			>
+				Create Listing
+			</Button>
 		</View>
 	);
 };

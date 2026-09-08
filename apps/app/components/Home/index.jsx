@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native'
 import { styles, Button } from '../Themed';
-import { withAuthorization } from '../../auth/session';
+import { withAuthorization } from '@safety-net/shared';
 import SignOutButton from '../SignOut';
 
 const HomeScreen = ({ navigation }) => (

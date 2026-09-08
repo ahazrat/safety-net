@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { doCreateUserWithEmailAndPassword, createUser, Roles as ROLES } from '@safety-net/shared'
-import { SafeAreaView, View, Text, TextInput, Switch, Button } from 'react-native';
-// import { SignInLink } from '../SignIn';
-import { styles } from '../Themed';
+import { SafeAreaView, View } from 'react-native';
+import { Text, TextInput, Switch, Button, HelperText } from 'react-native-paper';
 
 const SignUp = ({ navigation }) => {
 
@@ -10,6 +9,9 @@ const SignUp = ({ navigation }) => {
 	const [email, setEmail] = useState('');
 	const [passwordOne, setPasswordOne] = useState('');
 	const [passwordTwo, setPasswordTwo] = useState('');
+	// SECURITY SMELL: this client-side toggle lets any signer-upper grant
+	// themselves the admin role — flagged per the unification plan, not
+	// fixed (out of scope). A real fix needs server-side role assignment.
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -46,64 +48,62 @@ const SignUp = ({ navigation }) => {
 
 	return (
 		<SafeAreaView>
-			<Text style={styles.title}>Sign Up</Text>
-			<TextInput
-				style={styles.input}
-				value={username}
-				onChangeText={setUsername}
-				placeholder='Username'
-				autoCompleteType='username'
-			/>
-			<TextInput
-				style={styles.input}
-				value={email}
-				onChangeText={setEmail}
-				placeholder='Email'
-				autoCompleteType='email'
-			/>
-			<TextInput
-				style={styles.input}
-				value={passwordOne}
-				onChangeText={setPasswordOne}
-				placeholder='Password'
-				autoCompleteType='password'
-				secureTextEntry='true'  // this is flagged but works on web
-				textContentType='password'
-			/>
-			<TextInput
-				style={styles.input}
-				value={passwordTwo}
-				onChangeText={setPasswordTwo}
-				placeholder='Confirm Password'
-				autoCompleteType='password'
-				secureTextEntry='true'  // this is flagged but works on web
-				textContentType='password'
-			/>
-			<View style={[styles.margin20, { display: 'inline', marginTop: 0 }]}>
-				<Switch value={isAdmin} style={{ display: 'inline-block' }} />
-				<Text style={[styles.text, { display: 'inline-block', marginLeft: 10 }]}>Set Admin</Text>
-			</View>
-			<View style={styles.margin20}>
+			<View style={{ padding: 16 }}>
+				<Text variant='headlineMedium' style={{ textAlign: 'center', marginBottom: 20 }}>Sign Up</Text>
+				<TextInput
+					style={{ marginBottom: 12 }}
+					value={username}
+					onChangeText={setUsername}
+					label='Username'
+					autoComplete='username'
+				/>
+				<TextInput
+					style={{ marginBottom: 12 }}
+					value={email}
+					onChangeText={setEmail}
+					label='Email'
+					autoComplete='email'
+				/>
+				<TextInput
+					style={{ marginBottom: 12 }}
+					value={passwordOne}
+					onChangeText={setPasswordOne}
+					label='Password'
+					autoComplete='password'
+					secureTextEntry
+					textContentType='password'
+				/>
+				<TextInput
+					style={{ marginBottom: 12 }}
+					value={passwordTwo}
+					onChangeText={setPasswordTwo}
+					label='Confirm Password'
+					autoComplete='password'
+					secureTextEntry
+					textContentType='password'
+				/>
+				<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+					<Switch value={isAdmin} onValueChange={setIsAdmin} />
+					<Text style={{ marginLeft: 10 }}>Set Admin</Text>
+				</View>
 				<Button
-					title='Sign Up'
+					mode='contained'
 					onPress={onSubmit}
 					disabled={isInvalid}
-				/>
+					style={{ marginBottom: 12 }}
+				>
+					Sign Up
+				</Button>
+				{error && <HelperText type='error' visible>{error.message}</HelperText>}
 			</View>
-			{error && <Text style={styles.errorText}>{error.message}</Text>}
-			{/* <SignInLink navigation={navigation} /> */}
 		</SafeAreaView>
 	);
 };
 
 const SignUpLink = ({ navigation }) => (
-	<Text style={styles.textCenter}>
-		Don't have an account?
-		<Text
-			style={styles.text}
-			onPress={() => {navigation.navigate('SignUp');}}
-		> Sign Up</Text>
-	</Text>
+	<Button mode='text' onPress={() => { navigation.navigate('SignUp'); }}>
+		Don't have an account? Sign Up
+	</Button>
 );
 
 export default SignUp;

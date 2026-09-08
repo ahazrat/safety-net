@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View } from 'react-native';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 import { doPasswordReset } from '@safety-net/shared';
-import { styles } from '../Themed';
 
 const ForgotPasswordScreen = ({ navigation }) => {
 
@@ -20,34 +20,32 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View>
-			<Text style={styles.title}>Forgot Password</Text>
+		<View style={{ padding: 16 }}>
+			<Text variant='headlineMedium' style={{ textAlign: 'center', marginBottom: 20 }}>Forgot Password</Text>
 			<TextInput
-				style={styles.input}
+				style={{ marginBottom: 12 }}
 				value={email}
 				onChangeText={setEmail}
-				placeholder='Email'
-				autoCompleteType='Email'
+				label='Email'
+				autoComplete='email'
 			/>
-			<View style={styles.margin20}>
-				<Button
-					title='Reset Password'
-					disabled={isInvalid}
-					onPress={onSubmit}
-				/>
-			</View>
-			{error && <Text style={styles.errorText}>{error.message}</Text>}
+			<Button
+				mode='contained'
+				disabled={isInvalid}
+				onPress={onSubmit}
+				style={{ marginBottom: 12 }}
+			>
+				Reset Password
+			</Button>
+			{error && <HelperText type='error' visible>{error.message}</HelperText>}
 		</View>
 	);
 };
 
 const ForgotPasswordLink = ({ navigation }) => (
-	<Text
-		style={styles.textCenter}
-		onPress={() => {navigation.navigate('ForgotPassword');}}
-	>
+	<Button mode='text' onPress={() => { navigation.navigate('ForgotPassword'); }}>
 		Forgot password?
-	</Text>
+	</Button>
 );
 
 export default ForgotPasswordScreen;
