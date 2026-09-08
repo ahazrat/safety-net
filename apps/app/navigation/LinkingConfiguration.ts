@@ -23,6 +23,8 @@ export default {
       ForgotPassword: 'forgotpassword',
       ChangePassword: 'changepassword',
       Admin: 'admin',
+      Messages: 'messages',
+      Conversation: 'conversation',
       NotFound: '*',
     },
   },

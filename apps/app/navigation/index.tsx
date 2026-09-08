@@ -22,6 +22,8 @@ import AttributionScreen from '../components/Attribution';
 import ForgotPasswordScreen from '../components/PasswordForget';
 import ChangePasswordScreen from '../components/PasswordChange';
 import AdminScreen from '../components/Admin';
+import MessagesScreen from '../components/Messages';
+import ConversationScreen from '../components/Conversation';
 import NotFoundScreen from '../components/NotFound';
 
 import { RootStackParamList } from '../types';
@@ -103,6 +105,16 @@ function RootNavigator() {
 			/>
 			{authUser ? (
 				<>
+					<Drawer.Screen
+						name='Messages'
+						component={MessagesScreen}
+						options={{ title: 'Messages', drawerIcon: drawerIcon('message-text-outline') }}
+					/>
+					<Drawer.Screen
+						name='Conversation'
+						component={ConversationScreen}
+						options={{ title: 'Conversation', drawerItemStyle: { display: 'none' } }}
+					/>
 					<Drawer.Screen
 						name='Account'
 						component={AccountScreen}

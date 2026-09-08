@@ -368,6 +368,67 @@ test('admin cannot grant an unknown badge', async () => {
   )
 })
 
+test('participants can create and read a conversation; outsiders cannot', async () => {
+  const convo = {
+    participants: ['alice', 'bob'],
+  }
+  await assertSucceeds(setDoc(doc(asUser('alice'), 'conversations', 'alice_bob'), convo))
+  await assertSucceeds(getDoc(doc(asUser('alice'), 'conversations', 'alice_bob')))
+  await assertSucceeds(getDoc(doc(asUser('bob'), 'conversations', 'alice_bob')))
+  await assertFails(getDoc(doc(asUser('carol'), 'conversations', 'alice_bob')))
+  await assertFails(getDoc(doc(unauth(), 'conversations', 'alice_bob')))
+})
+
+test('cannot create a conversation without being a participant', async () => {
+  await assertFails(
+    setDoc(doc(asUser('alice'), 'conversations', 'bob_carol'), {
+      participants: ['bob', 'carol'],
+    })
+  )
+})
+
+test('participant can send a message; outsider cannot read or write', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'conversations', 'alice_bob'), { participants: ['alice', 'bob'] })
+    await setDoc(doc(db, 'conversations', 'alice_bob', 'messages', 'm1'), {
+      fromUid: 'alice',
+      text: 'Hello',
+      participants: ['alice', 'bob'],
+    })
+  })
+  await assertSucceeds(
+    addDoc(collection(asUser('alice'), 'conversations', 'alice_bob', 'messages'), {
+      fromUid: 'alice',
+      text: 'Follow up',
+      participants: ['alice', 'bob'],
+    })
+  )
+  await assertFails(
+    addDoc(collection(asUser('carol'), 'conversations', 'alice_bob', 'messages'), {
+      fromUid: 'carol',
+      text: 'Nope',
+      participants: ['alice', 'bob'],
+    })
+  )
+  await assertFails(
+    addDoc(collection(asUser('alice'), 'conversations', 'alice_bob', 'messages'), {
+      fromUid: 'alice',
+      text: '',
+      participants: ['alice', 'bob'],
+    })
+  )
+  await assertSucceeds(getDoc(doc(asUser('alice'), 'conversations', 'alice_bob', 'messages', 'm1')))
+  await assertFails(getDoc(doc(asUser('carol'), 'conversations', 'alice_bob', 'messages', 'm1')))
+  await assertSucceeds(
+    getDocs(
+      query(
+        collection(asUser('alice'), 'conversations', 'alice_bob', 'messages'),
+        where('participants', 'array-contains', 'alice')
+      )
+    )
+  )
+})
+
 test('unknown collections are denied', async () => {
   await assertFails(getDoc(doc(asUser('alice'), 'secrets', 'x')))
   await assertFails(setDoc(doc(asUser('alice'), 'secrets', 'x'), { n: 1 }))

@@ -8,7 +8,7 @@
   "scripts": {
     "test:rules": "firebase emulators:exec --only firestore --project safety-net-test \"node --test tests/firestore.rules.test.js\"",
     "test:validation": "node --test tests/validation.test.js",
-    "deploy:rules": "firebase deploy --only firestore:rules --project safety-net-2022"
+    "deploy:rules": "bash scripts/firebase-gcloud-user.sh deploy --only firestore:rules --project safety-net-2022"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^2.0.7",

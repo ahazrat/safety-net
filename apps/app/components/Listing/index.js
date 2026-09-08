@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text, Card, ActivityIndicator } from 'react-native-paper';
-import { getDocument } from '@safety-net/shared';
+import { Text, Card, ActivityIndicator, Button } from 'react-native-paper';
+import { AuthUserContext, getDocument } from '@safety-net/shared';
 import Map from '../Map';
 
-const Listing = ({ route }) => {
+const Listing = ({ route, navigation }) => {
+	const authUser = useContext(AuthUserContext);
 	const listingId = route?.params?.listingId;
 	const [listing, setListing] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -46,6 +47,15 @@ const Listing = ({ route }) => {
 	return (
 		<ScrollView style={{ padding: 16 }}>
 			<Text variant='headlineMedium' style={{ marginBottom: 12 }}>{listing.title || 'Legacy listing'}</Text>
+			{authUser && listing.ownerUid && listing.ownerUid !== authUser.uid && (
+				<Button
+					mode='outlined'
+					style={{ marginBottom: 12 }}
+					onPress={() => navigation.navigate('Messages', { otherUid: listing.ownerUid })}
+				>
+					Message owner
+				</Button>
+			)}
 			{startDate && <Text>Start: {startDate}</Text>}
 			{endDate && <Text>End: {endDate}</Text>}
 			{listing.requirements && (

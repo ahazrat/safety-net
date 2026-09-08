@@ -43,8 +43,15 @@ Firestore Security Rules live in `firestore.rules` (project
 
 ```
 npm run test:rules     # emulator + tests/firestore.rules.test.js
-npm run deploy:rules   # deploy to safety-net-2022 (needs Firebase CLI login)
+npm run deploy:rules   # deploy to safety-net-2022 via gcloud user ADC
 ```
+
+`deploy:rules` uses `scripts/firebase-gcloud-user.sh`, which authenticates
+firebase-tools with
+`~/.config/gcloud/legacy_credentials/asifhazrat@gmail.com/adc.json` (override
+with `FIREBASE_GCLOUD_ACCOUNT`). The Firebase CLI's own stored login was a
+2021 `fractalstrategies@gmail.com` session that 401s; default ADC is a
+fire-ice quota project that cannot refresh. Emulator tests do not need this.
 
 Admin role is not self-serve. Sign-up always creates a `USER`. An existing
 admin can grant or revoke `ADMIN` on other accounts from the Admin screen.
@@ -64,6 +71,11 @@ Verification badges (`packages/shared/constants/Badges.js`) live on
 or revoke a known badge on someone else (Account shows yours; Admin toggles
 them).
 
+Direct messages live in `conversations/{minUid_maxUid}/messages`. Only the
+two `participants` can read or write; list queries must use
+`participants array-contains auth.uid`. Open a thread from Messages or
+from a listing's "Message owner" button.
+
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
 - **iOS Simulator not available in this dev environment**: `Xcode.app`
@@ -78,7 +90,6 @@ them).
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. User-user messaging
 1. Project-task UI
 1. Live police/fire scanner + published crime & incident statistics feed, layered onto the
    Map/Home views to enrich a user's live risk profile (needs a data-source decision — e.g.

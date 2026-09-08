@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, addDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { db, app, auth } from './app'
 
@@ -67,6 +67,77 @@ export async function createListing(data) {
 
 export async function deleteDocument(col, id) {
   await deleteDoc(doc(db, col, id))
+}
+
+export function conversationIdFor(uidA, uidB) {
+  return [uidA, uidB].sort().join('_')
+}
+
+export async function getOrCreateConversation(otherUid) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Must be signed in to message')
+  if (!otherUid || otherUid === uid) {
+    throw new Error('Pick another user to message')
+  }
+  const id = conversationIdFor(uid, otherUid)
+  const ref = doc(db, 'conversations', id)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      participants: [uid, otherUid].sort(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+  }
+  return id
+}
+
+export async function sendMessage(otherUid, text) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Must be signed in to message')
+  const body = String(text || '').trim()
+  if (!body) throw new Error('Message cannot be empty')
+  if (body.length >= 2000) throw new Error('Message is too long')
+  const cid = await getOrCreateConversation(otherUid)
+  const participants = [uid, otherUid].sort()
+  await addDoc(collection(db, 'conversations', cid, 'messages'), {
+    fromUid: uid,
+    text: body,
+    participants,
+    createdAt: serverTimestamp(),
+  })
+  await updateDoc(doc(db, 'conversations', cid), { updatedAt: serverTimestamp() })
+  return cid
+}
+
+export async function listMyConversations() {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) return []
+  const snapshot = await getDocs(
+    query(collection(db, 'conversations'), where('participants', 'array-contains', uid))
+  )
+  return mapDocs(snapshot)
+}
+
+export async function listMessages(conversationId) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) return []
+  const snapshot = await getDocs(
+    query(
+      collection(db, 'conversations', conversationId, 'messages'),
+      where('participants', 'array-contains', uid)
+    )
+  )
+  return mapDocs(snapshot).sort((a, b) => {
+    const at = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0
+    const bt = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0
+    return at - bt
+  })
+}
+
+export function otherParticipant(conversation, uid) {
+  const parts = (conversation && conversation.participants) || []
+  return parts.find(p => p !== uid) || parts[0] || ''
 }
 
 export function uploadFile(storagePath, data) {
