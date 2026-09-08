@@ -17,6 +17,8 @@ export default {
       Listings: 'listings',
       Listing: 'listing',
       ListingCreate: 'createlisting',
+      Services: 'services',
+      Map: 'map',
       ForgotPassword: 'forgotpassword',
       ChangePassword: 'changepassword',
       Admin: 'admin',

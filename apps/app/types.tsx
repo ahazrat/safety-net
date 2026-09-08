@@ -9,8 +9,10 @@ export type RootStackParamList = {
   Home: undefined;
   Account: undefined;
   Listings: undefined;
-  Listing: undefined;
+  Listing: { listingId: string } | undefined;
   ListingCreate: undefined;
+  Services: undefined;
+  Map: undefined;
   ForgotPassword: undefined;
   ChangePassword: undefined;
   Admin: undefined;

@@ -2,15 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "web",
+      "name": "app-web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start", "--workspace=apps/web"],
-      "port": 3000
-    },
-    {
-      "name": "mobile-web",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "web", "--workspace=apps/mobile"],
+      "runtimeArgs": ["run", "web", "--workspace=apps/app"],
       "port": 19006
     }
   ]

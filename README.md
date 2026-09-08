@@ -92,6 +92,12 @@ Carried over from the pre-monorepo README:
 1. User-user messaging
 1. Stronger password requirements on sign up
 1. Email string validation
+1. Live police/fire scanner + published crime & incident statistics feed, layered onto the
+   Map/Home views to enrich a user's live risk profile (needs a data-source decision — e.g.
+   Broadcastify/OpenMHz for scanner audio, a crime-stats API like data.police.uk-style municipal
+   feeds — plus a design pass before implementation)
+1. Police & fire station directory, mapped by state/county/town — seeded gradually over time
+   (not a single bulk import), overlaid as pins on the Map component alongside listings
 
 ### Building the mobile app
 - Android emulator: install Android Studio, Tools > AVD Manager, create/launch a device
