@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import { Text, TextInput, Button, HelperText, Switch } from 'react-native-paper';
 
-import { createListing } from '@safety-net/shared';
+import { createListing as submitListing } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -43,6 +43,7 @@ const ListingCreate = ({ navigation }) => {
 	const [repeatDays, setRepeatDays] = useState('MWF');
 	const [latitude, setLatitude] = useState(0);
 	const [longitude, setLongitude] = useState(0);
+	const [isPublic, setIsPublic] = useState(true);
 	const [error, setError] = useState(null);
 
 	const numInput = (text, value, onChange, width='20%') => (
@@ -57,9 +58,14 @@ const ListingCreate = ({ navigation }) => {
 		</View>
 	);
 
-	const createListing = () => {
+	const onCreate = () => {
+		if (!String(title).trim()) {
+			setError(new Error('Title is required'));
+			return;
+		}
 		const newListing = {
-			title: title,
+			title: String(title).trim(),
+			visibility: isPublic ? 'public' : 'private',
 			dateRange: {
 				start: {
 					year: Number(startYear),
@@ -99,7 +105,7 @@ const ListingCreate = ({ navigation }) => {
 			},
 		};
 		setError(null);
-		createListing(newListing)
+		submitListing(newListing)
 			.then(() => navigation.navigate('Listings'))
 			.catch(setError);
 	};
@@ -140,9 +146,15 @@ const ListingCreate = ({ navigation }) => {
 				{numInput('Latitude', latitude, setLatitude, '40%')}
 				{numInput('Longitude', longitude, setLongitude, '40%')}
 			</View>
+			<View style={styles.inputView}>
+				<Text variant='titleMedium' style={{ marginRight: 12, alignSelf: 'center' }}>
+					{isPublic ? 'Public (visible on the map)' : 'Private (only you)'}
+				</Text>
+				<Switch value={isPublic} onValueChange={setIsPublic} />
+			</View>
 			<Button
 				mode='contained'
-				onPress={createListing}
+				onPress={onCreate}
 				style={styles.createButton}
 			>
 				Create Listing

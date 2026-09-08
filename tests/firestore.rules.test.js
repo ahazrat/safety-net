@@ -16,6 +16,8 @@ const {
   deleteDoc,
   deleteField,
   collection,
+  query,
+  where,
 } = require('firebase/firestore')
 
 const RULES = readFileSync(resolve(__dirname, '../firestore.rules'), 'utf8')
@@ -51,32 +53,116 @@ async function seed(writer) {
   })
 }
 
-test('signed-out visitors can read listings (public map)', async () => {
-  await seed(db => setDoc(doc(db, 'listings', 'l1'), { title: 'Patrol', ownerUid: 'alice' }))
+function validListing(overrides = {}) {
+  return {
+    title: 'Night watch',
+    ownerUid: 'alice',
+    visibility: 'public',
+    location: { lat: 41.8, lng: -87.6 },
+    ...overrides,
+  }
+}
+
+test('signed-out visitors can read public listings (public map)', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing()))
   await assertSucceeds(getDoc(doc(unauth(), 'listings', 'l1')))
-  await assertSucceeds(getDocs(collection(unauth(), 'listings')))
+  await assertSucceeds(
+    getDocs(query(collection(unauth(), 'listings'), where('visibility', '==', 'public')))
+  )
+})
+
+test('public listing query succeeds for signed-out visitors', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'listings', 'pub'), validListing({ title: 'Pub' }))
+  )
+  await assertSucceeds(
+    getDocs(query(collection(unauth(), 'listings'), where('visibility', '==', 'public')))
+  )
 })
 
 test('signed-out visitors cannot create listings', async () => {
   await assertFails(
-    addDoc(collection(unauth(), 'listings'), { title: 'Nope', ownerUid: 'alice' })
+    addDoc(collection(unauth(), 'listings'), validListing())
   )
 })
 
 test('signed-in user can create a listing they own', async () => {
   await assertSucceeds(
-    addDoc(collection(asUser('alice'), 'listings'), { title: 'Night watch', ownerUid: 'alice' })
+    addDoc(collection(asUser('alice'), 'listings'), validListing())
   )
 })
 
 test('signed-in user cannot create a listing owned by someone else', async () => {
   await assertFails(
-    addDoc(collection(asUser('alice'), 'listings'), { title: 'Stolen', ownerUid: 'bob' })
+    addDoc(collection(asUser('alice'), 'listings'), validListing({ ownerUid: 'bob' }))
+  )
+})
+
+test('create requires a non-empty title and lat/lng', async () => {
+  const alice = asUser('alice')
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ title: '' }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ location: { lat: 'x', lng: 1 } }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), { title: 'No loc', ownerUid: 'alice', visibility: 'public' })
+  )
+})
+
+test('create rejects unknown visibility', async () => {
+  await assertFails(
+    addDoc(
+      collection(asUser('alice'), 'listings'),
+      validListing({ visibility: 'friends' })
+    )
+  )
+})
+
+test('private listings are hidden from others; owner and admin can read', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(
+      doc(db, 'listings', 'priv'),
+      validListing({ title: 'Secret', visibility: 'private' })
+    )
+  })
+  await assertFails(getDoc(doc(unauth(), 'listings', 'priv')))
+  await assertFails(getDoc(doc(asUser('bob'), 'listings', 'priv')))
+  await assertSucceeds(getDoc(doc(asUser('alice'), 'listings', 'priv')))
+  await assertSucceeds(getDoc(doc(asUser('admin'), 'listings', 'priv')))
+})
+
+test('owner can list their own listings including private', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'priv'),
+      validListing({ visibility: 'private' })
+    )
+  )
+  await assertSucceeds(
+    getDocs(query(collection(asUser('alice'), 'listings'), where('ownerUid', '==', 'alice')))
+  )
+})
+
+test('owner cannot change ownerUid on update', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing()))
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), { ownerUid: 'bob' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), { title: 'Renamed' })
   )
 })
 
 test('owner can delete their listing; another user cannot', async () => {
-  await seed(db => setDoc(doc(db, 'listings', 'l1'), { title: 'Mine', ownerUid: 'alice' }))
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing({ title: 'Mine' })))
   await assertFails(deleteDoc(doc(asUser('bob'), 'listings', 'l1')))
   await assertSucceeds(deleteDoc(doc(asUser('alice'), 'listings', 'l1')))
 })
@@ -89,7 +175,7 @@ test('admin can delete someone else\'s listing', async () => {
       email: 'admin@example.com',
       roles: { ADMIN: 'ADMIN' },
     })
-    await setDoc(doc(db, 'listings', 'l1'), { title: 'Old', ownerUid: 'alice' })
+    await setDoc(doc(db, 'listings', 'l1'), validListing({ title: 'Old' }))
   })
   await assertSucceeds(deleteDoc(doc(asUser('admin'), 'listings', 'l1')))
 })

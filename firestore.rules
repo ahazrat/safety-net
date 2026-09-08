@@ -40,13 +40,62 @@ service cloud.firestore {
       allow delete: if isOwner(userId) || isAdmin();
     }
 
-    // Marketplace listings. Public read so the signed-out Home/Map pins work.
-    // Writes require ownerUid == auth.uid (stamped by createListing).
+    // Marketplace listings.
+    // visibility: 'public' (default) is readable by anyone; 'private' is
+    // owner/admin only. List queries must constrain to public or to the
+    // caller's ownerUid — unfiltered collection scans are denied once any
+    // private listing exists.
+    // Create requires a non-empty title, a lat/lng location, and a valid
+    // visibility. ownerUid is stamped by the client helper and is immutable.
+    function listingVisibility(data) {
+      return !('visibility' in data) || data.visibility == 'public'
+        ? 'public'
+        : data.visibility;
+    }
+
+    function isPublicListing(data) {
+      return listingVisibility(data) == 'public';
+    }
+
+    function validVisibility(data) {
+      return listingVisibility(data) in ['public', 'private'];
+    }
+
+    function validListingShape(data) {
+      return data.ownerUid is string
+        && data.ownerUid.size() > 0
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() < 200
+        && 'location' in data
+        && data.location.lat is number
+        && data.location.lng is number
+        && validVisibility(data);
+    }
+
+    function canReadListing(data) {
+      return isPublicListing(data)
+        || isOwner(data.ownerUid)
+        || isAdmin();
+    }
+
     match /listings/{listingId} {
-      allow read: if true;
+      allow get: if canReadListing(resource.data);
+      // List must not call isAdmin()/get() — that makes queries
+      // unconstrained. Admins still get() any listing by id.
+      allow list: if isPublicListing(resource.data)
+        || isOwner(resource.data.ownerUid);
       allow create: if isSignedIn()
-        && request.resource.data.ownerUid == request.auth.uid;
-      allow update, delete: if isSignedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && validListingShape(request.resource.data);
+      allow update: if isSignedIn()
+        && (
+          resource.data.ownerUid == request.auth.uid
+          || isAdmin()
+        )
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && validListingShape(request.resource.data);
+      allow delete: if isSignedIn()
         && (
           resource.data.ownerUid == request.auth.uid
           || isAdmin()

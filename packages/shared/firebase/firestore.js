@@ -1,10 +1,42 @@
-import { collection, doc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, addDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { db, app, auth } from './app'
 
 export async function getCollection(col) {
   const snapshot = await getDocs(collection(db, col))
   return snapshot.docs.map(d => ({ ...d.data(), id: d.id }))
+}
+
+function mapDocs(snapshot) {
+  return snapshot.docs.map(d => ({ ...d.data(), id: d.id }))
+}
+
+// List queries must match firestore.rules: public listings, or the
+// caller's own docs. Unfiltered collection scans are denied.
+export async function listPublicListings() {
+  const snapshot = await getDocs(
+    query(collection(db, 'listings'), where('visibility', '==', 'public'))
+  )
+  return mapDocs(snapshot)
+}
+
+export async function listMyListings() {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) return []
+  const snapshot = await getDocs(
+    query(collection(db, 'listings'), where('ownerUid', '==', uid))
+  )
+  return mapDocs(snapshot)
+}
+
+export async function listVisibleListings() {
+  const publicListings = await listPublicListings()
+  const mine = await listMyListings()
+  const byId = new Map()
+  for (const listing of publicListings.concat(mine)) {
+    byId.set(listing.id, listing)
+  }
+  return Array.from(byId.values())
 }
 
 export async function getDocument(col, id) {
@@ -24,8 +56,10 @@ export async function createListing(data) {
   if (!uid) {
     throw new Error('Must be signed in to create a listing')
   }
+  const visibility = data.visibility === 'private' ? 'private' : 'public'
   return createNewDoc('listings', {
     ...data,
+    visibility,
     ownerUid: uid,
     createdAt: serverTimestamp(),
   })

@@ -7,6 +7,8 @@ export interface Listing {
   id?: string
   ownerUid?: string
   createdAt?: unknown
+  /** 'public' (map/listings) or 'private' (owner/admin only). Defaults to public. */
+  visibility?: 'public' | 'private'
   title: string
   dateRange: {
     start: { year: number; month: number; day: number }

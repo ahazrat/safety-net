@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getCollection } from '@safety-net/shared';
+import { listPublicListings } from '@safety-net/shared';
 import { MapPin } from '../components/Map';
 
 export default function useListingPins(): MapPin[] {
 	const [pins, setPins] = useState<MapPin[]>([]);
 
 	useEffect(() => {
-		getCollection('listings')
+		listPublicListings()
 			.then((listings: any[]) => {
 				setPins(
 					listings

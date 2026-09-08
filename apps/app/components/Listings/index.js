@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Card, FAB } from 'react-native-paper';
-import { getCollection } from '@safety-net/shared';
+import { listVisibleListings } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -27,7 +27,7 @@ const Listings = ({ navigation }) => {
 	const [listings, setListings] = useState([]);
 
 	const getListings = () => {
-		getCollection('listings')
+		listVisibleListings()
 			.then(setListings)
 			.catch(err => console.log(err));
 	};

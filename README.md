@@ -51,6 +51,14 @@ admin can grant or revoke `ADMIN` on other accounts from the Admin screen.
 The first admin has to be bootstrapped in the Firebase console
 (`users/{uid}.roles.ADMIN = "ADMIN"`).
 
+Listings are public or private (`visibility`). Public listings are readable
+by anyone (Home/Map pins). Private listings are owner/admin only. Creates
+require a non-empty title, a `location.lat`/`lng`, and `ownerUid` matching
+the signed-in user; `ownerUid` cannot be changed later. List queries must
+filter (`visibility == 'public'` or `ownerUid == auth.uid`) — use
+`listPublicListings` / `listVisibleListings` rather than scanning the
+collection.
+
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
 - **iOS Simulator not available in this dev environment**: `Xcode.app`
@@ -65,8 +73,6 @@ The first admin has to be bootstrapped in the Firebase console
 Roughly in the order they should be tackled — infrastructure/security
 blockers first, then features:
 
-1. User-specific data access controls beyond the owner/admin rules already
-   in `firestore.rules` (e.g. listing visibility, field-level constraints)
 1. Badge system (badge list already ported: `packages/shared/constants/Badges.ts`)
 1. User-user messaging
 1. Project-task UI
