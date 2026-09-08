@@ -47,21 +47,31 @@ Both apps share one Firebase project (config in
 
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
-- **Framework versions differ**: web is React 18 + CRA 5; mobile is React
-  16.13 + RN 0.63 + Expo 42 (2021-era). Upgrading mobile's toolchain is a
-  separate project. The root `package.json` pins `react`/`react-dom` to
-  `^18.2.0` deliberately, so npm hoists React 18 to the workspace root and
-  gives mobile its own nested 16.13 copy instead — without this, CRA's
-  tooling (which resolves `react` from the workspace root) detects React
-  16.13, which predates the `react/jsx-runtime` automatic JSX transform, and
-  silently falls back to the classic transform everywhere in web. Because
-  the two apps need different React instances, `packages/shared` only holds
-  React-*free* code (Firebase calls, constants, types); the small
+- **Framework versions are now aligned**: both apps target React 18
+  (web: 18.3.1 via CRA 5; mobile: 18.2.0, exact — required as a peer by
+  `react-native@0.72.10` on Expo SDK 49, up from the original 2021-era
+  React 16.13 / RN 0.63 / Expo 42). The root `package.json` pins
+  `react`/`react-dom`/`react-native` explicitly so npm hoists a single
+  consistent set to the workspace root; mobile still resolves its own
+  nested `react@18.2.0` (react-native's exact peer requirement prevents a
+  single fully-deduped React instance across both apps, but both are now
+  React 18 rather than a major-version split). Because the two apps still
+  use physically different React instances, `packages/shared` continues to
+  hold only React-*free* code (Firebase calls, constants, types); the small
   hooks/context auth adapter (`withAuthentication`/`withAuthorization`/
-  `AuthUserContext`) is duplicated once per app (`apps/web/src/auth/session.js`,
-  `apps/mobile/auth/session.js`) rather than shared, since a hooks-based
-  module resolving a different React instance than its consumer breaks
-  hooks outright.
+  `AuthUserContext`) stays duplicated once per app
+  (`apps/web/src/auth/session.js`, `apps/mobile/auth/session.js`) rather
+  than shared, since a hooks-based module resolving a different React
+  instance than its consumer breaks hooks outright.
+- **`expo start --web` shows a benign console error** ("Cannot find module
+  `react-native/Libraries/Image/AssetRegistry`") caused by
+  `react-native-calendars`'s `recyclerlistview` dependency bundling its own
+  much newer nested `react-native` copy that restructured that internal
+  file. It doesn't block rendering (the app compiles and works in the
+  browser preview) and doesn't affect native builds or Expo Go, since
+  Metro resolves modules differently there. Fixing it for real means
+  either patching/pinning `react-native-calendars` or replacing its Agenda
+  view.
 - **Listing data shape differs between apps**: web writes a provider-profile
   shape (`jobTitle`/`fullName`/`userImage`, demo data via faker); mobile
   writes a scheduled-service-request shape (`dateRange`/`requirements`) modeled
