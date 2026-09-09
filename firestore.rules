@@ -174,7 +174,11 @@ service cloud.firestore {
       return validListedPrice(data)
         && paymentStatusOf(data) == 'none'
         && noMoneyProcessorFields(data)
-        && (!('currency' in data) || data.currency == 'usd');
+        && (!('currency' in data) || data.currency == 'usd')
+        && !('proposedExecutedPriceCentsOwner' in data)
+        && !('proposedExecutedPriceCentsAssignee' in data)
+        && !('executedPriceAckOwner' in data)
+        && !('executedPriceAckAssignee' in data);
     }
 
     function paymentFieldsUnchanged() {
@@ -197,6 +201,66 @@ service cloud.firestore {
         && resource.data.get('stripePaymentIntentId', '') == request.resource.data.get('stripePaymentIntentId', '')
         && resource.data.get('stripeCheckoutSessionId', '') == request.resource.data.get('stripeCheckoutSessionId', '')
         && resource.data.get('stripeConnectAccountId', '') == request.resource.data.get('stripeConnectAccountId', '');
+    }
+
+    function ownerAckUnchanged() {
+      return resource.data.get('proposedExecutedPriceCentsOwner', -1)
+          == request.resource.data.get('proposedExecutedPriceCentsOwner', -1)
+        && resource.data.get('executedPriceAckOwner', false)
+          == request.resource.data.get('executedPriceAckOwner', false);
+    }
+
+    function assigneeAckUnchanged() {
+      return resource.data.get('proposedExecutedPriceCentsAssignee', -1)
+          == request.resource.data.get('proposedExecutedPriceCentsAssignee', -1)
+        && resource.data.get('executedPriceAckAssignee', false)
+          == request.resource.data.get('executedPriceAckAssignee', false);
+    }
+
+    function ackFieldsUnchanged() {
+      return ownerAckUnchanged() && assigneeAckUnchanged();
+    }
+
+    function validAckBool(data, key) {
+      return !(key in data) || data[key] is bool;
+    }
+
+    // Owner may change only their proposed cents + ack. Cents change clears ack.
+    function ownerMayEditOwnAck() {
+      let beforeCents = resource.data.get('proposedExecutedPriceCentsOwner', -1);
+      let afterCents = request.resource.data.get('proposedExecutedPriceCentsOwner', -1);
+      let ack = request.resource.data.get('executedPriceAckOwner', false);
+      return request.auth.uid == resource.data.ownerUid
+        && assigneeAckUnchanged()
+        && validAckBool(request.resource.data, 'executedPriceAckOwner')
+        && (
+          !('proposedExecutedPriceCentsOwner' in request.resource.data)
+          || (request.resource.data.proposedExecutedPriceCentsOwner is number
+            && request.resource.data.proposedExecutedPriceCentsOwner
+              == int(request.resource.data.proposedExecutedPriceCentsOwner)
+            && request.resource.data.proposedExecutedPriceCentsOwner >= 0)
+        )
+        && (beforeCents == afterCents || ack == false)
+        && (ack != true || afterCents >= 0);
+    }
+
+    function assigneeMayEditOwnAck() {
+      let beforeCents = resource.data.get('proposedExecutedPriceCentsAssignee', -1);
+      let afterCents = request.resource.data.get('proposedExecutedPriceCentsAssignee', -1);
+      let ack = request.resource.data.get('executedPriceAckAssignee', false);
+      return assigneeOf(resource.data) == request.auth.uid
+        && assigneeOf(resource.data).size() > 0
+        && ownerAckUnchanged()
+        && validAckBool(request.resource.data, 'executedPriceAckAssignee')
+        && (
+          !('proposedExecutedPriceCentsAssignee' in request.resource.data)
+          || (request.resource.data.proposedExecutedPriceCentsAssignee is number
+            && request.resource.data.proposedExecutedPriceCentsAssignee
+              == int(request.resource.data.proposedExecutedPriceCentsAssignee)
+            && request.resource.data.proposedExecutedPriceCentsAssignee >= 0)
+        )
+        && (beforeCents == afterCents || ack == false)
+        && (ack != true || afterCents >= 0);
     }
 
     function jobStatusForwardOnly() {
@@ -243,6 +307,11 @@ service cloud.firestore {
             resource.data.ownerUid == request.auth.uid
             && ownerMayEditListedPrice()
           )
+        )
+        && (
+          ackFieldsUnchanged()
+          || ownerMayEditOwnAck()
+          || assigneeMayEditOwnAck()
         )
         && (
           resource.data.ownerUid == request.auth.uid

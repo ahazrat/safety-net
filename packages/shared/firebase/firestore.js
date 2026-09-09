@@ -66,6 +66,10 @@ export async function createListing(data) {
     stripeCheckoutSessionId: _cs,
     stripeConnectAccountId: _ca,
     btcAdd: _btc,
+    proposedExecutedPriceCentsOwner: _po,
+    proposedExecutedPriceCentsAssignee: _pa,
+    executedPriceAckOwner: _ao,
+    executedPriceAckAssignee: _aa,
     ...rest
   } = data
   const listing = {
@@ -120,6 +124,44 @@ export async function acceptListing(listingId) {
     status: 'accepted',
     assigneeUid: uid,
   })
+}
+
+function offPlatformParty(listing) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Must be signed in')
+  if (listing && listing.ownerUid === uid) return 'owner'
+  if (listing && listing.assigneeUid === uid) return 'assignee'
+  throw new Error('Only the poster or assignee can record an off-platform price')
+}
+
+export async function proposeOffPlatformPrice(listingId, cents) {
+  const n = Number(cents)
+  if (!Number.isInteger(n) || n < 0) {
+    throw new Error('Price must be a whole number of cents')
+  }
+  const listing = await getDocument('listings', listingId)
+  if (!listing) throw new Error('Listing not found')
+  const party = offPlatformParty(listing)
+  const patch = party === 'owner'
+    ? { proposedExecutedPriceCentsOwner: n, executedPriceAckOwner: false }
+    : { proposedExecutedPriceCentsAssignee: n, executedPriceAckAssignee: false }
+  await updateDoc(doc(db, 'listings', listingId), patch)
+}
+
+export async function ackOffPlatformPrice(listingId) {
+  const listing = await getDocument('listings', listingId)
+  if (!listing) throw new Error('Listing not found')
+  const party = offPlatformParty(listing)
+  const cents = party === 'owner'
+    ? listing.proposedExecutedPriceCentsOwner
+    : listing.proposedExecutedPriceCentsAssignee
+  if (!Number.isInteger(cents) || cents < 0) {
+    throw new Error('Propose a price before agreeing')
+  }
+  const patch = party === 'owner'
+    ? { executedPriceAckOwner: true }
+    : { executedPriceAckAssignee: true }
+  await updateDoc(doc(db, 'listings', listingId), patch)
 }
 
 export async function setListingStatus(listingId, status) {

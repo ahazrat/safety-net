@@ -41,4 +41,9 @@ export interface Listing {
    */
   listedPriceCents?: number
   currency?: 'usd'
+  /** Off-platform dual-ack. Clients write only their own pair; not executed/paymentStatus. */
+  proposedExecutedPriceCentsOwner?: number
+  proposedExecutedPriceCentsAssignee?: number
+  executedPriceAckOwner?: boolean
+  executedPriceAckAssignee?: boolean
 }

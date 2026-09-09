@@ -513,6 +513,98 @@ test('admin user cannot set stripe ids on a listing', async () => {
   )
 })
 
+test('create rejects off-platform ack fields', async () => {
+  await assertFails(
+    addDoc(
+      collection(asUser('alice'), 'listings'),
+      validListing({ executedPriceAckOwner: true, proposedExecutedPriceCentsOwner: 100 })
+    )
+  )
+})
+
+test('owner cannot set assignee ack', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'l1'),
+      validListing({ status: 'accepted', assigneeUid: 'bob' })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), {
+      executedPriceAckAssignee: true,
+      proposedExecutedPriceCentsAssignee: 1500,
+    })
+  )
+})
+
+test('admin cannot set owner off-platform ack', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), {
+      uid: 'admin',
+      username: 'boss',
+      email: 'admin@example.com',
+      roles: { ADMIN: 'ADMIN' },
+    })
+    await setDoc(
+      doc(db, 'listings', 'l1'),
+      validListing({ status: 'accepted', assigneeUid: 'bob' })
+    )
+  })
+  await assertFails(
+    updateDoc(doc(asUser('admin'), 'listings', 'l1'), {
+      proposedExecutedPriceCentsOwner: 1500,
+      executedPriceAckOwner: true,
+    })
+  )
+})
+
+test('owner may propose cents; changing cents cannot keep own ack true', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'l1'),
+      validListing({
+        status: 'accepted',
+        assigneeUid: 'bob',
+        proposedExecutedPriceCentsOwner: 1000,
+        executedPriceAckOwner: true,
+      })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), {
+      proposedExecutedPriceCentsOwner: 2000,
+      executedPriceAckOwner: true,
+    })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('alice'), 'listings', 'l1'), {
+      proposedExecutedPriceCentsOwner: 2000,
+      executedPriceAckOwner: false,
+    })
+  )
+})
+
+test('assignee cannot write owner proposed cents', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'l1'),
+      validListing({ status: 'accepted', assigneeUid: 'bob' })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), {
+      proposedExecutedPriceCentsOwner: 1500,
+      executedPriceAckOwner: true,
+    })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), {
+      proposedExecutedPriceCentsAssignee: 1500,
+      executedPriceAckAssignee: false,
+    })
+  )
+})
+
 test('owner may edit listedPriceCents while open', async () => {
   await seed(db =>
     setDoc(doc(db, 'listings', 'l1'), validListing({ listedPriceCents: 1000 }))

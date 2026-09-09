@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text, Card, ActivityIndicator, Button } from 'react-native-paper';
+import { Text, Card, ActivityIndicator, Button, TextInput } from 'react-native-paper';
 import {
 	AuthUserContext,
 	getDocument,
@@ -8,6 +8,11 @@ import {
 	acceptListing,
 	setListingStatus,
 	formatListedPrice,
+	formatCents,
+	dollarsTextToCents,
+	offPlatformAgreedCents,
+	proposeOffPlatformPrice,
+	ackOffPlatformPrice,
 } from '@safety-net/shared';
 import Map from '../Map';
 import PublicProfile from '../PublicProfile';
@@ -19,6 +24,7 @@ const Listing = ({ route, navigation }) => {
 	const [loading, setLoading] = useState(true);
 	const [jobError, setJobError] = useState(null);
 	const [jobBusy, setJobBusy] = useState(false);
+	const [offerDollars, setOfferDollars] = useState('');
 
 	const load = () => {
 		if (!listingId) {
@@ -113,6 +119,59 @@ const Listing = ({ route, navigation }) => {
 				</Button>
 			)}
 			{jobError && <Text style={{ color: '#b00020', marginBottom: 8 }}>{jobError.message}</Text>}
+			{(isOwner || isAssignee) && status !== 'open' && (
+				<Card style={{ marginBottom: 12 }}>
+					<Card.Title title='Off-platform price' />
+					<Card.Content>
+						{offPlatformAgreedCents(listing) != null ? (
+							<Text style={{ marginBottom: 8 }}>
+								We agreed {formatCents(offPlatformAgreedCents(listing))} off-platform.
+							</Text>
+						) : (
+							<Text style={{ marginBottom: 8 }}>
+								Record cash/Venmo here. Both of you propose the same amount and tap agree. This does not mark the job paid in-app.
+							</Text>
+						)}
+						<Text>
+							Poster proposed: {formatCents(listing.proposedExecutedPriceCentsOwner) || '—'}
+							{listing.executedPriceAckOwner ? ' (agreed)' : ''}
+						</Text>
+						<Text style={{ marginBottom: 8 }}>
+							Assignee proposed: {formatCents(listing.proposedExecutedPriceCentsAssignee) || '—'}
+							{listing.executedPriceAckAssignee ? ' (agreed)' : ''}
+						</Text>
+						<TextInput
+							label='Your amount USD'
+							value={offerDollars}
+							onChangeText={setOfferDollars}
+							keyboardType='numeric'
+							style={{ marginBottom: 8 }}
+						/>
+						<Button
+							mode='outlined'
+							disabled={jobBusy}
+							style={{ marginBottom: 8 }}
+							onPress={() => {
+								const cents = dollarsTextToCents(offerDollars);
+								if (cents === undefined || cents === null) {
+									setJobError(new Error('Enter a dollar amount to propose'));
+									return;
+								}
+								runJob(() => proposeOffPlatformPrice(listingId, cents));
+							}}
+						>
+							Propose amount
+						</Button>
+						<Button
+							mode='contained'
+							disabled={jobBusy}
+							onPress={() => runJob(() => ackOffPlatformPrice(listingId))}
+						>
+							I agree to my proposed amount
+						</Button>
+					</Card.Content>
+				</Card>
+			)}
 			{startDate && <Text>Start: {startDate}</Text>}
 			{endDate && <Text>End: {endDate}</Text>}
 			{listing.requirements && (
