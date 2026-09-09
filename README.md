@@ -24,6 +24,7 @@ apps/
 packages/
   shared/   Firebase config, auth logic, domain constants and types used by the app
 docs/
+  payments.md         Remaining payments PRs (Stripe after Chicago done jobs)
   design-reference/   Early mockups and mood-board imagery (no code)
   trello/             Snapshot of the SafetyNet Trello board (ideas, not code)
 ```
@@ -78,7 +79,12 @@ A listing is also a job: `status` is `open`, `accepted`, `in_progress`, or
 assignee. Anyone signed in except the owner can accept an open job
 (sets `assigneeUid` to themselves). The assignee can move it to
 `in_progress` / `done`; the owner can mark it done. Jobs screen lists
-listings you own or are assigned to.
+listings you own or are assigned to. Optional listed USD (`listedPriceCents`;
+omit = no price, `0` = volunteer). After accept, poster and assignee can
+dual-ack an off-platform amount; that does not set paid. Remaining payments
+plan (Stripe only after real Chicago `done` jobs + Blaze):
+[`docs/payments.md`](docs/payments.md). `requirements.stake` is a score, not
+money.
 
 Verification badges (`packages/shared/constants/Badges.js`) live on
 `users/{uid}.badges`. Sign-up creates an empty map; only an admin can grant
@@ -113,7 +119,7 @@ Next (same order as the roadmap):
 1. One neighborhood roster (ops)
 1. EAS iOS / stores once Xcode exists
 1. Teams + listing types
-1. Payments only after real completed jobs
+1. Payments (Stripe/Functions) only after real Chicago `done` jobs — [`docs/payments.md`](docs/payments.md)
 
 Parked (still in Trello, not next): Django/second backend, title plant/MLS,
 insurance, blockchain-as-homepage, national station import.

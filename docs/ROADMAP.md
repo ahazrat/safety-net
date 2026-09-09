@@ -71,7 +71,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Firestore rules + `npm run deploy:rules` | Shipped |
 | Teams of providers | Copy only |
 | Public username + badges on jobs | Shipped (`publicProfiles/{uid}`) |
-| Payments / stake / BTC | Not built |
+| Payments / stake / BTC | Phase 0 shipped: listed price + off-platform dual-ack. Stake is still a score. BTC dead. Stripe/Functions: [`docs/payments.md`](payments.md) after real Chicago `done` jobs + Blaze. |
 | Live scanner audio on the map | Not built (streaming) |
 | Scanner catalogue (Chicago links) | Shipped: Broadcastify official CPD zones + OpenMHz, no autoplay |
 | Crime stats overlay | Shipped: 30-day community-area counts from Chicago Data Portal (SODA). Not raw incidents. |
@@ -130,7 +130,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 
 1. **Teams** (Services copy): a listing can require N people; a captain assigns a roster (Minneapolis model).
 2. **Offerings as listing types** (watch / event / defense) instead of a free-text title only.
-3. **Price signal:** show requirement scores and, later, last-done rates. No in-app payment until a rail is chosen (BTC was on old web listings; do not pretend it works).
+3. **Price signal:** listed USD on create; off-platform dual-ack on accepted jobs. Last-done / Stripe only per [`docs/payments.md`](payments.md). Do not retask `requirements.stake` as dollars. BTC is dead.
 4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
 5. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host. Ops (buy + DNS), not app code.
 
@@ -193,7 +193,7 @@ Providers are **independent contractors**, not SafetyNet employees and not polic
 
 ### Pricing / capture (honest)
 
-Today there is **no take rate**, because there is no payment. GTM can be: free to post and accept. Later: optional featured pin, or a percent of a recorded contract price once a rail exists. Stake-as-bond is in the listing requirements object; it is not money until you define the asset.
+Take rate is **0**. GTM: free to post and accept. Listings may show a listed USD price and an off-platform agreement; that is not a processor. Stripe Connect (after Chicago `done` jobs + Blaze) is in [`docs/payments.md`](payments.md). `requirements.stake` stays a score. No Illinois sales tax on this labor.
 
 ### Narrative assets you already have
 
@@ -217,7 +217,7 @@ Engineering and GTM are the same list for the next stretch.
 4. **LinkedIn + one neighborhood roster** (ops, not code).
 5. **EAS iOS** once Xcode is installed; then store listing.
 6. **Teams** and listing types.
-7. **Payments / stake** only after a roster produced real completed jobs.
+7. **Payments** — remaining work (Functions, Connect, Checkout) only after ≥5 real Chicago `done` jobs and Blaze. Plan: [`docs/payments.md`](payments.md). Do not change stake.
 
 iOS Simulator verification stays last among *dev-environment* tasks; it should not block web GTM.
 
