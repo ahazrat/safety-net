@@ -14,6 +14,12 @@ type MapProps = {
 const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
 const DEFAULT_ZOOM = 11;
 
+// Kept in sync with leafletTemplate.ts's STATION_STYLE (native WebView path).
+const STATION_STYLE: Record<string, { color: string; fillColor: string }> = {
+	police: { color: '#1a4d8f', fillColor: '#2e6fd6' },
+	fire: { color: '#a03d00', fillColor: '#e8590c' },
+};
+
 export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style }: MapProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<L.Map | null>(null);
@@ -41,6 +47,18 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 					weight: 1,
 				}).addTo(map);
 				if (pin.title) circle.bindPopup(pin.title);
+				return;
+			}
+			if (pin.kind === 'police' || pin.kind === 'fire') {
+				const style = STATION_STYLE[pin.kind];
+				const marker = L.circleMarker([pin.lat, pin.lng], {
+					radius: 7,
+					color: style.color,
+					fillColor: style.fillColor,
+					fillOpacity: 0.9,
+					weight: 2,
+				}).addTo(map);
+				if (pin.title) marker.bindPopup(pin.title);
 				return;
 			}
 			const marker = L.marker([pin.lat, pin.lng]).addTo(map);

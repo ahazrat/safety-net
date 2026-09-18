@@ -43,6 +43,14 @@ mounted so those URLs keep working after sign-in or sign-out; the drawer
 only hides items that do not apply. `npx expo start --web` then open
 `http://localhost:8081/map` (port may vary).
 
+Production web is Firebase Hosting on project `safety-net-2022`:
+
+```
+npm run deploy:hosting   # expo export:web → apps/app/web-build → Hosting
+```
+
+Live URL: https://safety-net-2022.web.app (custom domain TBD — `safety-net.us` is taken).
+
 The app shares one Firebase project (`safety-net-2022`, config in
 `packages/shared/firebase/config.js`) for auth and Firestore.
 

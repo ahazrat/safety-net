@@ -2,13 +2,20 @@ export type MapPin = {
 	lat: number;
 	lng: number;
 	title?: string;
-	kind?: 'listing' | 'crime';
+	kind?: 'listing' | 'crime' | 'police' | 'fire';
 	count?: number;
 	radius?: number;
 };
 
 const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
 const DEFAULT_ZOOM = 11;
+
+// Small filled circle markers for station kinds, distinct from listing pins
+// (default Leaflet marker) and crime pins (large translucent circle).
+const STATION_STYLE: Record<string, { color: string; fillColor: string }> = {
+	police: { color: '#1a4d8f', fillColor: '#2e6fd6' },
+	fire: { color: '#a03d00', fillColor: '#e8590c' },
+};
 
 function pinJs(pin: MapPin): string {
 	const lat = Number(pin.lat);
@@ -17,6 +24,10 @@ function pinJs(pin: MapPin): string {
 	if (pin.kind === 'crime') {
 		const radius = Number(pin.radius) || 400;
 		return `L.circle([${lat}, ${lng}], { radius: ${radius}, color: '#922b21', fillColor: '#c0392b', fillOpacity: 0.28, weight: 1 })${popup}.addTo(map);`;
+	}
+	if (pin.kind === 'police' || pin.kind === 'fire') {
+		const style = STATION_STYLE[pin.kind];
+		return `L.circleMarker([${lat}, ${lng}], { radius: 7, color: '${style.color}', fillColor: '${style.fillColor}', fillOpacity: 0.9, weight: 2 })${popup}.addTo(map);`;
 	}
 	return `L.marker([${lat}, ${lng}])${popup}.addTo(map);`;
 }
