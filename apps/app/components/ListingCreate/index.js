@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, HelperText, Switch } from 'react-native-paper';
 
-import { createListing as submitListing, dollarsTextToCents } from '@safety-net/shared';
+import { AuthUserContext, createListing as submitListing, dollarsTextToCents } from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -28,7 +28,23 @@ const styles = StyleSheet.create({
 	},
 });
 
+const SignedOutPrompt = ({ navigation }) => (
+	<View style={[styles.view, { alignItems: 'center', justifyContent: 'center' }]}>
+		<Text variant='headlineSmall' style={{ marginBottom: 8, textAlign: 'center' }}>
+			Sign in to post a request
+		</Text>
+		<Text style={{ marginBottom: 20, textAlign: 'center' }}>
+			Creating a listing requires an account so providers know who they're working with.
+		</Text>
+		<View style={{ flexDirection: 'row', gap: 12 }}>
+			<Button mode='contained' onPress={() => navigation.navigate('SignUp')}>Sign Up</Button>
+			<Button mode='outlined' onPress={() => navigation.navigate('SignIn')}>Sign In</Button>
+		</View>
+	</View>
+);
+
 const ListingCreate = ({ navigation }) => {
+	const authUser = useContext(AuthUserContext);
 	const [title, setTitle] = useState('My new listing');
 	const [startYear, setStartYear] = useState(2021);
 	const [startMonth, setStartMonth] = useState(12);
@@ -46,6 +62,10 @@ const ListingCreate = ({ navigation }) => {
 	const [isPublic, setIsPublic] = useState(true);
 	const [priceDollars, setPriceDollars] = useState('');
 	const [error, setError] = useState(null);
+
+	if (!authUser) {
+		return <SignedOutPrompt navigation={navigation} />;
+	}
 
 	const numInput = (text, value, onChange, width='20%') => (
 		<View style={[styles.numInput, { width: width }]}>

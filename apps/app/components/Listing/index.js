@@ -108,6 +108,15 @@ const Listing = ({ route, navigation }) => {
 					Accept job
 				</Button>
 			)}
+			{!authUser && status === 'open' && (
+				<View style={{ marginBottom: 8 }}>
+					<Text style={{ marginBottom: 8 }}>Sign in to accept this job.</Text>
+					<View style={{ flexDirection: 'row', gap: 12 }}>
+						<Button mode='contained' onPress={() => navigation.navigate('SignUp')}>Sign Up</Button>
+						<Button mode='outlined' onPress={() => navigation.navigate('SignIn')}>Sign In</Button>
+					</View>
+				</View>
+			)}
 			{canStart && (
 				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => setListingStatus(listingId, 'in_progress'))}>
 					Start job

@@ -30,8 +30,8 @@ const SignedOutHome = ({ navigation }) => (
 		<Text variant='headlineMedium'>Welcome to Safety Net</Text>
 		<Text style={{ marginBottom: 20 }}>A decentralized marketplace for security</Text>
 		<View style={{ flexDirection: 'row', gap: 12, marginBottom: 30 }}>
-			<Button mode='contained' onPress={() => navigation.navigate('Services')}>Request</Button>
-			<Button mode='outlined' onPress={() => navigation.navigate('Services')}>Provide</Button>
+			<Button mode='contained' onPress={() => navigation.navigate('ListingCreate')}>Request</Button>
+			<Button mode='outlined' onPress={() => navigation.navigate('Listings')}>Provide</Button>
 		</View>
 		<Text style={{ alignSelf: 'stretch', marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.

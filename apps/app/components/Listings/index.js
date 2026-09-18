@@ -25,11 +25,13 @@ const styles = StyleSheet.create({
 
 const Listings = ({ navigation }) => {
 	const [listings, setListings] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const getListings = () => {
 		listVisibleListings()
 			.then(setListings)
-			.catch(err => console.log(err));
+			.catch(err => console.log(err))
+			.finally(() => setLoading(false));
 	};
 
 	useEffect(getListings, []);
@@ -77,6 +79,11 @@ const Listings = ({ navigation }) => {
 	return (
 		<View style={styles.view}>
 			<Text variant='headlineMedium' style={styles.title}>Listings</Text>
+			{!loading && listings.length === 0 && (
+				<Text style={{ textAlign: 'center', marginTop: 24 }}>
+					No open listings right now. Be the first to post one.
+				</Text>
+			)}
 			{listings.map(singleListing)}
 			<FAB
 				icon='plus'
