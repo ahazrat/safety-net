@@ -104,6 +104,23 @@ two `participants` can read or write; list queries must use
 `participants array-contains auth.uid`. Open a thread from Messages or
 from a listing's "Message owner" button.
 
+Home and the Services screen route straight into the real flows: signed-out
+visitors can browse public listings and the map before hitting a sign-in
+gate at Accept, and every Services offering card opens a prefilled
+`ListingCreate`. Creating or updating a listing/job shows **Sentinel
+Pulse** (`apps/app/components/SentinelPulse`), a short radar-ping
+confirmation animation with an optional tone (on by default, mutable via
+`SentinelMuteToggle`, preference persisted in AsyncStorage) — the same
+component is reused across sign-in, listing creation, and job-status
+changes. `ListingCreate` uses a platform-branching `DateTimeField`
+(`apps/app/components/DateTimeField`; native picker via
+`@react-native-community/datetimepicker`, raw `<input type="date"|"time">`
+on web, which has no picker library support) and a tap-the-map location
+picker instead of raw lat/lng fields. Map pins for listings are tappable
+through to the listing detail screen on both web (Leaflet DOM events) and
+native (WebView `postMessage` with a `type` discriminator, see
+`apps/app/components/Map/leafletTemplate.ts`).
+
 ## Known gaps (not solved by this consolidation, left as follow-ups)
 
 - **iOS Simulator not available in this dev environment**: `Xcode.app`

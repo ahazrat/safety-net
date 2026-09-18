@@ -70,6 +70,11 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Message owner from a listing | Shipped |
 | Firestore rules + `npm run deploy:rules` | Shipped |
 | Teams of providers | Copy only |
+| Home/Services CTAs route to real Listings/ListingCreate flows (no dead ends) | Shipped |
+| Signed-out browsing with sign-in gate at Accept | Shipped |
+| Confirmation animation (Sentinel Pulse: sign-in, create, job status) | Shipped |
+| Date/time + tap-the-map pickers on Create Listing | Shipped |
+| Map pins tap through to listing detail (web + native WebView) | Shipped |
 | Public username + badges on jobs | Shipped (`publicProfiles/{uid}`) |
 | Payments / stake / BTC | Phase 0 shipped: listed price + off-platform dual-ack. Stake is still a score. BTC dead. Stripe/Functions: [`docs/payments.md`](payments.md) after real Chicago `done` jobs + Blaze. |
 | Live scanner audio on the map | Not built (streaming) |
