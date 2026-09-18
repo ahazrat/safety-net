@@ -38,9 +38,16 @@ function pinJs(pin: MapPin): string {
 export function buildLeafletHtml(
 	pins: MapPin[] = [],
 	center: [number, number] = DEFAULT_CENTER,
-	zoom: number = DEFAULT_ZOOM
+	zoom: number = DEFAULT_ZOOM,
+	options: { interactive?: boolean } = {}
 ): string {
 	const markers = pins.map(pinJs).join('\n');
+	// Relayed to Map.native.tsx's WebView onMessage handler as {lat, lng}.
+	const clickHandler = options.interactive
+		? `map.on('click', function(e) {
+			window.ReactNativeWebView.postMessage(JSON.stringify({ lat: e.latlng.lat, lng: e.latlng.lng }));
+		});`
+		: '';
 
 	return `<!DOCTYPE html>
 <html>
@@ -61,6 +68,7 @@ export function buildLeafletHtml(
 			maxZoom: 19
 		}).addTo(map);
 		${markers}
+		${clickHandler}
 	</script>
 </body>
 </html>`;

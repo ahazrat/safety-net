@@ -9,6 +9,8 @@ type MapProps = {
 	center?: [number, number];
 	zoom?: number;
 	style?: ViewStyle;
+	/** When set, tapping the map reports the tapped coordinates instead of (or in addition to) showing pins. */
+	onLocationPress?: (lat: number, lng: number) => void;
 };
 
 const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
@@ -20,9 +22,14 @@ const STATION_STYLE: Record<string, { color: string; fillColor: string }> = {
 	fire: { color: '#a03d00', fillColor: '#e8590c' },
 };
 
-export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style }: MapProps) {
+export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style, onLocationPress }: MapProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<L.Map | null>(null);
+	// Read via a ref inside the click handler so re-renders that only change
+	// the callback identity don't force the whole map (and its pins) to
+	// tear down and rebuild.
+	const onLocationPressRef = useRef(onLocationPress);
+	onLocationPressRef.current = onLocationPress;
 
 	useEffect(() => {
 		if (!containerRef.current) return;
@@ -36,6 +43,10 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
 		}).addTo(map);
+
+		map.on('click', (e: L.LeafletMouseEvent) => {
+			onLocationPressRef.current?.(e.latlng.lat, e.latlng.lng);
+		});
 
 		pins.forEach(pin => {
 			if (pin.kind === 'crime') {
