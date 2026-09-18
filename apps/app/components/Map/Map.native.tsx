@@ -9,14 +9,18 @@ type MapProps = {
 	zoom?: number;
 	style?: ViewStyle;
 	onLocationPress?: (lat: number, lng: number) => void;
+	onPinPress?: (id: string) => void;
 };
 
-export default function Map({ pins = [], center, zoom, style, onLocationPress }: MapProps) {
+export default function Map({ pins = [], center, zoom, style, onLocationPress, onPinPress }: MapProps) {
 	const onMessage = (event: WebViewMessageEvent) => {
-		if (!onLocationPress) return;
 		try {
-			const { lat, lng } = JSON.parse(event.nativeEvent.data);
-			if (typeof lat === 'number' && typeof lng === 'number') onLocationPress(lat, lng);
+			const data = JSON.parse(event.nativeEvent.data);
+			if (data.type === 'location' && onLocationPress && typeof data.lat === 'number' && typeof data.lng === 'number') {
+				onLocationPress(data.lat, data.lng);
+			} else if (data.type === 'pin' && onPinPress && typeof data.id === 'string') {
+				onPinPress(data.id);
+			}
 		} catch (e) {
 			// Ignore malformed messages rather than crash the screen over a tap.
 		}

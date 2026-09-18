@@ -48,6 +48,7 @@ export default function MapScreen({ navigation }) {
 				center={CHICAGO_CENTER}
 				zoom={CHICAGO_ZOOM}
 				style={{ flex: 1, height: '100%' }}
+				onPinPress={(id) => navigation.navigate('Listing', { listingId: id })}
 			/>
 		</View>
 	);

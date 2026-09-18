@@ -69,9 +69,9 @@ function defaultEnd() {
 	return d;
 }
 
-const ListingCreate = ({ navigation }) => {
+const ListingCreate = ({ navigation, route }) => {
 	const authUser = useContext(AuthUserContext);
-	const [title, setTitle] = useState('My new listing');
+	const [title, setTitle] = useState(route?.params?.title || 'My new listing');
 	const [startDate, setStartDate] = useState(defaultStart);
 	const [endDate, setEndDate] = useState(defaultEnd);
 	const [repeatDays, setRepeatDays] = useState(['Mo', 'We', 'Fr']);

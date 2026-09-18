@@ -5,6 +5,8 @@ export type MapPin = {
 	kind?: 'listing' | 'crime' | 'police' | 'fire';
 	count?: number;
 	radius?: number;
+	/** Listing id; when present the pin is tappable (see onPinPress). */
+	id?: string;
 };
 
 const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
@@ -29,7 +31,12 @@ function pinJs(pin: MapPin): string {
 		const style = STATION_STYLE[pin.kind];
 		return `L.circleMarker([${lat}, ${lng}], { radius: 7, color: '${style.color}', fillColor: '${style.fillColor}', fillOpacity: 0.9, weight: 2 })${popup}.addTo(map);`;
 	}
-	return `L.marker([${lat}, ${lng}])${popup}.addTo(map);`;
+	// Relayed to Map.native.tsx's WebView onMessage handler; ignored (no id
+	// to navigate to) for any marker built from a non-listing pin.
+	const pinClick = pin.id
+		? `.on('click', function() { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'pin', id: ${JSON.stringify(pin.id)} })); })`
+		: '';
+	return `L.marker([${lat}, ${lng}])${popup}${pinClick}.addTo(map);`;
 }
 
 // Builds a standalone HTML document that renders an OSM/Leaflet map with the
@@ -42,10 +49,9 @@ export function buildLeafletHtml(
 	options: { interactive?: boolean } = {}
 ): string {
 	const markers = pins.map(pinJs).join('\n');
-	// Relayed to Map.native.tsx's WebView onMessage handler as {lat, lng}.
 	const clickHandler = options.interactive
 		? `map.on('click', function(e) {
-			window.ReactNativeWebView.postMessage(JSON.stringify({ lat: e.latlng.lat, lng: e.latlng.lng }));
+			window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'location', lat: e.latlng.lat, lng: e.latlng.lng }));
 		});`
 		: '';
 

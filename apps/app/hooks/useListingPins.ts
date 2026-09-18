@@ -12,6 +12,7 @@ export default function useListingPins(): MapPin[] {
 					listings
 						.filter(listing => listing.location && listing.location.lat != null && listing.location.lng != null)
 						.map(listing => ({
+							id: listing.id,
 							lat: listing.location.lat,
 							lng: listing.location.lng,
 							title: listing.title,

@@ -11,6 +11,8 @@ type MapProps = {
 	style?: ViewStyle;
 	/** When set, tapping the map reports the tapped coordinates instead of (or in addition to) showing pins. */
 	onLocationPress?: (lat: number, lng: number) => void;
+	/** Called with a pin's `id` when a pin that has one is tapped (e.g. a listing marker). */
+	onPinPress?: (id: string) => void;
 };
 
 const DEFAULT_CENTER: [number, number] = [41.85, -87.65];
@@ -22,14 +24,16 @@ const STATION_STYLE: Record<string, { color: string; fillColor: string }> = {
 	fire: { color: '#a03d00', fillColor: '#e8590c' },
 };
 
-export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style, onLocationPress }: MapProps) {
+export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, style, onLocationPress, onPinPress }: MapProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<L.Map | null>(null);
-	// Read via a ref inside the click handler so re-renders that only change
-	// the callback identity don't force the whole map (and its pins) to
-	// tear down and rebuild.
+	// Read via refs inside handlers so re-renders that only change a
+	// callback's identity don't force the whole map (and its pins) to tear
+	// down and rebuild.
 	const onLocationPressRef = useRef(onLocationPress);
 	onLocationPressRef.current = onLocationPress;
+	const onPinPressRef = useRef(onPinPress);
+	onPinPressRef.current = onPinPress;
 
 	useEffect(() => {
 		if (!containerRef.current) return;
@@ -74,6 +78,7 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 			}
 			const marker = L.marker([pin.lat, pin.lng]).addTo(map);
 			if (pin.title) marker.bindPopup(pin.title);
+			if (pin.id) marker.on('click', () => onPinPressRef.current?.(pin.id as string));
 		});
 
 		return () => {

@@ -8,7 +8,7 @@ import useListingPins from '../../hooks/useListingPins';
 import useChicagoCrimePins from '../../hooks/useChicagoCrimePins';
 import { CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
 
-function HomeMap() {
+function HomeMap({ navigation }) {
 	const listings = useListingPins();
 	const crime = useChicagoCrimePins();
 	return (
@@ -17,6 +17,7 @@ function HomeMap() {
 			center={CHICAGO_CENTER}
 			zoom={CHICAGO_ZOOM}
 			style={{ width: '100%', height: 400 }}
+			onPinPress={(id) => navigation.navigate('Listing', { listingId: id })}
 		/>
 	);
 }
@@ -36,7 +37,7 @@ const SignedOutHome = ({ navigation }) => (
 		<Text style={{ alignSelf: 'stretch', marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
-		<HomeMap />
+		<HomeMap navigation={navigation} />
 	</View>
 );
 
@@ -51,7 +52,7 @@ const SignedInHome = ({ navigation }) => (
 		<Text style={{ marginTop: 16, marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
-		<HomeMap />
+		<HomeMap navigation={navigation} />
 	</View>
 );
 
