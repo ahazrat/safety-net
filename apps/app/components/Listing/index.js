@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text, Card, ActivityIndicator, Button, TextInput } from 'react-native-paper';
 import {
@@ -16,6 +16,9 @@ import {
 } from '@safety-net/shared';
 import Map from '../Map';
 import PublicProfile from '../PublicProfile';
+import SentinelPulse from '../SentinelPulse';
+
+const CONFIRM_PULSE_MS = 900;
 
 const Listing = ({ route, navigation }) => {
 	const authUser = useContext(AuthUserContext);
@@ -25,6 +28,9 @@ const Listing = ({ route, navigation }) => {
 	const [jobError, setJobError] = useState(null);
 	const [jobBusy, setJobBusy] = useState(false);
 	const [offerDollars, setOfferDollars] = useState('');
+	const [pulseVisible, setPulseVisible] = useState(false);
+	const [pulseKey, setPulseKey] = useState(0);
+	const pulseTimer = useRef(null);
 
 	const load = () => {
 		if (!listingId) {
@@ -40,6 +46,8 @@ const Listing = ({ route, navigation }) => {
 	useEffect(() => {
 		load();
 	}, [listingId]);
+
+	useEffect(() => () => clearTimeout(pulseTimer.current), []);
 
 	if (loading) {
 		return (
@@ -70,6 +78,12 @@ const Listing = ({ route, navigation }) => {
 		setJobError(null);
 		fn()
 			.then(load)
+			.then(() => {
+				setPulseKey(k => k + 1);
+				setPulseVisible(true);
+				clearTimeout(pulseTimer.current);
+				pulseTimer.current = setTimeout(() => setPulseVisible(false), CONFIRM_PULSE_MS);
+			})
 			.catch(setJobError)
 			.finally(() => setJobBusy(false));
 	};
@@ -83,6 +97,12 @@ const Listing = ({ route, navigation }) => {
 
 	return (
 		<ScrollView style={{ padding: 16 }}>
+			{pulseVisible && (
+				<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+					<SentinelPulse key={pulseKey} status='confirmed' label='Updated' size={40} />
+					<Text style={{ marginLeft: 8 }}>Updated</Text>
+				</View>
+			)}
 			<Text variant='headlineMedium' style={{ marginBottom: 12 }}>{listing.title || 'Legacy listing'}</Text>
 			{authUser && listing.ownerUid && listing.ownerUid !== authUser.uid && (
 				<Button

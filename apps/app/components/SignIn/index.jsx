@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 import { doSignInWithEmailAndPassword, validateEmail } from '@safety-net/shared';
 import { SignUpLink } from '../SignUp';
 import { ForgotPasswordLink } from '../PasswordForget';
+import SentinelPulse, { SentinelMuteToggle } from '../SentinelPulse';
+
+const SIGN_IN_PULSE_MS = 850;
 
 const SignIn = ({ navigation }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState(null);
+	const [signedIn, setSignedIn] = useState(false);
 
 	const emailError = validateEmail(email);
 	const isInvalid = !!emailError || password === '';
@@ -20,10 +24,26 @@ const SignIn = ({ navigation }) => {
 				setEmail('');
 				setPassword('');
 				setError(null);
-				navigation.navigate('Home');
+				setSignedIn(true);
 			})
 			.catch(setError);
 	};
+
+	useEffect(() => {
+		if (!signedIn) return;
+		const timer = setTimeout(() => navigation.navigate('Home'), SIGN_IN_PULSE_MS);
+		return () => clearTimeout(timer);
+	}, [signedIn]);
+
+	if (signedIn) {
+		return (
+			<View style={{ padding: 16, alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+				<SentinelPulse status='confirmed' label='Signed in' size={80} />
+				<Text style={{ marginTop: 12 }}>Signed in</Text>
+				<SentinelMuteToggle />
+			</View>
+		);
+	}
 
 	return (
 		<View style={{ padding: 16 }}>

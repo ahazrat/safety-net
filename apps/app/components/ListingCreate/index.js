@@ -1,8 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, HelperText, Switch } from 'react-native-paper';
 
 import { AuthUserContext, createListing as submitListing, dollarsTextToCents } from '@safety-net/shared';
+import SentinelPulse from '../SentinelPulse';
+
+const CREATE_PULSE_MS = 850;
 
 const styles = StyleSheet.create({
 	view: {
@@ -62,9 +65,25 @@ const ListingCreate = ({ navigation }) => {
 	const [isPublic, setIsPublic] = useState(true);
 	const [priceDollars, setPriceDollars] = useState('');
 	const [error, setError] = useState(null);
+	const [created, setCreated] = useState(false);
+
+	useEffect(() => {
+		if (!created) return;
+		const timer = setTimeout(() => navigation.navigate('Listings'), CREATE_PULSE_MS);
+		return () => clearTimeout(timer);
+	}, [created]);
 
 	if (!authUser) {
 		return <SignedOutPrompt navigation={navigation} />;
+	}
+
+	if (created) {
+		return (
+			<View style={[styles.view, { alignItems: 'center', justifyContent: 'center' }]}>
+				<SentinelPulse status='confirmed' label='Listing posted' size={80} />
+				<Text style={{ marginTop: 12 }}>Listing posted</Text>
+			</View>
+		);
 	}
 
 	const numInput = (text, value, onChange, width='20%') => (
@@ -136,7 +155,7 @@ const ListingCreate = ({ navigation }) => {
 		}
 		setError(null);
 		submitListing(newListing)
-			.then(() => navigation.navigate('Listings'))
+			.then(() => setCreated(true))
 			.catch(setError);
 	};
 
