@@ -67,7 +67,7 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 			if (pin.kind === 'police' || pin.kind === 'fire') {
 				const style = STATION_STYLE[pin.kind];
 				const marker = L.circleMarker([pin.lat, pin.lng], {
-					radius: 7,
+					radius: 9,
 					color: style.color,
 					fillColor: style.fillColor,
 					fillOpacity: 0.9,

@@ -29,7 +29,7 @@ function pinJs(pin: MapPin): string {
 	}
 	if (pin.kind === 'police' || pin.kind === 'fire') {
 		const style = STATION_STYLE[pin.kind];
-		return `L.circleMarker([${lat}, ${lng}], { radius: 7, color: '${style.color}', fillColor: '${style.fillColor}', fillOpacity: 0.9, weight: 2 })${popup}.addTo(map);`;
+		return `L.circleMarker([${lat}, ${lng}], { radius: 9, color: '${style.color}', fillColor: '${style.fillColor}', fillOpacity: 0.9, weight: 2 })${popup}.addTo(map);`;
 	}
 	// Relayed to Map.native.tsx's WebView onMessage handler; ignored (no id
 	// to navigate to) for any marker built from a non-listing pin.
