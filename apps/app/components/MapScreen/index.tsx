@@ -37,8 +37,8 @@ export default function MapScreen({ navigation }) {
 		<View style={{ flex: 1 }}>
 			<View style={{ paddingHorizontal: 12, paddingTop: 8, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
 				<LayerToggle value={showCrime} onValueChange={setShowCrime} label="Crime (30 days)" />
-				<LayerToggle value={showPolice} onValueChange={setShowPolice} label="Police stations" />
-				<LayerToggle value={showFire} onValueChange={setShowFire} label="Fire stations" />
+				<LayerToggle value={showPolice} onValueChange={setShowPolice} label={`Police stations (${police.length})`} />
+				<LayerToggle value={showFire} onValueChange={setShowFire} label={`Fire stations (${fire.length})`} />
 				<Button compact onPress={() => navigation.navigate('Scanners')} style={{ marginBottom: 8 }}>
 					Scanners
 				</Button>
