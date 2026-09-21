@@ -55,7 +55,7 @@ The Minneapolis / “street captain + green-light patrol” note on Trello is th
 
 ## What is true in the product today
 
-Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase project **`safety-net-2022`**.
+Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase project **`safetynet-us`**. Prod Firestore data remains on `safety-net-2022` until an export/import.
 
 | Capability | Status |
 | --- | --- |

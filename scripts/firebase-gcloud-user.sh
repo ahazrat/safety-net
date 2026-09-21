@@ -12,7 +12,7 @@ if [[ ! -f "$ADC" ]]; then
   exit 1
 fi
 export GOOGLE_APPLICATION_CREDENTIALS="$ADC"
-export GOOGLE_CLOUD_QUOTA_PROJECT="${GOOGLE_CLOUD_QUOTA_PROJECT:-safety-net-2022}"
+export GOOGLE_CLOUD_QUOTA_PROJECT="${GOOGLE_CLOUD_QUOTA_PROJECT:-safetynet-us}"
 # Drop inherited ADC that points at the fire-ice SA / broken default ADC.
 unset CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
