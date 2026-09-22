@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text, Card, ActivityIndicator, Button, TextInput } from 'react-native-paper';
+import { Text, Card, Chip, ActivityIndicator, Button, TextInput } from 'react-native-paper';
 import {
 	AuthUserContext,
 	getDocument,
@@ -13,6 +13,7 @@ import {
 	offPlatformAgreedCents,
 	proposeOffPlatformPrice,
 	ackOffPlatformPrice,
+	listingTypeLabel,
 } from '@safety-net/shared';
 import Map from '../Map';
 import PublicProfile from '../PublicProfile';
@@ -103,7 +104,10 @@ const Listing = ({ route, navigation }) => {
 					<Text style={{ marginLeft: 8 }}>Updated</Text>
 				</View>
 			)}
-			<Text variant='headlineMedium' style={{ marginBottom: 12 }}>{listing.title || 'Legacy listing'}</Text>
+			<Text variant='headlineMedium' style={{ marginBottom: 8 }}>{listing.title || 'Legacy listing'}</Text>
+			<Chip compact style={{ alignSelf: 'flex-start', marginBottom: 12 }}>
+				{listingTypeLabel(listing)}
+			</Chip>
 			{authUser && listing.ownerUid && listing.ownerUid !== authUser.uid && (
 				<Button
 					mode='outlined'

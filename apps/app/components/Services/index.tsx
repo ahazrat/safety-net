@@ -12,17 +12,17 @@ const CARDS = [
 	{ text1: 'Feature', text2: 'Badges', text3: 'verification', text4: 'badges that can be earned by providers include: professional-demeanor, complete-profile, de-escalation, self-defense, personal-defense, weapons-non-lethal, weapons-lethal, emergency-response, cpr' },
 	{ text1: 'Feature', text2: 'Teams', text3: 'feature', text4: 'combine strengths and needs into Teams to maximize value for all sides' },
 
-	{ text1: 'Offering', text2: 'Neighborhood Watch', text3: 'pay-per-contract', text4: 'hire a local, trusted agent to monitor a given area provide surveillance at a given time', link: 'request' },
-	{ text1: 'Offering', text2: 'Event Security', text3: 'pay-per-contract', text4: 'real, human presence with specific directives to handle rare occurances', link: 'request' },
-	{ text1: 'Offering', text2: 'Physical Defense', text3: 'pay-per-contract', text4: 'professionally trained and certified agents when you need them', link: 'request' },
+	{ text1: 'Offering', text2: 'Neighborhood Watch', text3: 'pay-per-contract', text4: 'hire a local, trusted agent to monitor a given area provide surveillance at a given time', link: 'request', listingType: 'watch' },
+	{ text1: 'Offering', text2: 'Event Security', text3: 'pay-per-contract', text4: 'real, human presence with specific directives to handle rare occurances', link: 'request', listingType: 'event' },
+	{ text1: 'Offering', text2: 'Physical Defense', text3: 'pay-per-contract', text4: 'professionally trained and certified agents when you need them', link: 'request', listingType: 'defense' },
 
-	{ text1: 'Offering', text2: 'ID Verification', text3: 'pay-per-contract', text4: '', link: 'request' },
-	{ text1: 'Offering', text2: 'Safe Rides', text3: 'pay-per-contract', text4: '', link: 'request' },
-	{ text1: 'Offering', text2: 'Notary', text3: 'pay-per-contract', text4: '', link: 'request' },
+	{ text1: 'Offering', text2: 'ID Verification', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
+	{ text1: 'Offering', text2: 'Safe Rides', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
+	{ text1: 'Offering', text2: 'Notary', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
 
-	{ text1: 'Offering', text2: 'Credit Check', text3: 'pay-per-contract', text4: '', link: 'request' },
-	{ text1: 'Offering', text2: 'Arbiter', text3: 'pay-per-contract', text4: '', link: 'request' },
-	{ text1: 'Offering', text2: 'Assessment', text3: 'pay-per-contract', text4: '', link: 'request' },
+	{ text1: 'Offering', text2: 'Credit Check', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
+	{ text1: 'Offering', text2: 'Arbiter', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
+	{ text1: 'Offering', text2: 'Assessment', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
 
 	{ text1: 'Outcome', text2: 'Reliability', text3: 'value', text4: 'synonymous with stability, streamlined development and operations, and a better user experience' },
 	{ text1: 'Outcome', text2: 'Ease of mind', text3: 'value', text4: 'security, confidence, certainty, comfort, safety, assurance, reassurance, conviction, happiness and sureness' },
@@ -34,7 +34,7 @@ export default function ServicesScreen({ navigation }) {
 		<ScrollView contentContainerStyle={{ padding: 16 }}>
 			<Text variant='headlineMedium' style={{ marginBottom: 16 }}>What is Safety Net</Text>
 			<View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-				{CARDS.map(({ link, ...card }, i) => (
+				{CARDS.map(({ link, listingType, ...card }, i) => (
 					<BasicCard
 						key={i}
 						{...card}
@@ -42,7 +42,10 @@ export default function ServicesScreen({ navigation }) {
 							link === 'Listings'
 								? () => navigation.navigate('Listings')
 								: link === 'request'
-									? () => navigation.navigate('ListingCreate', { title: card.text2 })
+									? () => navigation.navigate('ListingCreate', {
+										title: card.text2,
+										listingType: listingType || 'other',
+									})
 									: undefined
 						}
 					/>

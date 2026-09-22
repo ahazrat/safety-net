@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { db, app } from './app'
 import { auth } from './auth'
+import { normalizeListingType } from '../utils/listingType'
 
 export async function getCollection(col) {
   const snapshot = await getDocs(collection(db, col))
@@ -76,6 +77,7 @@ export async function createListing(data) {
     ...rest,
     visibility,
     status: 'open',
+    listingType: normalizeListingType(rest.listingType, rest.title),
     ownerUid: uid,
     createdAt: serverTimestamp(),
   }

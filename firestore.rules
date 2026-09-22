@@ -99,7 +99,9 @@ service cloud.firestore {
     // caller's ownerUid — unfiltered collection scans are denied once any
     // private listing exists.
     // Create requires a non-empty title, a lat/lng location, and a valid
-    // visibility. ownerUid is stamped by the client helper and is immutable.
+    // visibility. listingType if present must be watch|event|defense|other.
+    // ownerUid is stamped by the client helper and is immutable.
+    // Legacy docs may omit listingType; create/update may leave it missing.
     function listingVisibility(data) {
       return !('visibility' in data) || data.visibility == 'public'
         ? 'public'
@@ -137,6 +139,14 @@ service cloud.firestore {
         );
     }
 
+    function listingTypeOf(data) {
+      return !('listingType' in data) ? 'other' : data.listingType;
+    }
+
+    function validListingType(data) {
+      return listingTypeOf(data) in ['watch', 'event', 'defense', 'other'];
+    }
+
     function validListingShape(data) {
       return data.ownerUid is string
         && data.ownerUid.size() > 0
@@ -147,7 +157,8 @@ service cloud.firestore {
         && data.location.lat is number
         && data.location.lng is number
         && validVisibility(data)
-        && validJob(data);
+        && validJob(data)
+        && validListingType(data);
     }
 
     function paymentStatusOf(data) {
@@ -282,7 +293,8 @@ service cloud.firestore {
     function jobContentUnchanged() {
       return request.resource.data.title == resource.data.title
         && listingVisibility(request.resource.data) == listingVisibility(resource.data)
-        && request.resource.data.location == resource.data.location;
+        && request.resource.data.location == resource.data.location
+        && listingTypeOf(request.resource.data) == listingTypeOf(resource.data);
     }
 
     match /listings/{listingId} {

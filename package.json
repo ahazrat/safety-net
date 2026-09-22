@@ -15,6 +15,7 @@
     "test:geo": "node --test tests/chicago.geo.test.js",
     "test:stations": "node --test tests/chicago.stations.test.js",
     "test:money": "node --test tests/money.test.js",
+    "test:listingType": "node --test tests/listingType.test.js",
     "deploy:rules": "bash scripts/firebase-gcloud-user.sh deploy --only firestore:rules --project safetynet-us",
     "build:web": "npm run build:web --workspace=@safety-net/app",
     "deploy:hosting": "npm run build:web && bash scripts/firebase-gcloud-user.sh deploy --only hosting --project safetynet-us"

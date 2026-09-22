@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, Card, FAB } from 'react-native-paper';
-import { listVisibleListings, listingStatusOf, formatListedPrice } from '@safety-net/shared';
+import { Text, Card, Chip, FAB } from 'react-native-paper';
+import {
+	listVisibleListings,
+	listingStatusOf,
+	formatListedPrice,
+	listingTypeOf,
+	listingTypeLabel,
+	LISTING_TYPE_CHIPS,
+} from '@safety-net/shared';
 
 const styles = StyleSheet.create({
 	view: {
@@ -26,6 +33,7 @@ const styles = StyleSheet.create({
 const Listings = ({ navigation }) => {
 	const [listings, setListings] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [typeFilter, setTypeFilter] = useState(null);
 
 	const getListings = () => {
 		listVisibleListings()
@@ -59,6 +67,9 @@ const Listings = ({ navigation }) => {
 			>
 				<Card.Title title={listing.title || 'Legacy listing'} />
 				<Card.Content>
+					<Chip compact style={{ alignSelf: 'flex-start', marginBottom: 6 }}>
+						{listingTypeLabel(listing)}
+					</Chip>
 					<Text>Status: {listingStatusOf(listing).replace('_', ' ')}</Text>
 					<Text>Price: {formatListedPrice(listing) || 'No price set'}</Text>
 					{startDate && <Text>Start: {startDate}</Text>}
@@ -76,15 +87,37 @@ const Listings = ({ navigation }) => {
 		);
 	};
 
+	const visible = typeFilter
+		? listings.filter(listing => listingTypeOf(listing) === typeFilter)
+		: listings;
+
 	return (
 		<View style={styles.view}>
 			<Text variant='headlineMedium' style={styles.title}>Listings</Text>
+			<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+				<Chip compact selected={typeFilter == null} onPress={() => setTypeFilter(null)}>All</Chip>
+				{LISTING_TYPE_CHIPS.map(({ value, label }) => (
+					<Chip
+						key={value}
+						compact
+						selected={typeFilter === value}
+						onPress={() => setTypeFilter(value)}
+					>
+						{label}
+					</Chip>
+				))}
+			</View>
 			{!loading && listings.length === 0 && (
 				<Text style={{ textAlign: 'center', marginTop: 24 }}>
 					No open listings right now. Be the first to post one.
 				</Text>
 			)}
-			{listings.map(singleListing)}
+			{!loading && listings.length > 0 && visible.length === 0 && (
+				<Text style={{ textAlign: 'center', marginTop: 24 }}>
+					No listings of this type.
+				</Text>
+			)}
+			{visible.map(singleListing)}
 			<FAB
 				icon='plus'
 				label='Create a listing'

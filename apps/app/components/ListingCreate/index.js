@@ -1,8 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, HelperText, Switch, Chip } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
-import { AuthUserContext, createListing as submitListing, dollarsTextToCents, CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
+import {
+	AuthUserContext,
+	createListing as submitListing,
+	dollarsTextToCents,
+	CHICAGO_CENTER,
+	CHICAGO_ZOOM,
+	LISTING_TYPE_CHIPS,
+	normalizeListingType,
+	defaultTitleForListingType,
+} from '@safety-net/shared';
 import SentinelPulse from '../SentinelPulse';
 import DateTimeField from '../DateTimeField';
 import Map from '../Map';
@@ -69,9 +79,19 @@ function defaultEnd() {
 	return d;
 }
 
+function typeFromRoute(params) {
+	return normalizeListingType(params?.listingType, params?.title);
+}
+
+function titleFromRoute(params) {
+	if (params?.title) return params.title;
+	return defaultTitleForListingType(typeFromRoute(params));
+}
+
 const ListingCreate = ({ navigation, route }) => {
 	const authUser = useContext(AuthUserContext);
-	const [title, setTitle] = useState(route?.params?.title || 'My new listing');
+	const [listingType, setListingType] = useState(() => typeFromRoute(route?.params));
+	const [title, setTitle] = useState(() => titleFromRoute(route?.params));
 	const [startDate, setStartDate] = useState(defaultStart);
 	const [endDate, setEndDate] = useState(defaultEnd);
 	const [repeatDays, setRepeatDays] = useState(['Mo', 'We', 'Fr']);
@@ -81,11 +101,34 @@ const ListingCreate = ({ navigation, route }) => {
 	const [error, setError] = useState(null);
 	const [created, setCreated] = useState(false);
 
+	useFocusEffect(useCallback(() => {
+		setCreated(false);
+	}, []));
+
+	useEffect(() => {
+		const params = route?.params;
+		if (params && (params.listingType != null || params.title != null)) {
+			setListingType(typeFromRoute(params));
+			setTitle(titleFromRoute(params));
+		}
+	}, [route?.params?.listingType, route?.params?.title]);
+
 	useEffect(() => {
 		if (!created) return;
 		const timer = setTimeout(() => navigation.navigate('Listings'), CREATE_PULSE_MS);
 		return () => clearTimeout(timer);
 	}, [created]);
+
+	const selectType = (next) => {
+		setListingType(next);
+		setTitle(prev => {
+			const prevDefault = defaultTitleForListingType(listingType);
+			if (!String(prev).trim() || prev === prevDefault) {
+				return defaultTitleForListingType(next);
+			}
+			return prev;
+		});
+	};
 
 	if (!authUser) {
 		return <SignedOutPrompt navigation={navigation} />;
@@ -120,6 +163,7 @@ const ListingCreate = ({ navigation, route }) => {
 		}
 		const newListing = {
 			title: String(title).trim(),
+			listingType,
 			visibility: isPublic ? 'public' : 'private',
 			dateRange: {
 				start: {
@@ -172,9 +216,22 @@ const ListingCreate = ({ navigation, route }) => {
 	return (
 		<ScrollView contentContainerStyle={styles.view}>
 			<Text variant='headlineMedium' style={styles.title}>Create Listing</Text>
+			<Text variant='titleMedium' style={styles.sectionLabel}>Type</Text>
+			<View style={styles.dayRow}>
+				{LISTING_TYPE_CHIPS.map(({ value, label }) => (
+					<Chip
+						key={value}
+						selected={listingType === value}
+						onPress={() => selectType(value)}
+						compact
+					>
+						{label}
+					</Chip>
+				))}
+			</View>
 			<TextInput
 				style={styles.textInput}
-				label='Title'
+				label='Title (optional override)'
 				value={title}
 				onChangeText={setTitle}
 			/>

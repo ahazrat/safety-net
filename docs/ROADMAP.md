@@ -62,7 +62,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Email/password auth, stronger passwords, email format check | Shipped |
 | User docs; ADMIN granted only by an existing admin | Shipped |
 | Public map pins from listings with lat/lng | Shipped (web verified; iOS simulator not) |
-| Create listing (title, schedule, location, public/private) | Shipped |
+| Create listing (type watch/event/defense/other, title, schedule, location, public/private) | Shipped |
 | Job lifecycle: open → accepted → in_progress → done + assignee | Shipped |
 | Jobs screen (owned or assigned) | Shipped |
 | Admin-granted verification badges | Shipped |
@@ -134,7 +134,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 ### Then — marketplace density
 
 1. **Teams** (Services copy): a listing can require N people; a captain assigns a roster (Minneapolis model).
-2. **Offerings as listing types** (watch / event / defense) instead of a free-text title only.
+2. **Offerings as listing types** — shipped (`listingType`: watch / event / defense / other). Services Offering cards prefill type + title; Create has a type picker; list/detail show a type chip.
 3. **Price signal:** listed USD on create; off-platform dual-ack on accepted jobs. Last-done / Stripe only per [`docs/payments.md`](payments.md). Do not retask `requirements.stake` as dollars. BTC is dead.
 4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
 5. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host. Ops (buy + DNS), not app code.
@@ -221,7 +221,7 @@ Engineering and GTM are the same list for the next stretch.
 3. **Hand-seeded Chicago station pins.** Done for CPD + CFD on Map (deepen/verify as addresses change).
 4. **LinkedIn + one neighborhood roster** (ops, not code).
 5. **EAS iOS** once Xcode is installed; then store listing.
-6. **Teams** and listing types.
+6. **Teams**. Listing types shipped.
 7. **Payments** — remaining work (Functions, Connect, Checkout) only after ≥5 real Chicago `done` jobs and Blaze. Plan: [`docs/payments.md`](payments.md). Do not change stake.
 
 iOS Simulator verification stays last among *dev-environment* tasks; it should not block web GTM.

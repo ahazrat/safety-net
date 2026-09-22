@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList } from 'react-native';
 import { Text, Card, Chip, HelperText } from 'react-native-paper';
-import { listMyJobs, listingStatusOf, withAuthorization, getPublicProfile, formatListedPrice, formatCents, offPlatformAgreedCents } from '@safety-net/shared';
+import { listMyJobs, listingStatusOf, listingTypeLabel, withAuthorization, getPublicProfile, formatListedPrice, formatCents, offPlatformAgreedCents } from '@safety-net/shared';
 
 const JobsScreen = ({ navigation }) => {
 	const [jobs, setJobs] = useState([]);
@@ -44,7 +44,10 @@ const JobsScreen = ({ navigation }) => {
 					>
 						<Card.Title title={item.title || 'Legacy listing'} />
 						<Card.Content>
-							<Chip compact>{listingStatusOf(item).replace('_', ' ')}</Chip>
+							<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+								<Chip compact>{listingTypeLabel(item)}</Chip>
+								<Chip compact>{listingStatusOf(item).replace('_', ' ')}</Chip>
+							</View>
 							<Text style={{ marginTop: 8 }}>
 								Price: {formatListedPrice(item) || 'No price set'}
 							</Text>

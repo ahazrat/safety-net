@@ -10,7 +10,7 @@ export type RootStackParamList = {
   Account: undefined;
   Listings: undefined;
   Listing: { listingId: string } | undefined;
-  ListingCreate: undefined;
+  ListingCreate: { title?: string; listingType?: 'watch' | 'event' | 'defense' | 'other' } | undefined;
   Jobs: undefined;
   Services: undefined;
   Map: undefined;

@@ -59,6 +59,7 @@ function validListing(overrides = {}) {
     ownerUid: 'alice',
     visibility: 'public',
     location: { lat: 41.8, lng: -87.6 },
+    listingType: 'watch',
     ...overrides,
   }
 }
@@ -95,6 +96,59 @@ test('signed-in user can create a listing they own', async () => {
 test('signed-in user cannot create a listing owned by someone else', async () => {
   await assertFails(
     addDoc(collection(asUser('alice'), 'listings'), validListing({ ownerUid: 'bob' }))
+  )
+})
+
+test('create accepts listingType enum and rejects unknown values', async () => {
+  const alice = asUser('alice')
+  await assertSucceeds(
+    addDoc(collection(alice, 'listings'), validListing({ listingType: 'event' }))
+  )
+  await assertSucceeds(
+    addDoc(collection(alice, 'listings'), validListing({ listingType: 'defense' }))
+  )
+  await assertSucceeds(
+    addDoc(collection(alice, 'listings'), validListing({ listingType: 'other' }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ listingType: 'wizard' }))
+  )
+  const { listingType: _omit, ...noType } = validListing()
+  await assertSucceeds(addDoc(collection(alice, 'listings'), noType))
+})
+
+test('legacy listing without listingType can be read and owner-updated', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'listings', 'legacy'), {
+      title: 'Night watch',
+      ownerUid: 'alice',
+      visibility: 'public',
+      location: { lat: 41.8, lng: -87.6 },
+    })
+  )
+  await assertSucceeds(getDoc(doc(unauth(), 'listings', 'legacy')))
+  await assertSucceeds(
+    updateDoc(doc(asUser('alice'), 'listings', 'legacy'), { title: 'Renamed' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('alice'), 'listings', 'legacy'), { listingType: 'watch' })
+  )
+})
+
+test('assignee cannot change listingType on accept', async () => {
+  await seed(db => setDoc(doc(db, 'listings', 'l1'), validListing({ status: 'open' })))
+  await assertFails(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), {
+      status: 'accepted',
+      assigneeUid: 'bob',
+      listingType: 'other',
+    })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'l1'), {
+      status: 'accepted',
+      assigneeUid: 'bob',
+    })
   )
 })
 

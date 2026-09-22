@@ -14,6 +14,11 @@ export interface Listing {
   /** Provider who accepted the job. Empty while status is 'open'. */
   assigneeUid?: string
   title: string
+  /**
+   * Canonical offering type. Missing or unknown on legacy docs is treated
+   * as 'other', or inferred from title when it matches an offering name.
+   */
+  listingType?: 'watch' | 'event' | 'defense' | 'other'
   dateRange: {
     start: { year: number; month: number; day: number }
     end: { year: number; month: number; day: number }
