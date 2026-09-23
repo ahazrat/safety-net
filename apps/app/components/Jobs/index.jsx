@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList } from 'react-native';
 import { Text, Card, Chip, HelperText } from 'react-native-paper';
 import { listMyJobs, listingStatusOf, listingTypeLabel, withAuthorization, getPublicProfile, formatListedPrice, formatCents, offPlatformAgreedCents } from '@safety-net/shared';
+import BadgeChips from '../BadgeChips';
 
 const JobsScreen = ({ navigation }) => {
 	const [jobs, setJobs] = useState([]);
-	const [names, setNames] = useState({});
+	const [profiles, setProfiles] = useState({});
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
@@ -17,10 +18,10 @@ const JobsScreen = ({ navigation }) => {
 				const entries = await Promise.all(
 					uids.map(async uid => {
 						const profile = await getPublicProfile(uid).catch(() => null);
-						return [uid, (profile && profile.username) || uid];
+						return [uid, profile || { uid, username: uid }];
 					})
 				);
-				setNames(Object.fromEntries(entries));
+				setProfiles(Object.fromEntries(entries));
 			})
 			.catch(setError)
 			.finally(() => setLoading(false));
@@ -57,10 +58,14 @@ const JobsScreen = ({ navigation }) => {
 								</Text>
 							) : null}
 							<Text style={{ marginTop: 8 }}>
-								Posted by {names[item.ownerUid] || item.ownerUid || 'unknown'}
+								Posted by {(profiles[item.ownerUid] && profiles[item.ownerUid].username) || item.ownerUid || 'unknown'}
 							</Text>
+							<BadgeChips profile={profiles[item.ownerUid]} />
 							{item.assigneeUid ? (
-								<Text>Assigned to {names[item.assigneeUid] || item.assigneeUid}</Text>
+								<View style={{ marginTop: 8 }}>
+									<Text>Assigned to {(profiles[item.assigneeUid] && profiles[item.assigneeUid].username) || item.assigneeUid}</Text>
+									<BadgeChips profile={profiles[item.assigneeUid]} />
+								</View>
 							) : null}
 						</Card.Content>
 					</Card>

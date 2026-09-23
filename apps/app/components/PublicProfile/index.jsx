@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Text, Chip } from 'react-native-paper';
-import { getPublicProfile, earnedBadgeIds, labelForBadge } from '@safety-net/shared';
+import { Text } from 'react-native-paper';
+import { getPublicProfile } from '@safety-net/shared';
+import BadgeChips from '../BadgeChips';
 
 export default function PublicProfile({ uid, label }) {
 	const [profile, setProfile] = useState(null);
@@ -19,24 +20,13 @@ export default function PublicProfile({ uid, label }) {
 	if (!uid) return null;
 
 	const name = (profile && profile.username) || uid;
-	const badges = earnedBadgeIds(profile);
 
 	return (
 		<View style={{ marginBottom: 12 }}>
 			<Text style={{ marginBottom: 4 }}>
 				{label}: {name}
 			</Text>
-			<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-				{badges.length === 0 ? (
-					<Text style={{ opacity: 0.7 }}>No verification badges</Text>
-				) : (
-					badges.map(id => (
-						<Chip key={id} compact style={{ marginRight: 8, marginBottom: 4 }}>
-							{labelForBadge(id)}
-						</Chip>
-					))
-				)}
-			</View>
+			<BadgeChips profile={profile} emptyLabel='No verification badges' />
 		</View>
 	);
 }

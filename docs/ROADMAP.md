@@ -66,6 +66,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Job lifecycle: open → accepted → in_progress → done + assignee | Shipped |
 | Jobs screen (owned or assigned) | Shipped |
 | Admin-granted verification badges | Shipped |
+| Badge chips on listing detail, listings list, and jobs (from publicProfiles) | Shipped |
 | Direct messages (two-party conversations) | Shipped |
 | Message owner from a listing | Shipped |
 | Firestore rules + `npm run deploy:rules` | Shipped |
@@ -119,7 +120,7 @@ The loop is: **see map → create or accept a job → message → start → done
 1. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
 2. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
 
-Optional but high leverage: show **badge chips on listings / jobs**, not only on Account/Admin, so a requester can see who they hired.
+**Badge chips** on listing detail, the listings list, and jobs — shipped. A requester sees the poster's and assignee's admin-granted badges (public profile only; email stays private).
 
 ### Next — situational map (the free hook)
 

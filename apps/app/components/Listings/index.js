@@ -8,7 +8,9 @@ import {
 	listingTypeOf,
 	listingTypeLabel,
 	LISTING_TYPE_CHIPS,
+	getPublicProfile,
 } from '@safety-net/shared';
+import BadgeChips from '../BadgeChips';
 
 const styles = StyleSheet.create({
 	view: {
@@ -32,6 +34,7 @@ const styles = StyleSheet.create({
 
 const Listings = ({ navigation }) => {
 	const [listings, setListings] = useState([]);
+	const [profiles, setProfiles] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [typeFilter, setTypeFilter] = useState(null);
 
@@ -43,6 +46,15 @@ const Listings = ({ navigation }) => {
 	};
 
 	useEffect(getListings, []);
+
+	useEffect(() => {
+		const uids = [...new Set(listings.map(listing => listing.ownerUid).filter(Boolean))];
+		if (uids.length === 0) return;
+		Promise.all(uids.map(async uid => {
+			const profile = await getPublicProfile(uid).catch(() => null);
+			return [uid, profile || { uid, username: uid }];
+		})).then(entries => setProfiles(Object.fromEntries(entries)));
+	}, [listings]);
 
 	// Firestore's `listings` collection may still hold documents from before
 	// the Listing shape was canonicalized (title/dateRange/requirements) —
@@ -70,6 +82,10 @@ const Listings = ({ navigation }) => {
 					<Chip compact style={{ alignSelf: 'flex-start', marginBottom: 6 }}>
 						{listingTypeLabel(listing)}
 					</Chip>
+					<Text>
+						Posted by {(profiles[listing.ownerUid] && profiles[listing.ownerUid].username) || listing.ownerUid || 'unknown'}
+					</Text>
+					<BadgeChips profile={profiles[listing.ownerUid]} />
 					<Text>Status: {listingStatusOf(listing).replace('_', ' ')}</Text>
 					<Text>Price: {formatListedPrice(listing) || 'No price set'}</Text>
 					{startDate && <Text>Start: {startDate}</Text>}
