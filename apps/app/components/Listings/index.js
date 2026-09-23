@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, Card, Chip, FAB } from 'react-native-paper';
+import { Text, Card, Chip, Button, FAB } from 'react-native-paper';
 import {
 	listVisibleListings,
 	listingStatusOf,
@@ -131,9 +131,14 @@ const Listings = ({ navigation }) => {
 				))}
 			</View>
 			{!loading && listings.length === 0 && (
-				<Text style={{ textAlign: 'center', marginTop: 24 }}>
-					No open listings right now. Be the first to post one.
-				</Text>
+				<View style={{ alignItems: 'center', marginTop: 24 }}>
+					<Text style={{ textAlign: 'center', marginBottom: 12 }}>
+						No open listings right now. Be the first to post one.
+					</Text>
+					<Button mode='contained' onPress={() => navigation.navigate('ListingCreate', { listingType: 'watch', title: 'Neighborhood Watch' })}>
+						Post a watch
+					</Button>
+				</View>
 			)}
 			{!loading && listings.length > 0 && visible.length === 0 && (
 				<Text style={{ textAlign: 'center', marginTop: 24 }}>

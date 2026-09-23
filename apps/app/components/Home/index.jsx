@@ -50,14 +50,16 @@ const SignedOutHome = ({ navigation }) => {
 		<Text style={{ marginBottom: 16, textAlign: 'center' }}>
 			Private contracts. A public map of jobs and risk.
 		</Text>
-		<Button
-			testID="tour-request"
-			mode='contained'
-			style={{ marginBottom: 16 }}
-			onPress={() => post('watch', 'Neighborhood Watch')}
-		>
-			Post a watch
-		</Button>
+		<View style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+			<Button
+				testID="tour-request"
+				mode='contained'
+				onPress={() => post('watch', 'Neighborhood Watch')}
+			>
+				Post a watch
+			</Button>
+			<Button mode='outlined' onPress={() => navigation.navigate('SignIn')}>Sign in</Button>
+		</View>
 		<View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
 			{OFFERINGS.map(item => (
 				<Button
@@ -84,8 +86,11 @@ const SignedInHome = ({ navigation }) => {
 	const { replayTour } = useContext(DemoContext);
 	return (
 	<View style={{ padding: 16 }}>
-		<Text variant='headlineMedium' style={{ marginBottom: 12 }}>Home</Text>
-		<Text style={{ marginBottom: 12 }}>The home page is accessible by every single signed in user.</Text>
+		<Text variant='headlineMedium' style={{ marginBottom: 8 }}>Hire a neighbor</Text>
+		<Text style={{ marginBottom: 12 }}>Private contracts. A public map of jobs and risk.</Text>
+		<Button mode='contained' style={{ alignSelf: 'flex-start', marginBottom: 12 }} onPress={() => navigation.navigate('ListingCreate', { listingType: 'watch', title: 'Neighborhood Watch' })}>
+			Post a watch
+		</Button>
 		<Button mode='text' onPress={() => navigation.navigate('Listings')}>Listings</Button>
 		<Button mode='text' onPress={() => navigation.navigate('Account')}>Account</Button>
 		<Button mode='text' onPress={() => navigation.navigate('Feedback')}>Feedback</Button>
