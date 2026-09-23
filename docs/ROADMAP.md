@@ -120,7 +120,7 @@ The loop is: **see map → create or accept a job → message → start → done
 Web UX audit: [`UX-AUDIT.md`](UX-AUDIT.md). Shipped from that pass: Sign in on the landing, Post a watch on signed-in Home and on empty listings.
 
 1. **One Chicago roster** — [`ROSTER-OPS-CHICAGO.md`](ROSTER-OPS-CHICAGO.md). The listings page is empty until this exists.
-2. **Domain** — do not use `safety-net.us` (not Asif’s). Next name is an open question. Live site stays https://safetynet-us.web.app. Clicks if he later proves a login: [`ops-chicago.md`](ops-chicago.md).
+2. **Domain** — `safety-net.us` is not owned. Live site stays https://safetynet-us.web.app. A custom domain is later. Notes: [`ops-chicago.md`](ops-chicago.md).
 3. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
 4. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
 5. **Next UX, not now:** read-only type and price on signed-out Create; one “Layers” control on the map; one off-platform price sentence under the listed-USD field.

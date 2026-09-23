@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { listPublicListings } from '@safety-net/shared';
 import { MapPin } from '../components/Map';
 
-export default function useListingPins(): MapPin[] {
+export function usePublicListingPins(): { pins: MapPin[]; ready: boolean } {
 	const [pins, setPins] = useState<MapPin[]>([]);
+	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
 		listPublicListings()
@@ -19,8 +20,13 @@ export default function useListingPins(): MapPin[] {
 						}))
 				);
 			})
-			.catch(err => console.log(err));
+			.catch(err => console.log(err))
+			.finally(() => setReady(true));
 	}, []);
 
-	return pins;
+	return { pins, ready };
+}
+
+export default function useListingPins(): MapPin[] {
+	return usePublicListingPins().pins;
 }

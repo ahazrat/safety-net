@@ -9,6 +9,7 @@ import { CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
 import { DemoContext } from '../../tour/DemoContext';
 import { BLOCK_WATCH_CENTER, BLOCK_WATCH_ZOOM, blockWatchPins } from '../../tour/blockWatch';
 import { color, space } from '../../theme/tokens';
+import EmptyRoster from '../EmptyRoster';
 
 function LayerToggle({ value, onValueChange, label }) {
 	return (
@@ -25,7 +26,7 @@ export default function MapScreen({ navigation }) {
 	const police = usePoliceStationPins();
 	const fire = useFireStationPins();
 
-	const { pinsOn } = useContext(DemoContext);
+	const { pinsOn, replayTour } = useContext(DemoContext);
 	const [showCrime, setShowCrime] = useState(true);
 	const [showPolice, setShowPolice] = useState(false);
 	const [showFire, setShowFire] = useState(false);
@@ -47,6 +48,9 @@ export default function MapScreen({ navigation }) {
 				<Button compact onPress={() => navigation.navigate('Scanners')} style={{ marginBottom: 8 }}>
 					Scanners
 				</Button>
+			</View>
+			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm }}>
+				<EmptyRoster navigation={navigation} onReplay={() => navigation.navigate('Home')} />
 			</View>
 			<Map
 				pins={pins}

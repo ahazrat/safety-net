@@ -11,6 +11,7 @@ import useListingPins from '../../hooks/useListingPins';
 import useChicagoCrimePins from '../../hooks/useChicagoCrimePins';
 import { CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
 import { blockWatchPins } from '../../tour/blockWatch';
+import EmptyRoster from '../EmptyRoster';
 
 function HomeMap({ navigation }) {
 	const listings = useListingPins();
@@ -75,6 +76,7 @@ const SignedOutHome = ({ navigation }) => {
 		<Text style={{ alignSelf: 'stretch', marginBottom: space.sm, color: color.textMuted }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
+		<EmptyRoster navigation={navigation} showMapLink onReplay={replayTour} />
 		<HomeMap navigation={navigation} />
 		<Button compact style={{ marginTop: 8 }} onPress={() => navigation.navigate('Map')}>Open the map</Button>
 		<Button compact style={{ marginTop: 4 }} onPress={replayTour}>Replay tour</Button>
@@ -99,6 +101,7 @@ const SignedInHome = ({ navigation }) => {
 		<Text style={{ marginTop: 16, marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
+		<EmptyRoster navigation={navigation} showMapLink onReplay={replayTour} />
 		<HomeMap navigation={navigation} />
 		<Button compact style={{ marginTop: 12 }} onPress={replayTour}>Replay tour</Button>
 	</View>
