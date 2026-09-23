@@ -50,7 +50,7 @@ export default function MapScreen({ navigation }) {
 				</Button>
 			</View>
 			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm }}>
-				<EmptyRoster navigation={navigation} onReplay={() => navigation.navigate('Home')} />
+				<EmptyRoster navigation={navigation} onReplay={replayTour} />
 			</View>
 			<Map
 				pins={pins}
