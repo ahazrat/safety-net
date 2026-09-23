@@ -138,7 +138,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 2. **Offerings as listing types** — shipped (`listingType`: watch / event / defense / other). Services Offering cards prefill type + title; Create has a type picker; list/detail show a type chip.
 3. **Price signal:** listed USD on create; off-platform dual-ack on accepted jobs. Last-done / Stripe only per [`docs/payments.md`](payments.md). Do not retask `requirements.stake` as dollars. BTC is dead.
 4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
-5. **Domain** — `safety-net.us` is already registered (GoDaddy, expires 2027-02-25). DNS is at Wix (`ns14.wixdns.net`, `ns15.wixdns.net`); the apex and `www` currently serve Wix’s “connect your domain” page, not Firebase. Do not buy the name again. Do not register a `.us` in Cloud Domains (`.us` is not on that price list). Next click is Asif’s: confirm the domain is in his GoDaddy portfolio and his Wix Domains list, then add the Firebase Hosting TXT plus A `199.36.158.100` (or whatever the `safetynet-us` wizard prints) in Wix DNS. Live site until that connects: https://safetynet-us.web.app. Checklist: [`docs/ops-chicago.md`](ops-chicago.md).
+5. **Domain** — `safety-net.us` is registered at GoDaddy (expires 2027-02-25). DNS is at Wix (`ns14.wixdns.net`, `ns15.wixdns.net`). Not available to rebuy. Cloud Domains cannot register `.us`. Next clicks: Asif proves the GoDaddy and Wix logins, then adds the custom domain on Firebase Hosting project `safetynet-us`. Clicks and records: `/workspace/safety-net-build/DOMAIN-WHERE-TO-BUY.txt`. Live until then: https://safetynet-us.web.app.
 
 ### Later — civil stack (Trello Concepts)
 
@@ -218,7 +218,7 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 Engineering and GTM are the same list for the next stretch.
 
 1. **Android auth persistence** + Map sanity check.
-2. **Domain** — `safety-net.us` is registered at GoDaddy; DNS is Wix. Point that zone at Firebase Hosting on `safetynet-us` (see [`docs/ops-chicago.md`](ops-chicago.md)). Do not buy a second name unless it is missing from both logins.
+2. **Domain** — `safety-net.us` is registered at GoDaddy (expires 2027-02-25); DNS is Wix (`ns14`/`ns15.wixdns.net`). Do not rebuy. Cloud Domains cannot register `.us`. Asif proves both logins, then connects Firebase Hosting on `safetynet-us`. Detail: `/workspace/safety-net-build/DOMAIN-WHERE-TO-BUY.txt`.
 3. **Hand-seeded Chicago station pins.** Done for CPD + CFD on Map (deepen/verify as addresses change).
 4. **LinkedIn + one Chicago neighborhood roster** (ops, not code). Checklist: [`docs/ops-chicago.md`](ops-chicago.md).
 5. **EAS iOS** once Xcode is installed; then store listing.
