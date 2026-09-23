@@ -175,7 +175,7 @@ The Trello slideshow and LinkedIn company page ([safety-net-marketplace](https:/
 ### Beachhead motion
 
 1. **Chicago overlay** so the map is not an empty Leaflet (shareable even on Expo web).
-2. **One real roster:** one Chicago neighborhood, not a national import. Steps are in [`docs/ops-chicago.md`](ops-chicago.md): 5–10 providers with admin-granted badges, five real listings, then walk create → map → accept → DM → start → done.
+2. **One real roster:** one Chicago neighborhood, not a national import. Checklist: [`docs/ROSTER-OPS-CHICAGO.md`](ROSTER-OPS-CHICAGO.md).
 3. **Walk the loop on a call:** create → appear on map → accept → DM → start → done.
 4. **Public web URL** (domain + existing deep links) once the overlay and a roster exist. Neighborhood organizers still will not install TestFlight to “look at a map.”
 5. **Only then** talk App Store. Android EAS already had a test; iOS is still blocked on Xcode / store assets.
@@ -220,7 +220,7 @@ Engineering and GTM are the same list for the next stretch.
 1. **Android auth persistence** + Map sanity check.
 2. **Domain** — `safety-net.us` is registered at GoDaddy (expires 2027-02-25); DNS is Wix (`ns14`/`ns15.wixdns.net`). Do not rebuy. Cloud Domains cannot register `.us`. Asif proves both logins, then connects Firebase Hosting on `safetynet-us`. Detail: `/workspace/safety-net-build/DOMAIN-WHERE-TO-BUY.txt`.
 3. **Hand-seeded Chicago station pins.** Done for CPD + CFD on Map (deepen/verify as addresses change).
-4. **LinkedIn + one Chicago neighborhood roster** (ops, not code). Checklist: [`docs/ops-chicago.md`](ops-chicago.md).
+4. **LinkedIn + one Chicago neighborhood roster** (ops, not code). Checklist: [`docs/ROSTER-OPS-CHICAGO.md`](ROSTER-OPS-CHICAGO.md).
 5. **EAS iOS** once Xcode is installed; then store listing.
 6. **Teams** and listing types — shipped.
 7. **Payments** — remaining work (Functions, Connect, Checkout) only after ≥5 real Chicago `done` jobs and Blaze. Plan: [`docs/payments.md`](payments.md). Do not change stake.

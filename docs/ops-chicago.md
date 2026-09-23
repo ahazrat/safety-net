@@ -32,19 +32,4 @@ A new `.us` label is only for the case where both logins lack `safety-net.us`. `
 
 ## One neighborhood roster
 
-Pick one Chicago geography you can walk: one community area, one business corridor, or one existing watch. Not a citywide scrape and not a national station import.
-
-Done when all of these are true:
-
-- [ ] The corridor is named in one sentence (which streets, which watch or shop group).
-- [ ] 5–10 real people have accounts on `safetynet-us`. They chose the passwords. No shared demo login, no faker batch.
-- [ ] An existing admin granted each provider at least one badge from Account/Admin. Badges are admin-attested, not licenses. Do not market weapons-lethal matching.
-- [ ] Each provider has a public username. Email stays on `users/{uid}`.
-- [ ] Five listings exist on that corridor, with a real lat/lng, `listingType` of `watch`, `event`, or `defense`, and `teamSize` 1 unless that captain already has people.
-- [ ] At least one listing was accepted, messaged, started, and marked done by the people on the roster.
-- [ ] The public map at https://safetynet-us.web.app/map shows those pins plus the Chicago crime counts and station pins already shipped.
-- [ ] One LinkedIn post on [safety-net-marketplace](https://www.linkedin.com/company/safety-net-marketplace) is a map screenshot and the offer, not a philosophy wall.
-
-Order on the call: create → pin on the map → accept (or captain + join, if `teamSize` > 1) → DM → start → done. Badge chips on the listing and on Jobs should show the hired person’s badges after the admin grant.
-
-Do not seed stand-in names onto the public map to make the checklist look finished.
+The roster steps are in [`ROSTER-OPS-CHICAGO.md`](ROSTER-OPS-CHICAGO.md). One watch or corridor, not a national import.
