@@ -15,6 +15,7 @@ import {
 	TEAM_SIZE_MAX,
 } from '@safety-net/shared';
 import SentinelPulse from '../SentinelPulse';
+import PriceNote from '../PriceNote';
 import DateTimeField from '../DateTimeField';
 import Map from '../Map';
 
@@ -52,20 +53,34 @@ const styles = StyleSheet.create({
 	},
 });
 
-const SignedOutPrompt = ({ navigation }) => (
-	<View testID="tour-create-gate" style={[styles.view, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
-		<Text variant='headlineSmall' style={{ marginBottom: 8, textAlign: 'center' }}>
-			Sign in to post a request
-		</Text>
-		<Text style={{ marginBottom: 20, textAlign: 'center' }}>
-			Creating a listing requires an account so providers know who they're working with.
-		</Text>
-		<View style={{ flexDirection: 'row', gap: 12 }}>
-			<Button mode='contained' onPress={() => navigation.navigate('SignUp')}>Sign Up</Button>
-			<Button mode='outlined' onPress={() => navigation.navigate('SignIn')}>Sign In</Button>
-		</View>
-	</View>
-);
+const SignedOutPrompt = ({ navigation, route }) => {
+	const listingType = typeFromRoute(route?.params);
+	return (
+		<ScrollView contentContainerStyle={styles.view}>
+			<Text variant='headlineMedium' style={styles.title}>Create Listing</Text>
+			<Text style={{ marginBottom: 8 }}>
+				Example: a block walk is about $5 a house, listed USD. This preview does not post a job.
+			</Text>
+			<PriceNote />
+			<Text variant='titleMedium' style={styles.sectionLabel}>Type</Text>
+			<View testID="tour-listing-type" style={styles.dayRow}>
+				{LISTING_TYPE_CHIPS.map(({ value, label }) => (
+					<Chip key={value} selected={listingType === value} compact>
+						{label}
+					</Chip>
+				))}
+			</View>
+			<Text testID="tour-price" style={{ marginBottom: 16 }}>Example listed price: $5</Text>
+			<View testID="tour-create-gate">
+				<Text variant='titleMedium' style={{ marginBottom: 8 }}>Sign in to post</Text>
+				<View style={{ flexDirection: 'row', gap: 12 }}>
+					<Button mode='contained' onPress={() => navigation.navigate('SignIn')}>Sign in</Button>
+					<Button mode='outlined' onPress={() => navigation.navigate('SignUp')}>Sign up</Button>
+				</View>
+			</View>
+		</ScrollView>
+	);
+};
 
 function defaultStart() {
 	const d = new Date();
@@ -133,7 +148,7 @@ const ListingCreate = ({ navigation, route }) => {
 	};
 
 	if (!authUser) {
-		return <SignedOutPrompt navigation={navigation} />;
+		return <SignedOutPrompt navigation={navigation} route={route} />;
 	}
 
 	if (created) {
@@ -297,6 +312,7 @@ const ListingCreate = ({ navigation, route }) => {
 				onChangeText={setPriceDollars}
 				keyboardType='numeric'
 			/>
+			<PriceNote />
 			<View style={[styles.row, { alignItems: 'center' }]}>
 				<Text variant='titleMedium' style={{ marginRight: 12 }}>
 					{isPublic ? 'Public (visible on the map)' : 'Private (only you)'}

@@ -27,6 +27,7 @@ export default function MapScreen({ navigation }) {
 	const fire = useFireStationPins();
 
 	const { pinsOn, replayTour } = useContext(DemoContext);
+	const [layersOpen, setLayersOpen] = useState(false);
 	const [showCrime, setShowCrime] = useState(true);
 	const [showPolice, setShowPolice] = useState(false);
 	const [showFire, setShowFire] = useState(false);
@@ -41,13 +42,23 @@ export default function MapScreen({ navigation }) {
 
 	return (
 		<View testID="tour-map" style={{ flex: 1, backgroundColor: color.background }}>
-			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: color.border }}>
-				<LayerToggle value={showCrime} onValueChange={setShowCrime} label="Crime (30 days)" />
-				<LayerToggle value={showPolice} onValueChange={setShowPolice} label={`Police stations (${police.length})`} />
-				<LayerToggle value={showFire} onValueChange={setShowFire} label={`Fire stations (${fire.length})`} />
-				<Button compact onPress={() => navigation.navigate('Scanners')} style={{ marginBottom: 8 }}>
-					Scanners
+			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm, borderBottomWidth: 1, borderBottomColor: color.border }}>
+				<Button compact mode={layersOpen ? 'contained' : 'outlined'} onPress={() => setLayersOpen(open => !open)} style={{ alignSelf: 'flex-start', marginBottom: space.sm }}>
+					Layers
 				</Button>
+				<Text style={{ color: color.textMuted, marginBottom: space.sm }}>
+					Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
+				</Text>
+				{layersOpen ? (
+					<View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+						<LayerToggle value={showCrime} onValueChange={setShowCrime} label="Crime (30 days)" />
+						<LayerToggle value={showPolice} onValueChange={setShowPolice} label={`Police stations (${police.length})`} />
+						<LayerToggle value={showFire} onValueChange={setShowFire} label={`Fire stations (${fire.length})`} />
+						<Button compact onPress={() => navigation.navigate('Scanners')} style={{ marginBottom: 8 }}>
+							Scanners
+						</Button>
+					</View>
+				) : null}
 			</View>
 			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm }}>
 				<EmptyRoster navigation={navigation} onReplay={replayTour} />
