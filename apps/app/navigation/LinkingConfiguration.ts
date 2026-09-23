@@ -23,6 +23,8 @@ export const linkingScreens = {
   Account: 'account',
   ChangePassword: 'changepassword',
   Admin: 'admin',
+  Feedback: 'feedback',
+  FeedbackReports: 'admin/feedback',
   NotFound: '*',
 };
 

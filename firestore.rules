@@ -453,5 +453,35 @@ service cloud.firestore {
         allow update, delete: if false;
       }
     }
+
+    // Signed-in feedback. Create stamps the caller's uid and status open.
+    // Only an admin may read the collection or change status.
+    match /feedback/{feedbackId} {
+      function validFeedbackCreate(data) {
+        return data.uid == request.auth.uid
+          && data.type in ['bug', 'idea', 'praise', 'other']
+          && data.stars is int
+          && data.stars >= 1
+          && data.stars <= 5
+          && data.body is string
+          && data.body.size() > 0
+          && data.body.size() < 4000
+          && data.status == 'open'
+          && (!('contactEmail' in data) || (data.contactEmail is string && data.contactEmail.size() < 200))
+          && (!('appPath' in data) || (data.appPath is string && data.appPath.size() < 300))
+          && (!('userAgent' in data) || (data.userAgent is string && data.userAgent.size() < 400));
+      }
+
+      allow get, list: if isAdmin();
+      allow create: if isSignedIn() && validFeedbackCreate(request.resource.data);
+      allow update: if isAdmin()
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.type == resource.data.type
+        && request.resource.data.stars == resource.data.stars
+        && request.resource.data.body == resource.data.body
+        && request.resource.data.status in ['open', 'reviewed', 'closed']
+        && request.resource.data.status != resource.data.status;
+      allow delete: if false;
+    }
   }
 }

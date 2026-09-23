@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, FlatList } from 'react-native';
-import { Text, List, Switch, HelperText, Chip } from 'react-native-paper';
+import { Text, List, Switch, HelperText, Chip, Button } from 'react-native-paper';
 import {
 	getUsersArr,
 	setUserAdminRole,
@@ -63,6 +63,9 @@ const AdminScreen = ({ navigation }) => {
 		<View style={{ padding: 16, flex: 1 }}>
 			<Text variant='headlineMedium'>Admin</Text>
 			<Text style={{ marginBottom: 12 }}>The Admin screen is accessible only by signed in admin users.</Text>
+			<Button mode='outlined' style={{ marginBottom: 12, alignSelf: 'flex-start' }} onPress={() => navigation.navigate('FeedbackReports')}>
+				Feedback reports
+			</Button>
 			<Text variant='titleMedium'>User List</Text>
 			<Text style={{ marginBottom: 12 }}>
 				Grant or revoke admin and verification badges on other accounts. The first admin must be set in the Firebase console.

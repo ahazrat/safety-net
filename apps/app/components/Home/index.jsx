@@ -86,6 +86,7 @@ const SignedInHome = ({ navigation }) => {
 		<Text style={{ marginBottom: 12 }}>The home page is accessible by every single signed in user.</Text>
 		<Button mode='text' onPress={() => navigation.navigate('Listings')}>Listings</Button>
 		<Button mode='text' onPress={() => navigation.navigate('Account')}>Account</Button>
+		<Button mode='text' onPress={() => navigation.navigate('Feedback')}>Feedback</Button>
 		<Button mode='text' onPress={() => navigation.navigate('Admin')}>Admin</Button>
 		<SignOutButton />
 		<Text style={{ marginTop: 16, marginBottom: 8 }}>

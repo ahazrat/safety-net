@@ -24,6 +24,8 @@ import AttributionScreen from '../components/Attribution';
 import ForgotPasswordScreen from '../components/PasswordForget';
 import ChangePasswordScreen from '../components/PasswordChange';
 import AdminScreen from '../components/Admin';
+import FeedbackScreen from '../components/Feedback';
+import FeedbackReportsScreen from '../components/FeedbackReports';
 import MessagesScreen from '../components/Messages';
 import ConversationScreen from '../components/Conversation';
 import NotFoundScreen from '../components/NotFound';
@@ -147,6 +149,16 @@ function RootNavigator() {
 				name="Admin"
 				component={AdminScreen}
 				options={{ title: 'Admin', drawerIcon: drawerIcon('shield-account-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name="Feedback"
+				component={FeedbackScreen}
+				options={{ title: 'Feedback', drawerIcon: drawerIcon('message-alert-outline'), ...signedIn }}
+			/>
+			<Drawer.Screen
+				name="FeedbackReports"
+				component={FeedbackReportsScreen}
+				options={{ title: 'Feedback reports', ...neverInDrawer }}
 			/>
 			<Drawer.Screen
 				name='SignIn'

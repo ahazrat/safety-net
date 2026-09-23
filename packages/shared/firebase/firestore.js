@@ -332,6 +332,48 @@ export function otherParticipant(conversation, uid) {
   return parts.find(p => p !== uid) || parts[0] || ''
 }
 
+const FEEDBACK_TYPES = ['bug', 'idea', 'praise', 'other']
+const FEEDBACK_STATUSES = ['open', 'reviewed', 'closed']
+
+export async function submitFeedback(input) {
+  const uid = auth.currentUser && auth.currentUser.uid
+  if (!uid) throw new Error('Sign in to send feedback')
+  const type = FEEDBACK_TYPES.includes(input && input.type) ? input.type : ''
+  const stars = Number(input && input.stars)
+  const body = String((input && input.body) || '').trim()
+  if (!type) throw new Error('Pick a feedback type')
+  if (!Number.isInteger(stars) || stars < 1 || stars > 5) throw new Error('Pick 1 to 5 stars')
+  if (!body) throw new Error('Write a short note')
+  const docData = {
+    uid,
+    type,
+    stars,
+    body,
+    status: 'open',
+    createdAt: serverTimestamp(),
+  }
+  const email = String((input && input.contactEmail) || '').trim()
+  if (email) docData.contactEmail = email
+  if (input && input.appPath) docData.appPath = String(input.appPath).slice(0, 300)
+  if (input && input.userAgent) docData.userAgent = String(input.userAgent).slice(0, 400)
+  const ref = await addDoc(collection(db, 'feedback'), docData)
+  return ref.id
+}
+
+export async function listFeedback() {
+  const snapshot = await getDocs(collection(db, 'feedback'))
+  return mapDocs(snapshot).sort((a, b) => {
+    const at = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0
+    const bt = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0
+    return bt - at
+  })
+}
+
+export async function setFeedbackStatus(id, status) {
+  if (!FEEDBACK_STATUSES.includes(status)) throw new Error('Unknown status')
+  await updateDoc(doc(db, 'feedback', id), { status })
+}
+
 export function uploadFile(storagePath, data) {
   const storage = getStorage(app)
   return uploadBytes(ref(storage, storagePath), data)

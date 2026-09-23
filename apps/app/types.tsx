@@ -19,6 +19,8 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   ChangePassword: undefined;
   Admin: undefined;
+  Feedback: undefined;
+  FeedbackReports: undefined;
   Messages: { otherUid?: string } | undefined;
   Conversation: { conversationId: string; otherUid: string } | undefined;
   NotFound: undefined;

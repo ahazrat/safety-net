@@ -857,6 +857,52 @@ test('participant can send a message; outsider cannot read or write', async () =
   )
 })
 
+function feedbackDoc(overrides = {}) {
+  return {
+    uid: 'alice',
+    type: 'bug',
+    stars: 4,
+    body: 'The map pin is hard to tap',
+    status: 'open',
+    ...overrides,
+  }
+}
+
+test('signed-in user can create their own feedback and cannot read it', async () => {
+  await assertFails(addDoc(collection(unauth(), 'feedback'), feedbackDoc()))
+  await assertFails(
+    addDoc(collection(asUser('alice'), 'feedback'), feedbackDoc({ uid: 'bob' }))
+  )
+  await assertFails(
+    addDoc(collection(asUser('alice'), 'feedback'), feedbackDoc({ stars: 0 }))
+  )
+  await assertFails(
+    addDoc(collection(asUser('alice'), 'feedback'), feedbackDoc({ type: 'rant' }))
+  )
+  const ref = await assertSucceeds(
+    addDoc(collection(asUser('alice'), 'feedback'), feedbackDoc({ contactEmail: 'a@example.com' }))
+  )
+  await assertFails(getDoc(ref))
+  await assertFails(getDocs(collection(asUser('alice'), 'feedback')))
+})
+
+test('admin can list feedback and mark it reviewed', async () => {
+  await seed(async db => {
+    await setDoc(doc(db, 'users', 'admin'), { uid: 'admin', roles: { ADMIN: 'ADMIN' } })
+    await setDoc(doc(db, 'feedback', 'f1'), feedbackDoc())
+  })
+  await assertSucceeds(getDocs(collection(asUser('admin'), 'feedback')))
+  await assertSucceeds(
+    updateDoc(doc(asUser('admin'), 'feedback', 'f1'), { status: 'reviewed' })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('alice'), 'feedback', 'f1'), { status: 'closed' })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('admin'), 'feedback', 'f1'), { body: 'rewritten', status: 'closed' })
+  )
+})
+
 test('unknown collections are denied', async () => {
   await assertFails(getDoc(doc(asUser('alice'), 'secrets', 'x')))
   await assertFails(setDoc(doc(asUser('alice'), 'secrets', 'x'), { n: 1 }))
