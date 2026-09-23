@@ -3,10 +3,11 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { color } from '../theme/tokens';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
-import { ColorSchemeName, Text, useWindowDimensions, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import SignUp from '../components/SignUp';
@@ -36,12 +37,23 @@ import { AuthUserContext } from '@safety-net/shared';
 import Tour, { useTourGate } from '../components/Tour';
 import { DemoContext } from '../tour/DemoContext';
 
-export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+export default function Navigation() {
 	return (
 		<NavigationContainer
 			linking={LinkingConfiguration}
 			fallback={<Text>Loading...</Text>}
-			theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+			theme={{
+				...DefaultTheme,
+				colors: {
+					...DefaultTheme.colors,
+					primary: color.navy,
+					background: color.background,
+					card: color.surface,
+					text: color.text,
+					border: color.border,
+					notification: color.navy,
+				},
+			}}>
 			<RootNavigator />
 		</NavigationContainer>
 	);

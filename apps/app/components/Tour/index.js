@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { AuthUserContext } from '@safety-net/shared'
 import { BLOCK_WATCH, exampleNightlyCents } from '../../tour/blockWatch'
 import { clearTourDismiss, demoQueryOn, dismissTour, tourDismissed } from '../../tour/dismiss'
+import { color, radius } from '../../theme/tokens'
 
 const NIGHTLY = (exampleNightlyCents() / 100).toFixed(0)
 
@@ -207,12 +208,12 @@ export default function Tour({ open, step, onStep, onClose }) {
 					left: 16,
 					right: 16,
 					top: balloonTop,
-					backgroundColor: '#fffef6',
-					borderRadius: 12,
+					backgroundColor: color.surface,
+					borderRadius: radius.control,
 					padding: 14,
 					maxWidth: 420,
 					borderWidth: 1,
-					borderColor: hovered ? '#f5c518' : '#e6d48a',
+					borderColor: hovered ? color.navy : color.border,
 				}}
 			>
 				<Text variant="titleMedium">{current.title}</Text>

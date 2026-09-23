@@ -7,6 +7,7 @@ import {
 	withAuthorization,
 	Roles as ROLES,
 } from '@safety-net/shared';
+import { layout, space } from '../../theme/tokens';
 
 const TYPES = ['bug', 'idea', 'praise', 'other'];
 const STATUSES = ['open', 'reviewed', 'closed'];
@@ -52,7 +53,7 @@ const FeedbackReportsScreen = () => {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={{ padding: 16 }}>
+		<ScrollView contentContainerStyle={{ padding: space.lg, width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
 			<Text variant='headlineMedium'>Feedback reports</Text>
 			<Text style={{ marginBottom: 12 }}>Newest first. Admins only.</Text>
 			<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>

@@ -13,11 +13,15 @@ import {
 	teamLabel,
 } from '@safety-net/shared';
 import BadgeChips from '../BadgeChips';
+import { layout, space } from '../../theme/tokens';
 
 const styles = StyleSheet.create({
 	view: {
 		height: '100%',
-		padding: 20,
+		padding: space.lg,
+		width: '100%',
+		maxWidth: layout.pageMaxWidth,
+		alignSelf: 'center',
 	},
 	title: {
 		textAlign: 'center',

@@ -3,6 +3,7 @@ import { View, Image, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { AuthUserContext } from '@safety-net/shared';
 import { DemoContext } from '../../tour/DemoContext';
+import { color, layout, space } from '../../theme/tokens';
 import SignOutButton from '../SignOut';
 import Map from '../Map';
 import useListingPins from '../../hooks/useListingPins';
@@ -38,7 +39,7 @@ const SignedOutHome = ({ navigation }) => {
 	const { replayTour } = useContext(DemoContext);
 	const post = (listingType, title) => navigation.navigate('ListingCreate', { listingType, title });
 	return (
-	<ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center' }}>
+	<ScrollView contentContainerStyle={{ padding: space.lg, alignItems: 'center', width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
 		<Image
 			source={require('../../assets/images/shield-icon.webp')}
 			style={{ width: 96, height: 96, marginBottom: 16 }}
@@ -68,7 +69,7 @@ const SignedOutHome = ({ navigation }) => {
 				</Button>
 			))}
 		</View>
-		<Text style={{ alignSelf: 'stretch', marginBottom: 8 }}>
+		<Text style={{ alignSelf: 'stretch', marginBottom: space.sm, color: color.textMuted }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
 		<HomeMap navigation={navigation} />

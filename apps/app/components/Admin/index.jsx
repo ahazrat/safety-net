@@ -13,6 +13,7 @@ import {
 	AuthUserContext,
 } from '@safety-net/shared';
 import { HomeButton } from '../Home';
+import { layout, space } from '../../theme/tokens';
 
 const AdminScreen = ({ navigation }) => {
 	const authUser = useContext(AuthUserContext);
@@ -60,7 +61,7 @@ const AdminScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={{ padding: 16, flex: 1 }}>
+		<View style={{ padding: space.lg, flex: 1, width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
 			<Text variant='headlineMedium'>Admin</Text>
 			<Text style={{ marginBottom: 12 }}>The Admin screen is accessible only by signed in admin users.</Text>
 			<Button mode='outlined' style={{ marginBottom: 12, alignSelf: 'flex-start' }} onPress={() => navigation.navigate('FeedbackReports')}>

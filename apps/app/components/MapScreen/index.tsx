@@ -8,6 +8,7 @@ import { usePoliceStationPins, useFireStationPins } from '../../hooks/useChicago
 import { CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
 import { DemoContext } from '../../tour/DemoContext';
 import { BLOCK_WATCH_CENTER, BLOCK_WATCH_ZOOM, blockWatchPins } from '../../tour/blockWatch';
+import { color, space } from '../../theme/tokens';
 
 function LayerToggle({ value, onValueChange, label }) {
 	return (
@@ -38,8 +39,8 @@ export default function MapScreen({ navigation }) {
 	];
 
 	return (
-		<View testID="tour-map" style={{ flex: 1 }}>
-			<View style={{ paddingHorizontal: 12, paddingTop: 8, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+		<View testID="tour-map" style={{ flex: 1, backgroundColor: color.background }}>
+			<View style={{ paddingHorizontal: space.md, paddingTop: space.sm, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: color.border }}>
 				<LayerToggle value={showCrime} onValueChange={setShowCrime} label="Crime (30 days)" />
 				<LayerToggle value={showPolice} onValueChange={setShowPolice} label={`Police stations (${police.length})`} />
 				<LayerToggle value={showFire} onValueChange={setShowFire} label={`Fire stations (${fire.length})`} />

@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 import { Button, Chip, HelperText, Text, TextInput } from 'react-native-paper';
 import { AuthUserContext, submitFeedback, withAuthorization } from '@safety-net/shared';
+import { layout, space } from '../../theme/tokens';
 
 const TYPES = [
 	{ value: 'bug', label: 'Bug' },
@@ -39,7 +40,7 @@ const FeedbackScreen = ({ navigation }) => {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={{ padding: 16 }}>
+		<ScrollView contentContainerStyle={{ padding: space.lg, width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
 			<Text variant='headlineMedium' style={{ marginBottom: 8 }}>Feedback</Text>
 			<Text style={{ marginBottom: 12 }}>
 				Tell us what broke or what to build next. Signed-in only.
