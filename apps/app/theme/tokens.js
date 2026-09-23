@@ -26,6 +26,11 @@ export const radius = {
 
 export const type = {
 	fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif',
+	display: { fontSize: 32, lineHeight: 38, fontWeight: '700' },
+	title: { fontSize: 22, lineHeight: 28, fontWeight: '600' },
+	body: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
+	caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
+	mono: { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', fontSize: 13, lineHeight: 18 },
 }
 
 export const layout = {

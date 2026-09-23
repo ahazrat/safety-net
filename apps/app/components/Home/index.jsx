@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { AuthUserContext } from '@safety-net/shared';
 import { DemoContext } from '../../tour/DemoContext';
-import { color, layout, space } from '../../theme/tokens';
+import { color, space, type } from '../../theme/tokens';
+import Screen from '../Screen';
 import SignOutButton from '../SignOut';
 import Map from '../Map';
 import useListingPins from '../../hooks/useListingPins';
@@ -39,13 +40,13 @@ const SignedOutHome = ({ navigation }) => {
 	const { replayTour } = useContext(DemoContext);
 	const post = (listingType, title) => navigation.navigate('ListingCreate', { listingType, title });
 	return (
-	<ScrollView contentContainerStyle={{ padding: space.lg, alignItems: 'center', width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
+	<Screen>
 		<Image
 			source={require('../../assets/images/shield-icon.webp')}
 			style={{ width: 96, height: 96, marginBottom: 16 }}
 			accessibilityLabel="Safety Net"
 		/>
-		<Text variant='headlineMedium' style={{ textAlign: 'center' }}>Hire a neighbor</Text>
+		<Text variant='headlineMedium' style={[{ textAlign: 'center', color: color.text }, type.display]}>Hire a neighbor</Text>
 		<Text style={{ marginBottom: 16, textAlign: 'center' }}>
 			Private contracts. A public map of jobs and risk.
 		</Text>
@@ -75,7 +76,7 @@ const SignedOutHome = ({ navigation }) => {
 		<HomeMap navigation={navigation} />
 		<Button compact style={{ marginTop: 8 }} onPress={() => navigation.navigate('Map')}>Open the map</Button>
 		<Button compact style={{ marginTop: 4 }} onPress={replayTour}>Replay tour</Button>
-	</ScrollView>
+	</Screen>
 	);
 };
 

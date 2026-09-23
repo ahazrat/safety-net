@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Button, Chip, HelperText, Text } from 'react-native-paper';
 import {
 	listFeedback,
@@ -7,7 +7,8 @@ import {
 	withAuthorization,
 	Roles as ROLES,
 } from '@safety-net/shared';
-import { layout, space } from '../../theme/tokens';
+import { type } from '../../theme/tokens';
+import Screen from '../Screen';
 
 const TYPES = ['bug', 'idea', 'praise', 'other'];
 const STATUSES = ['open', 'reviewed', 'closed'];
@@ -53,7 +54,7 @@ const FeedbackReportsScreen = () => {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={{ padding: space.lg, width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
+		<Screen>
 			<Text variant='headlineMedium'>Feedback reports</Text>
 			<Text style={{ marginBottom: 12 }}>Newest first. Admins only.</Text>
 			<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
@@ -75,7 +76,7 @@ const FeedbackReportsScreen = () => {
 				<View key={row.id} style={{ marginBottom: 16, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#ddd' }}>
 					<Text>{row.type} · {row.stars} stars · {row.status}</Text>
 					<Text style={{ marginVertical: 4 }}>{String(row.body || '').slice(0, 280)}</Text>
-					<Text style={{ opacity: 0.7 }}>
+					<Text style={[{ opacity: 0.7 }, type.mono]}>
 						{row.uid}{row.contactEmail ? ` · ${row.contactEmail}` : ''}{when(row.createdAt) ? ` · ${when(row.createdAt)}` : ''}
 					</Text>
 					<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
@@ -93,7 +94,7 @@ const FeedbackReportsScreen = () => {
 					</View>
 				</View>
 			))}
-		</ScrollView>
+		</Screen>
 	);
 };
 

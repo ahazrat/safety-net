@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { Platform, ScrollView, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { Button, Chip, HelperText, Text, TextInput } from 'react-native-paper';
 import { AuthUserContext, submitFeedback, withAuthorization } from '@safety-net/shared';
-import { layout, space } from '../../theme/tokens';
+import Screen from '../Screen';
 
 const TYPES = [
 	{ value: 'bug', label: 'Bug' },
@@ -40,7 +40,7 @@ const FeedbackScreen = ({ navigation }) => {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={{ padding: space.lg, width: '100%', maxWidth: layout.pageMaxWidth, alignSelf: 'center' }}>
+		<Screen>
 			<Text variant='headlineMedium' style={{ marginBottom: 8 }}>Feedback</Text>
 			<Text style={{ marginBottom: 12 }}>
 				Tell us what broke or what to build next. Signed-in only.
@@ -79,7 +79,7 @@ const FeedbackScreen = ({ navigation }) => {
 			{error && <HelperText type='error' visible>{error.message}</HelperText>}
 			{sent && <Text style={{ marginBottom: 8 }}>Thanks. We saved your note.</Text>}
 			<Button mode='contained' disabled={busy} onPress={onSubmit}>Submit</Button>
-		</ScrollView>
+		</Screen>
 	);
 };
 
