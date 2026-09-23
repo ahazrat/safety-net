@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { AuthUserContext } from '@safety-net/shared';
 import { DemoContext } from '../../tour/DemoContext';
@@ -28,26 +28,53 @@ function HomeMap({ navigation }) {
 	);
 }
 
+const OFFERINGS = [
+	{ label: 'Neighborhood Watch', listingType: 'watch', title: 'Neighborhood Watch' },
+	{ label: 'Event Security', listingType: 'event', title: 'Event Security' },
+	{ label: 'Physical Defense', listingType: 'defense', title: 'Physical Defense' },
+];
+
 const SignedOutHome = ({ navigation }) => {
 	const { replayTour } = useContext(DemoContext);
+	const post = (listingType, title) => navigation.navigate('ListingCreate', { listingType, title });
 	return (
-	<View style={{ padding: 16, alignItems: 'center' }}>
+	<ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center' }}>
 		<Image
 			source={require('../../assets/images/shield-icon.webp')}
 			style={{ width: 96, height: 96, marginBottom: 16 }}
+			accessibilityLabel="Safety Net"
 		/>
-		<Text variant='headlineMedium'>Welcome to Safety Net</Text>
-		<Text style={{ marginBottom: 20 }}>A decentralized marketplace for security</Text>
-		<View style={{ flexDirection: 'row', gap: 12, marginBottom: 30 }}>
-			<Button testID="tour-request" mode='contained' onPress={() => navigation.navigate('ListingCreate')}>Request</Button>
-			<Button mode='outlined' onPress={() => navigation.navigate('Listings')}>Provide</Button>
+		<Text variant='headlineMedium' style={{ textAlign: 'center' }}>Hire a neighbor</Text>
+		<Text style={{ marginBottom: 16, textAlign: 'center' }}>
+			Private contracts. A public map of jobs and risk.
+		</Text>
+		<Button
+			testID="tour-request"
+			mode='contained'
+			style={{ marginBottom: 16 }}
+			onPress={() => post('watch', 'Neighborhood Watch')}
+		>
+			Post a watch
+		</Button>
+		<View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
+			{OFFERINGS.map(item => (
+				<Button
+					key={item.listingType}
+					compact
+					mode='outlined'
+					onPress={() => post(item.listingType, item.title)}
+				>
+					{item.label}
+				</Button>
+			))}
 		</View>
 		<Text style={{ alignSelf: 'stretch', marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
 		<HomeMap navigation={navigation} />
-		<Button compact style={{ marginTop: 12 }} onPress={replayTour}>Replay tour</Button>
-	</View>
+		<Button compact style={{ marginTop: 8 }} onPress={() => navigation.navigate('Map')}>Open the map</Button>
+		<Button compact style={{ marginTop: 4 }} onPress={replayTour}>Replay tour</Button>
+	</ScrollView>
 	);
 };
 
