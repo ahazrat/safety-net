@@ -6,7 +6,7 @@
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
-import { ColorSchemeName, Text, useWindowDimensions } from 'react-native';
+import { ColorSchemeName, Text, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import SignUp from '../components/SignUp';
@@ -31,6 +31,8 @@ import NotFoundScreen from '../components/NotFound';
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import { AuthUserContext } from '@safety-net/shared';
+import Tour, { useTourGate } from '../components/Tour';
+import { DemoContext } from '../tour/DemoContext';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 	return (
@@ -55,6 +57,7 @@ const hiddenItem = { display: 'none' as const };
 
 function RootNavigator() {
 	const authUser = React.useContext(AuthUserContext);
+	const tour = useTourGate();
 	const { width } = useWindowDimensions();
 	// The bundled Drawer falls back to its "legacy" (reanimated v1 API)
 	// implementation under react-native-reanimated v3, whose backdrop
@@ -69,6 +72,8 @@ function RootNavigator() {
 	const neverInDrawer = { drawerItemStyle: hiddenItem };
 
 	return (
+		<DemoContext.Provider value={{ pinsOn: tour.pinsOn, replayTour: tour.replayTour }}>
+		<View style={{ flex: 1 }}>
 		<Drawer.Navigator
 			initialRouteName="Home"
 			screenOptions={{ headerShown: true, drawerType }}
@@ -164,5 +169,8 @@ function RootNavigator() {
 				options={{ title: 'Oops!', ...neverInDrawer }}
 			/>
 		</Drawer.Navigator>
+		<Tour open={tour.open} step={tour.step} onStep={tour.setStep} onClose={tour.close} />
+		</View>
+		</DemoContext.Provider>
 	);
 }

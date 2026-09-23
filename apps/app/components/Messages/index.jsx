@@ -40,7 +40,7 @@ const MessagesScreen = ({ navigation, route }) => {
 	};
 
 	return (
-		<View style={{ padding: 16, flex: 1 }}>
+		<View testID="tour-messages" style={{ padding: 16, flex: 1 }}>
 			<Text variant='headlineMedium' style={{ marginBottom: 8 }}>Messages</Text>
 			<Text style={{ marginBottom: 12 }}>
 				Conversations are private to the two participants. Start one with a user id, or from a listing.

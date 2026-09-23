@@ -111,7 +111,7 @@ const Listings = ({ navigation }) => {
 		: listings;
 
 	return (
-		<View style={styles.view}>
+		<View testID="tour-listings" style={styles.view}>
 			<Text variant='headlineMedium' style={styles.title}>Listings</Text>
 			<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
 				<Chip compact selected={typeFilter == null} onPress={() => setTypeFilter(null)}>All</Chip>

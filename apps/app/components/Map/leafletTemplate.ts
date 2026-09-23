@@ -2,7 +2,7 @@ export type MapPin = {
 	lat: number;
 	lng: number;
 	title?: string;
-	kind?: 'listing' | 'crime' | 'police' | 'fire';
+	kind?: 'listing' | 'crime' | 'police' | 'fire' | 'example';
 	count?: number;
 	radius?: number;
 	/** Listing id; when present the pin is tappable (see onPinPress). */
@@ -26,6 +26,9 @@ function pinJs(pin: MapPin): string {
 	if (pin.kind === 'crime') {
 		const radius = Number(pin.radius) || 400;
 		return `L.circle([${lat}, ${lng}], { radius: ${radius}, color: '#922b21', fillColor: '#c0392b', fillOpacity: 0.28, weight: 1 })${popup}.addTo(map);`;
+	}
+	if (pin.kind === 'example') {
+		return `L.circleMarker([${lat}, ${lng}], { radius: 8, color: '#8a6a00', fillColor: '#f5c518', fillOpacity: 0.95, weight: 2 })${popup}.addTo(map);`;
 	}
 	if (pin.kind === 'police' || pin.kind === 'fire') {
 		const style = STATION_STYLE[pin.kind];

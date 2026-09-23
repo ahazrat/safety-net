@@ -64,6 +64,17 @@ export default function Map({ pins = [], center = DEFAULT_CENTER, zoom = DEFAULT
 				if (pin.title) circle.bindPopup(pin.title);
 				return;
 			}
+			if (pin.kind === 'example') {
+				const marker = L.circleMarker([pin.lat, pin.lng], {
+					radius: 8,
+					color: '#8a6a00',
+					fillColor: '#f5c518',
+					fillOpacity: 0.95,
+					weight: 2,
+				}).addTo(map);
+				if (pin.title) marker.bindPopup(pin.title);
+				return;
+			}
 			if (pin.kind === 'police' || pin.kind === 'fire') {
 				const style = STATION_STYLE[pin.kind];
 				const marker = L.circleMarker([pin.lat, pin.lng], {

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 const SignedOutPrompt = ({ navigation }) => (
-	<View style={[styles.view, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
+	<View testID="tour-create-gate" style={[styles.view, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
 		<Text variant='headlineSmall' style={{ marginBottom: 8, textAlign: 'center' }}>
 			Sign in to post a request
 		</Text>
@@ -220,7 +220,7 @@ const ListingCreate = ({ navigation, route }) => {
 		<ScrollView contentContainerStyle={styles.view}>
 			<Text variant='headlineMedium' style={styles.title}>Create Listing</Text>
 			<Text variant='titleMedium' style={styles.sectionLabel}>Type</Text>
-			<View style={styles.dayRow}>
+			<View testID="tour-listing-type" style={styles.dayRow}>
 				{LISTING_TYPE_CHIPS.map(({ value, label }) => (
 					<Chip
 						key={value}
@@ -290,6 +290,7 @@ const ListingCreate = ({ navigation, route }) => {
 			/>
 
 			<TextInput
+				testID="tour-price"
 				style={styles.textInput}
 				label='Listed price USD (optional; 0 = volunteer)'
 				value={priceDollars}

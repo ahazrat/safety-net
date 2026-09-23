@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View } from 'react-native';
 import { Switch, Text, Button } from 'react-native-paper';
 import Map from '../Map';
@@ -6,6 +6,8 @@ import useListingPins from '../../hooks/useListingPins';
 import useChicagoCrimePins from '../../hooks/useChicagoCrimePins';
 import { usePoliceStationPins, useFireStationPins } from '../../hooks/useChicagoStationPins';
 import { CHICAGO_CENTER, CHICAGO_ZOOM } from '@safety-net/shared';
+import { DemoContext } from '../../tour/DemoContext';
+import { BLOCK_WATCH_CENTER, BLOCK_WATCH_ZOOM, blockWatchPins } from '../../tour/blockWatch';
 
 function LayerToggle({ value, onValueChange, label }) {
 	return (
@@ -22,19 +24,21 @@ export default function MapScreen({ navigation }) {
 	const police = usePoliceStationPins();
 	const fire = useFireStationPins();
 
+	const { pinsOn } = useContext(DemoContext);
 	const [showCrime, setShowCrime] = useState(true);
 	const [showPolice, setShowPolice] = useState(false);
 	const [showFire, setShowFire] = useState(false);
 
 	const pins = [
 		...listings,
+		...(pinsOn ? blockWatchPins() : []),
 		...(showCrime ? crime : []),
 		...(showPolice ? police : []),
 		...(showFire ? fire : []),
 	];
 
 	return (
-		<View style={{ flex: 1 }}>
+		<View testID="tour-map" style={{ flex: 1 }}>
 			<View style={{ paddingHorizontal: 12, paddingTop: 8, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
 				<LayerToggle value={showCrime} onValueChange={setShowCrime} label="Crime (30 days)" />
 				<LayerToggle value={showPolice} onValueChange={setShowPolice} label={`Police stations (${police.length})`} />
@@ -45,10 +49,13 @@ export default function MapScreen({ navigation }) {
 			</View>
 			<Map
 				pins={pins}
-				center={CHICAGO_CENTER}
-				zoom={CHICAGO_ZOOM}
+				center={pinsOn ? BLOCK_WATCH_CENTER : CHICAGO_CENTER}
+				zoom={pinsOn ? BLOCK_WATCH_ZOOM : CHICAGO_ZOOM}
 				style={{ flex: 1, height: '100%' }}
-				onPinPress={(id) => navigation.navigate('Listing', { listingId: id })}
+				onPinPress={(id) => {
+					if (String(id).startsWith('example-')) return;
+					navigation.navigate('Listing', { listingId: id });
+				}}
 			/>
 		</View>
 	);
