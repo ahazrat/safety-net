@@ -152,6 +152,98 @@ test('assignee cannot change listingType on accept', async () => {
   )
 })
 
+test('create accepts teamSize 1..8 and rejects the rest', async () => {
+  const alice = asUser('alice')
+  await assertSucceeds(
+    addDoc(collection(alice, 'listings'), validListing({ teamSize: 1 }))
+  )
+  await assertSucceeds(
+    addDoc(collection(alice, 'listings'), validListing({ teamSize: 8 }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ teamSize: 0 }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ teamSize: 9 }))
+  )
+  await assertFails(
+    addDoc(collection(alice, 'listings'), validListing({ teamSize: 3, rosterUids: ['bob'] }))
+  )
+})
+
+test('captain accepts a team, sets the roster, and others cannot write it', async () => {
+  await seed(db =>
+    setDoc(doc(db, 'listings', 'team'), validListing({ teamSize: 2, status: 'open' }))
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), {
+      status: 'accepted',
+      assigneeUid: 'bob',
+    })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { rosterUids: ['bob'] })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { status: 'in_progress' })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('carol'), 'listings', 'team'), { rosterUids: ['bob', 'carol'] })
+  )
+  await assertSucceeds(
+    setDoc(doc(asUser('carol'), 'listings', 'team', 'joinRequests', 'carol'), { uid: 'carol' })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { rosterUids: ['bob', 'carol'] })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { rosterUids: ['bob', 'carol', 'dave'] })
+  )
+  await assertFails(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { rosterUids: ['carol'] })
+  )
+})
+
+test('captain can remove a member but not themselves', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'team'),
+      validListing({
+        teamSize: 3,
+        status: 'accepted',
+        assigneeUid: 'bob',
+        rosterUids: ['bob', 'carol'],
+      })
+    )
+  )
+  await assertFails(
+    updateDoc(doc(asUser('carol'), 'listings', 'team'), { rosterUids: ['bob'] })
+  )
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { rosterUids: ['bob'] })
+  )
+})
+
+test('a full team can start and a roster member can read it', async () => {
+  await seed(db =>
+    setDoc(
+      doc(db, 'listings', 'team'),
+      validListing({
+        teamSize: 2,
+        status: 'accepted',
+        assigneeUid: 'bob',
+        rosterUids: ['bob', 'carol'],
+        visibility: 'private',
+      })
+    )
+  )
+  await assertSucceeds(getDoc(doc(asUser('carol'), 'listings', 'team')))
+  await assertFails(getDoc(doc(asUser('dave'), 'listings', 'team')))
+  await assertSucceeds(
+    updateDoc(doc(asUser('bob'), 'listings', 'team'), { status: 'in_progress' })
+  )
+})
+
 test('create requires a non-empty title and lat/lng', async () => {
   const alice = asUser('alice')
   await assertFails(

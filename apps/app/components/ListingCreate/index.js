@@ -12,6 +12,7 @@ import {
 	LISTING_TYPE_CHIPS,
 	normalizeListingType,
 	defaultTitleForListingType,
+	TEAM_SIZE_MAX,
 } from '@safety-net/shared';
 import SentinelPulse from '../SentinelPulse';
 import DateTimeField from '../DateTimeField';
@@ -97,6 +98,7 @@ const ListingCreate = ({ navigation, route }) => {
 	const [repeatDays, setRepeatDays] = useState(['Mo', 'We', 'Fr']);
 	const [location, setLocation] = useState(null);
 	const [isPublic, setIsPublic] = useState(true);
+	const [teamSize, setTeamSize] = useState(1);
 	const [priceDollars, setPriceDollars] = useState('');
 	const [error, setError] = useState(null);
 	const [created, setCreated] = useState(false);
@@ -164,6 +166,7 @@ const ListingCreate = ({ navigation, route }) => {
 		const newListing = {
 			title: String(title).trim(),
 			listingType,
+			teamSize,
 			visibility: isPublic ? 'public' : 'private',
 			dateRange: {
 				start: {
@@ -246,6 +249,18 @@ const ListingCreate = ({ navigation, route }) => {
 			<View style={styles.row}>
 				<DateTimeField label='Date' mode='date' value={endDate} onChange={setEndDate} />
 				<DateTimeField label='Time' mode='time' value={endDate} onChange={setEndDate} />
+			</View>
+
+			<Text variant='titleMedium' style={styles.sectionLabel}>Team size</Text>
+			<Text style={{ marginBottom: 8 }}>
+				1 is a solo job. Above that, the first person to accept is captain and others join until the roster is full.
+			</Text>
+			<View style={styles.dayRow}>
+				{Array.from({ length: TEAM_SIZE_MAX }, (_, i) => i + 1).map(n => (
+					<Chip key={n} selected={teamSize === n} onPress={() => setTeamSize(n)} compact>
+						{String(n)}
+					</Chip>
+				))}
 			</View>
 
 			<Text variant='titleMedium' style={styles.sectionLabel}>Repeat on</Text>

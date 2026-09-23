@@ -17,6 +17,7 @@
     "test:money": "node --test tests/money.test.js",
     "test:listingType": "node --test tests/listingType.test.js",
     "test:badges": "node --test tests/badges.test.js",
+    "test:team": "node --test tests/team.test.js",
     "deploy:rules": "bash scripts/firebase-gcloud-user.sh deploy --only firestore:rules --project safetynet-us",
     "build:web": "npm run build:web --workspace=@safety-net/app",
     "deploy:hosting": "npm run build:web && bash scripts/firebase-gcloud-user.sh deploy --only hosting --project safetynet-us"

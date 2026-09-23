@@ -143,7 +143,6 @@ Next (same order as the roadmap):
 1. Hand-seeded Chicago station pins
 1. One neighborhood roster (ops)
 1. EAS iOS / stores once Xcode exists
-1. Teams (listing types shipped)
 1. Payments (Stripe/Functions) only after real Chicago `done` jobs — [`docs/payments.md`](docs/payments.md)
 
 Parked (still in Trello, not next): Django/second backend, title plant/MLS,

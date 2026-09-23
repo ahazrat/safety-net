@@ -8,6 +8,7 @@ export { default as Badges, labelForBadge, earnedBadgeIds } from './constants/Ba
 export * from './constants/Routes'
 export * from './utils/money.js'
 export * from './utils/listingType.js'
+export * from './utils/team.js'
 export * from './chicago/crime.js'
 export * from './chicago/scanners.js'
 export * from './chicago/geo.js'

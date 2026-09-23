@@ -6,6 +6,9 @@ import {
 	getDocument,
 	listingStatusOf,
 	acceptListing,
+	requestToJoin,
+	listJoinRequests,
+	addRosterMember,
 	setListingStatus,
 	formatListedPrice,
 	formatCents,
@@ -14,6 +17,9 @@ import {
 	proposeOffPlatformPrice,
 	ackOffPlatformPrice,
 	listingTypeLabel,
+	teamSizeOf,
+	rosterOf,
+	removeRosterMember,
 } from '@safety-net/shared';
 import Map from '../Map';
 import PublicProfile from '../PublicProfile';
@@ -29,6 +35,7 @@ const Listing = ({ route, navigation }) => {
 	const [jobError, setJobError] = useState(null);
 	const [jobBusy, setJobBusy] = useState(false);
 	const [offerDollars, setOfferDollars] = useState('');
+	const [joinRequests, setJoinRequests] = useState([]);
 	const [pulseVisible, setPulseVisible] = useState(false);
 	const [pulseKey, setPulseKey] = useState(0);
 	const pulseTimer = useRef(null);
@@ -39,7 +46,13 @@ const Listing = ({ route, navigation }) => {
 			return Promise.resolve();
 		}
 		return getDocument('listings', listingId)
-			.then(setListing)
+			.then(doc => {
+				setListing(doc);
+				if (doc && authUser && doc.assigneeUid === authUser.uid && teamSizeOf(doc) > 1) {
+					return listJoinRequests(listingId).then(setJoinRequests).catch(() => setJoinRequests([]));
+				}
+				setJoinRequests([]);
+			})
 			.catch(err => console.log(err))
 			.finally(() => setLoading(false));
 	};
@@ -70,8 +83,14 @@ const Listing = ({ route, navigation }) => {
 	const uid = authUser && authUser.uid;
 	const isOwner = uid && listing.ownerUid === uid;
 	const isAssignee = uid && listing.assigneeUid === uid;
+	const teamSize = teamSizeOf(listing);
+	const roster = rosterOf(listing);
+	const onRoster = uid && roster.includes(uid);
+	const rosterFull = roster.length >= teamSize;
 	const canAccept = uid && !isOwner && status === 'open';
-	const canStart = uid && isAssignee && status === 'accepted';
+	const canRequest = uid && !isOwner && !isAssignee && !onRoster && !rosterFull
+		&& teamSize > 1 && status === 'accepted';
+	const canStart = uid && isAssignee && status === 'accepted' && (teamSize <= 1 || rosterFull);
 	const canComplete = uid && (isAssignee || isOwner) && (status === 'accepted' || status === 'in_progress');
 
 	const runJob = (fn) => {
@@ -122,17 +141,58 @@ const Listing = ({ route, navigation }) => {
 				Price: {formatListedPrice(listing) || 'No price set'}
 			</Text>
 			<PublicProfile uid={listing.ownerUid} label='Posted by' />
-			{listing.assigneeUid ? (
+			{teamSize > 1 ? (
+				<View style={{ marginBottom: 12 }}>
+					<Text style={{ marginBottom: 8 }}>
+						Team {roster.length} of {teamSize}. The first person to accept is captain.
+					</Text>
+					{roster.length === 0 && <Text style={{ marginBottom: 8 }}>No one on the roster yet</Text>}
+					{roster.map((memberUid, index) => (
+						<View key={memberUid} style={{ marginBottom: 8 }}>
+							<PublicProfile uid={memberUid} label={index === 0 ? 'Captain' : 'Roster'} />
+							{isAssignee && index > 0 && status === 'accepted' && (
+								<Button
+									mode='text'
+									disabled={jobBusy}
+									onPress={() => runJob(() => removeRosterMember(listingId, memberUid))}
+								>
+									Remove from roster
+								</Button>
+							)}
+						</View>
+					))}
+					{isAssignee && joinRequests.map(request => (
+						<View key={request.uid} style={{ marginBottom: 8 }}>
+							<PublicProfile uid={request.uid} label='Wants to join' />
+							<Button
+								mode='outlined'
+								disabled={jobBusy || rosterFull}
+								onPress={() => runJob(() => addRosterMember(listingId, request.uid))}
+							>
+								Add to roster
+							</Button>
+						</View>
+					))}
+					{isAssignee && !rosterFull && status === 'accepted' && (
+						<Text style={{ marginBottom: 8 }}>Fill the roster before starting this job.</Text>
+					)}
+				</View>
+			) : listing.assigneeUid ? (
 				<PublicProfile uid={listing.assigneeUid} label='Assigned to' />
 			) : (
 				<Text style={{ marginBottom: 8 }}>No assignee yet</Text>
 			)}
 			{canAccept && (
 				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => acceptListing(listingId))}>
-					Accept job
+					{teamSize > 1 ? 'Accept as captain' : 'Accept job'}
 				</Button>
 			)}
-			{!authUser && status === 'open' && (
+			{canRequest && (
+				<Button mode='contained' disabled={jobBusy} style={{ marginBottom: 8 }} onPress={() => runJob(() => requestToJoin(listingId))}>
+					Ask to join
+				</Button>
+			)}
+			{!authUser && (status === 'open' || (teamSize > 1 && status === 'accepted' && !rosterFull)) && (
 				<View style={{ marginBottom: 8 }}>
 					<Text style={{ marginBottom: 8 }}>Sign in to accept this job.</Text>
 					<View style={{ flexDirection: 'row', gap: 12 }}>

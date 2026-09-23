@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList } from 'react-native';
 import { Text, Card, Chip, HelperText } from 'react-native-paper';
-import { listMyJobs, listingStatusOf, listingTypeLabel, withAuthorization, getPublicProfile, formatListedPrice, formatCents, offPlatformAgreedCents } from '@safety-net/shared';
+import { listMyJobs, listingStatusOf, listingTypeLabel, teamSizeOf, teamLabel, withAuthorization, getPublicProfile, formatListedPrice, formatCents, offPlatformAgreedCents } from '@safety-net/shared';
 import BadgeChips from '../BadgeChips';
 
 const JobsScreen = ({ navigation }) => {
@@ -47,6 +47,7 @@ const JobsScreen = ({ navigation }) => {
 						<Card.Content>
 							<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
 								<Chip compact>{listingTypeLabel(item)}</Chip>
+								{teamSizeOf(item) > 1 && <Chip compact>{teamLabel(item)}</Chip>}
 								<Chip compact>{listingStatusOf(item).replace('_', ' ')}</Chip>
 							</View>
 							<Text style={{ marginTop: 8 }}>

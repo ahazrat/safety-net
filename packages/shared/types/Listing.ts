@@ -11,8 +11,15 @@ export interface Listing {
   visibility?: 'public' | 'private'
   /** Job lifecycle. Missing on legacy docs is treated as 'open'. */
   status?: 'open' | 'accepted' | 'in_progress' | 'done'
-  /** Provider who accepted the job. Empty while status is 'open'. */
+  /** Provider who accepted the job. Empty while status is 'open'. For a team, this is the captain. */
   assigneeUid?: string
+  /**
+   * How many providers the job needs. Missing means solo (1).
+   * When greater than 1, assigneeUid is the captain and rosterUids is the roster.
+   */
+  teamSize?: number
+  /** Provider uids. Index 0 is the captain. Empty until the first accept. */
+  rosterUids?: string[]
   title: string
   /**
    * Canonical offering type. Missing or unknown on legacy docs is treated

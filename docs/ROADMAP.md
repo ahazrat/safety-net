@@ -70,7 +70,7 @@ Canonical app: this monorepo, Expo / React Native / react-native-web, Firebase p
 | Direct messages (two-party conversations) | Shipped |
 | Message owner from a listing | Shipped |
 | Firestore rules + `npm run deploy:rules` | Shipped |
-| Teams of providers | Copy only |
+| Teams of providers | Shipped: `teamSize` 1–8. Captain accepts, others request to join, captain fills `rosterUids`. Start waits on a full roster. |
 | Home/Services CTAs route to real Listings/ListingCreate flows (no dead ends) | Shipped |
 | Signed-out browsing with sign-in gate at Accept | Shipped |
 | Confirmation animation (Sentinel Pulse: sign-in, create, job status) | Shipped |
@@ -134,7 +134,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 
 ### Then — marketplace density
 
-1. **Teams** (Services copy): a listing can require N people; a captain assigns a roster (Minneapolis model).
+1. **Teams** — shipped. A listing sets `teamSize` (1–8). The first person to accept is captain and starts `rosterUids`. Others ask to join; the captain adds or removes them. Start stays locked until the roster is full. Solo jobs stay the old accept path.
 2. **Offerings as listing types** — shipped (`listingType`: watch / event / defense / other). Services Offering cards prefill type + title; Create has a type picker; list/detail show a type chip.
 3. **Price signal:** listed USD on create; off-platform dual-ack on accepted jobs. Last-done / Stripe only per [`docs/payments.md`](payments.md). Do not retask `requirements.stake` as dollars. BTC is dead.
 4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
@@ -222,7 +222,7 @@ Engineering and GTM are the same list for the next stretch.
 3. **Hand-seeded Chicago station pins.** Done for CPD + CFD on Map (deepen/verify as addresses change).
 4. **LinkedIn + one neighborhood roster** (ops, not code).
 5. **EAS iOS** once Xcode is installed; then store listing.
-6. **Teams**. Listing types shipped.
+6. **Teams** and listing types — shipped.
 7. **Payments** — remaining work (Functions, Connect, Checkout) only after ≥5 real Chicago `done` jobs and Blaze. Plan: [`docs/payments.md`](payments.md). Do not change stake.
 
 iOS Simulator verification stays last among *dev-environment* tasks; it should not block web GTM.

@@ -9,6 +9,8 @@ import {
 	listingTypeLabel,
 	LISTING_TYPE_CHIPS,
 	getPublicProfile,
+	teamSizeOf,
+	teamLabel,
 } from '@safety-net/shared';
 import BadgeChips from '../BadgeChips';
 
@@ -79,9 +81,10 @@ const Listings = ({ navigation }) => {
 			>
 				<Card.Title title={listing.title || 'Legacy listing'} />
 				<Card.Content>
-					<Chip compact style={{ alignSelf: 'flex-start', marginBottom: 6 }}>
-						{listingTypeLabel(listing)}
-					</Chip>
+					<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+						<Chip compact>{listingTypeLabel(listing)}</Chip>
+						{teamSizeOf(listing) > 1 && <Chip compact>{teamLabel(listing)}</Chip>}
+					</View>
 					<Text>
 						Posted by {(profiles[listing.ownerUid] && profiles[listing.ownerUid].username) || listing.ownerUid || 'unknown'}
 					</Text>
