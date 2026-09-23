@@ -16,7 +16,7 @@ None in the UI itself. The empty marketplace is an ops gap, not a broken screen:
 
 1. **Signed-out Create preview** — shipped in `3f24b5c`. `/createlisting` shows type chips and the $5 example as read-only. Sign in to post. Messages and feedback still require sign-in with no preview.
 2. **Map Layers** — shipped in `3f24b5c`. Crime, police, fire, and Scanners sit under one Layers control. The community-area counts caption stays.
-3. **Services is a second catalog.** Home already offers Watch, Event, and Defense. Services repeats them as cards plus later offerings (ID, rides, notary) with empty blurbs. Keep Services, but do not add more cards until one corridor has five real listings.
+3. **Services later offerings** — the empty ID, rides, notary, credit, arbiter, and assessment cards no longer open Create. One “Later offerings” note stays, with no request link. Watch, Event, and Defense still open Create.
 4. **Off-platform price line** — shipped in `3f24b5c` on Create and listing detail: “Listed USD. You agree the amount off-platform. No card charge.”
 5. **Account badge sentence** — shipped with this pass. Badges are admin-attested trust marks, not a license and not required to post.
 

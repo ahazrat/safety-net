@@ -16,13 +16,7 @@ const CARDS = [
 	{ text1: 'Offering', text2: 'Event Security', text3: 'pay-per-contract', text4: 'real, human presence with specific directives to handle rare occurances', link: 'request', listingType: 'event' },
 	{ text1: 'Offering', text2: 'Physical Defense', text3: 'pay-per-contract', text4: 'professionally trained and certified agents when you need them', link: 'request', listingType: 'defense' },
 
-	{ text1: 'Offering', text2: 'ID Verification', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
-	{ text1: 'Offering', text2: 'Safe Rides', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
-	{ text1: 'Offering', text2: 'Notary', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
-
-	{ text1: 'Offering', text2: 'Credit Check', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
-	{ text1: 'Offering', text2: 'Arbiter', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
-	{ text1: 'Offering', text2: 'Assessment', text3: 'pay-per-contract', text4: '', link: 'request', listingType: 'other' },
+	{ text1: 'Later', text2: 'Later offerings', text3: 'not available to post', text4: 'ID verification, safe rides, notary, and others are not open yet.' },
 
 	{ text1: 'Outcome', text2: 'Reliability', text3: 'value', text4: 'synonymous with stability, streamlined development and operations, and a better user experience' },
 	{ text1: 'Outcome', text2: 'Ease of mind', text3: 'value', text4: 'security, confidence, certainty, comfort, safety, assurance, reassurance, conviction, happiness and sureness' },
