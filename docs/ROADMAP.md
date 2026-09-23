@@ -138,7 +138,7 @@ This layer is the **unsigned-in homepage value**: you can open SafetyNet and see
 2. **Offerings as listing types** — shipped (`listingType`: watch / event / defense / other). Services Offering cards prefill type + title; Create has a type picker; list/detail show a type chip.
 3. **Price signal:** listed USD on create; off-platform dual-ack on accepted jobs. Last-done / Stripe only per [`docs/payments.md`](payments.md). Do not retask `requirements.stake` as dollars. BTC is dead.
 4. **Provider profile that others can read** — shipped as `publicProfiles/{uid}` (username + badges). Email and roles stay private on `users/{uid}`. Shown on Listing and Jobs.
-5. **Domain** — Trello has `safety-net.us`; also shop names around “safety net.” Point it at the web app. Web paths (`/`, `/map`, `/listing/:id`, …) are wired; they still need a host. Ops (buy + DNS), not app code.
+5. **Domain** — `safety-net.us` is already registered (GoDaddy, expires 2027-02-25). DNS is at Wix (`ns14.wixdns.net`, `ns15.wixdns.net`); the apex and `www` currently serve Wix’s “connect your domain” page, not Firebase. Do not buy the name again. Do not register a `.us` in Cloud Domains (`.us` is not on that price list). Next click is Asif’s: confirm the domain is in his GoDaddy portfolio and his Wix Domains list, then add the Firebase Hosting TXT plus A `199.36.158.100` (or whatever the `safetynet-us` wizard prints) in Wix DNS. Live site until that connects: https://safetynet-us.web.app. Checklist: [`docs/ops-chicago.md`](ops-chicago.md).
 
 ### Later — civil stack (Trello Concepts)
 
@@ -175,7 +175,7 @@ The Trello slideshow and LinkedIn company page ([safety-net-marketplace](https:/
 ### Beachhead motion
 
 1. **Chicago overlay** so the map is not an empty Leaflet (shareable even on Expo web).
-2. **One real roster:** find a street-captain style group (the GoldandBlack / Minneapolis pattern, or a Chicago watch). Onboard 5–10 providers with **manually granted badges**. Seed 5 listings.
+2. **One real roster:** one Chicago neighborhood, not a national import. Steps are in [`docs/ops-chicago.md`](ops-chicago.md): 5–10 providers with admin-granted badges, five real listings, then walk create → map → accept → DM → start → done.
 3. **Walk the loop on a call:** create → appear on map → accept → DM → start → done.
 4. **Public web URL** (domain + existing deep links) once the overlay and a roster exist. Neighborhood organizers still will not install TestFlight to “look at a map.”
 5. **Only then** talk App Store. Android EAS already had a test; iOS is still blocked on Xcode / store assets.
@@ -218,9 +218,9 @@ GTM near-term: **one landing page** (map + three offerings + “post a watch”)
 Engineering and GTM are the same list for the next stretch.
 
 1. **Android auth persistence** + Map sanity check.
-2. **Domain** (`safety-net.us` or better) → web app. Paths are wired; pick a host.
+2. **Domain** — `safety-net.us` is registered at GoDaddy; DNS is Wix. Point that zone at Firebase Hosting on `safetynet-us` (see [`docs/ops-chicago.md`](ops-chicago.md)). Do not buy a second name unless it is missing from both logins.
 3. **Hand-seeded Chicago station pins.** Done for CPD + CFD on Map (deepen/verify as addresses change).
-4. **LinkedIn + one neighborhood roster** (ops, not code).
+4. **LinkedIn + one Chicago neighborhood roster** (ops, not code). Checklist: [`docs/ops-chicago.md`](ops-chicago.md).
 5. **EAS iOS** once Xcode is installed; then store listing.
 6. **Teams** and listing types — shipped.
 7. **Payments** — remaining work (Functions, Connect, Checkout) only after ≥5 real Chicago `done` jobs and Blaze. Plan: [`docs/payments.md`](payments.md). Do not change stake.

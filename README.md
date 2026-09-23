@@ -139,9 +139,9 @@ Value proposition, GTM, and ordered priorities live in
 Next (same order as the roadmap):
 
 1. Android auth persistence + Map check
-1. Domain → web app
+1. Domain: `safety-net.us` is at GoDaddy/Wix — point DNS at Firebase Hosting ([`docs/ops-chicago.md`](docs/ops-chicago.md))
 1. Hand-seeded Chicago station pins
-1. One neighborhood roster (ops)
+1. One Chicago neighborhood roster ([`docs/ops-chicago.md`](docs/ops-chicago.md))
 1. EAS iOS / stores once Xcode exists
 1. Payments (Stripe/Functions) only after real Chicago `done` jobs — [`docs/payments.md`](docs/payments.md)
 
