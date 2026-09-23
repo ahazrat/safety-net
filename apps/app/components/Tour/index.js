@@ -25,7 +25,7 @@ export const TOUR_STEPS = [
 		target: 'tour-map',
 		demo: true,
 		title: 'Block walk — twice a night',
-		body: `${BLOCK_WATCH.houseCount} houses on ${BLOCK_WATCH.street} in ${BLOCK_WATCH.neighborhood}. A walker covers the block ${BLOCK_WATCH.walksPerNight} times a night. $5 a house listed. Example nightly total $${NIGHTLY}. Not a live market rate. The price is agreed off-platform.`,
+		body: `${BLOCK_WATCH.houseCount} neighbors on ${BLOCK_WATCH.street} in ${BLOCK_WATCH.neighborhood} hire one walker. The walker goes twice a night. About $5 a house, listed USD. Example total $${NIGHTLY}. Off-platform. No Stripe. Not a live market rate.`,
 	},
 	{
 		route: 'ListingCreate',
@@ -39,7 +39,7 @@ export const TOUR_STEPS = [
 		target: 'tour-price',
 		fallbackTarget: 'tour-create-gate',
 		title: 'Listed price',
-		body: 'Example: $5 per house. That amount is listed USD. It is not a card charge.',
+		body: 'Example: about $5 per house, listed USD. Off-platform. No Stripe.',
 	},
 	{
 		route: 'Listings',

@@ -25,7 +25,7 @@ export function blockWatchPins(scenario = BLOCK_WATCH) {
 			lat: startLat + (i % 2) * 0.00003,
 			lng: startLng + i * 0.00022,
 			kind: 'example',
-			title: `Example house ${i + 1} · $5 listed`,
+			title: `Example neighbor ${i + 1} · $5 listed USD`,
 		})
 	}
 	return pins
