@@ -14,11 +14,11 @@ None in the UI itself. The empty marketplace is an ops gap, not a broken screen:
 
 ## Medium
 
-1. **Create, messages, and feedback are gates without a preview.** Signed-out `/createlisting` and `/feedback` only say sign in. The tour explains type and price, but the live form is hidden. A later slice can show the type chips and the $5 example as read-only until sign-in, without accepting a post.
-2. **Map chrome is a wrap of switches.** Crime, police, fire, and Scanners compete with the map on a phone-width browser. Group the layers under one “Layers” control later. Do not remove the counts caption: circles are community-area totals, not incidents.
+1. **Signed-out Create preview** — shipped in `3f24b5c`. `/createlisting` shows type chips and the $5 example as read-only. Sign in to post. Messages and feedback still require sign-in with no preview.
+2. **Map Layers** — shipped in `3f24b5c`. Crime, police, fire, and Scanners sit under one Layers control. The community-area counts caption stays.
 3. **Services is a second catalog.** Home already offers Watch, Event, and Defense. Services repeats them as cards plus later offerings (ID, rides, notary) with empty blurbs. Keep Services, but do not add more cards until one corridor has five real listings.
-4. **Price language is split.** Create says “Listed price USD (optional; 0 = volunteer).” The tour says off-platform, no Stripe. Put one line under the price field everywhere: “Listed USD. You agree the amount off-platform. No card charge.”
-5. **Badges on an empty directory teach nothing.** Chips appear only after an admin grant and a listing exists. On Account, one sentence already fits: badges are admin-attested trust marks, not a license and not required to post.
+4. **Off-platform price line** — shipped in `3f24b5c` on Create and listing detail: “Listed USD. You agree the amount off-platform. No card charge.”
+5. **Account badge sentence** — shipped with this pass. Badges are admin-attested trust marks, not a license and not required to post.
 
 ## Polish
 

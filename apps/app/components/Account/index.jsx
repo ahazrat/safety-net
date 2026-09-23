@@ -8,6 +8,7 @@ import {
 	earnedBadgeIds,
 	labelForBadge,
 } from '@safety-net/shared';
+import { color } from '../../theme/tokens';
 
 const AccountScreen = ({ navigation }) => (
 	<AuthUserContext.Consumer>
@@ -18,8 +19,8 @@ const AccountScreen = ({ navigation }) => (
 					<Text variant='headlineMedium' style={{ marginBottom: 12 }}>Account</Text>
 					<Text style={{ fontWeight: 'bold', marginBottom: 12 }}>Email: {authUser.email}</Text>
 					<Text variant='titleMedium' style={{ marginBottom: 8 }}>Badges</Text>
-					<Text style={{ marginBottom: 8 }}>
-						Verification badges are granted by an admin. Yours appear filled in.
+					<Text style={{ marginBottom: 8, color: color.text }}>
+						Badges are admin-attested trust marks, not a license and not required to post. Yours appear filled in.
 					</Text>
 					<View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
 						{Badges.map(id => (

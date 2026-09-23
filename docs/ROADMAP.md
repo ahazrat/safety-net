@@ -123,7 +123,7 @@ Web UX audit: [`UX-AUDIT.md`](UX-AUDIT.md). Shipped from that pass: Sign in on t
 2. **Domain** — `safety-net.us` is not owned. Live site stays https://safetynet-us.web.app. A custom domain is later. Notes: [`ops-chicago.md`](ops-chicago.md).
 3. **Persist Android auth** (Trello bug). A provider who backgrounded the app cannot be your launch story if they are signed out.
 4. **Re-test Map on Android and, when Xcode exists, iOS Simulator** (`Map.native.tsx`).
-5. **Next UX, not now:** read-only type and price on signed-out Create; one “Layers” control on the map; one off-platform price sentence under the listed-USD field.
+5. **UX shipped:** signed-out Create preview, map Layers, and the off-platform USD sentence (`3f24b5c`). Account states badges are trust marks, not a license and not required to post. Chicago roster and a domain remain ops, not code.
 
 **Badge chips** on listing detail, the listings list, and jobs — shipped. A requester sees the poster's and assignee's admin-granted badges (public profile only; email stays private).
 
