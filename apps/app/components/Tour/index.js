@@ -71,6 +71,7 @@ export default function Tour({ open, step, onStep, onClose }) {
 	const current = TOUR_STEPS[step] || TOUR_STEPS[0]
 	const [rect, setRect] = useState(null)
 	const [hovered, setHovered] = useState(false)
+	const [pinned, setPinned] = useState(true)
 
 	useEffect(() => {
 		if (!open) return
@@ -78,6 +79,41 @@ export default function Tour({ open, step, onStep, onClose }) {
 			navigation.navigate(current.route)
 		}
 	}, [open, step])
+
+	useEffect(() => {
+		setPinned(true)
+		setHovered(false)
+	}, [step])
+
+	useEffect(() => {
+		if (!open || Platform.OS !== 'web') return
+		const ids = [current.target, current.fallbackTarget, 'tour-spotlight'].filter(Boolean)
+		const hit = (event) => {
+			const el = event.target && event.target.closest && event.target.closest('[data-testid]')
+			if (!el) return false
+			return ids.indexOf(el.getAttribute('data-testid')) !== -1
+		}
+		let lastTap = 0
+		const onOver = (event) => { if (hit(event)) setHovered(true) }
+		const onOut = (event) => { if (hit(event)) setHovered(false) }
+		const onTap = (event) => {
+			if (!hit(event)) return
+			const now = Date.now()
+			if (now - lastTap < 400) return
+			lastTap = now
+			setPinned(value => !value)
+		}
+		document.addEventListener('mouseover', onOver)
+		document.addEventListener('mouseout', onOut)
+		document.addEventListener('click', onTap)
+		document.addEventListener('touchend', onTap)
+		return () => {
+			document.removeEventListener('mouseover', onOver)
+			document.removeEventListener('mouseout', onOut)
+			document.removeEventListener('click', onTap)
+			document.removeEventListener('touchend', onTap)
+		}
+	}, [open, step, current.target, current.fallbackTarget])
 
 	useEffect(() => {
 		if (!open || Platform.OS !== 'web') {
@@ -106,8 +142,14 @@ export default function Tour({ open, step, onStep, onClose }) {
 	const hole = rect
 	const balloonTop = hole ? Math.min(hole.y + hole.height + 12, (typeof window !== 'undefined' ? window.innerHeight : 800) - 220) : 72
 
+	const showBalloon = !hole || hovered || pinned
 	const hoverProps = Platform.OS === 'web'
-		? { onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) }
+		? {
+			onHoverIn: () => setHovered(true),
+			onHoverOut: () => setHovered(false),
+			onMouseEnter: () => setHovered(true),
+			onMouseLeave: () => setHovered(false),
+		}
 		: {}
 
 	return (
@@ -118,7 +160,7 @@ export default function Tour({ open, step, onStep, onClose }) {
 			{hole ? (
 				<Pressable
 					testID="tour-spotlight"
-					onPress={() => setHovered(true)}
+					onPress={() => {}}
 					{...hoverProps}
 					style={{
 						position: 'absolute',
@@ -158,7 +200,7 @@ export default function Tour({ open, step, onStep, onClose }) {
 					}}
 				/>
 			) : null}
-			<View
+			{showBalloon ? <View
 				testID="tour-balloon"
 				style={{
 					position: 'absolute',
@@ -170,12 +212,15 @@ export default function Tour({ open, step, onStep, onClose }) {
 					padding: 14,
 					maxWidth: 420,
 					borderWidth: 1,
-					borderColor: '#e6d48a',
+					borderColor: hovered ? '#f5c518' : '#e6d48a',
 				}}
 			>
 				<Text variant="titleMedium">{current.title}</Text>
 				<Text style={{ marginTop: 6, marginBottom: 12 }}>{current.body}</Text>
-				<Text style={{ opacity: 0.6, marginBottom: 8 }}>{step + 1} / {TOUR_STEPS.length}{hovered ? ' · tip open' : ''}</Text>
+				<Text style={{ opacity: 0.6, marginBottom: 8 }}>
+					{step + 1} / {TOUR_STEPS.length} · hover or tap the highlight
+					{hovered ? ' · hover' : ''}{pinned ? ' · tapped open' : ''}
+				</Text>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
 					<Button compact disabled={step === 0} onPress={() => onStep(step - 1)}>Back</Button>
 					<Button compact mode="contained" onPress={() => last ? onClose(true) : onStep(step + 1)}>
@@ -183,7 +228,7 @@ export default function Tour({ open, step, onStep, onClose }) {
 					</Button>
 					<Button compact onPress={() => onClose(true)}>Skip</Button>
 				</View>
-			</View>
+			</View> : null}
 		</View>
 	)
 }
