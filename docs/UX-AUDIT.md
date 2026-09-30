@@ -43,3 +43,11 @@ Android auth persistence and a Map retest are still the device blockers in the r
 - Signed-out Home: Sign in beside Post a watch.
 - Signed-in Home: “Hire a neighbor” and Post a watch. Removed the developer sentence.
 - Empty listings: Post a watch button.
+
+## Follow-up, 2026-09-30
+
+- Drawer is grouped and branded: logo header, core actions (Home, Services, Map, Listings, Create, Jobs, Messages, Sign in/up) above a divider, utilities (Scanners, Attribution, Account, Feedback, Admin, password) below.
+- Signed-out Home: shield logo and primary buttons are centered again (the `Screen` wrapper does not center children).
+- Home no longer shows a second Post a watch in the empty-roster note; one primary action per screen. Listings and Map keep theirs.
+- Once real jobs exist, the roster slot shows a live "N open jobs on the map right now" line instead of the empty note. It never shows a zero count.
+- Shield icon corners had a faint gray haze (alpha ≤ 6) that drew a box on the light background; cleared.

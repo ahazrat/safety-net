@@ -5,9 +5,9 @@
  */
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { color } from '../theme/tokens';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import * as React from 'react';
-import { Text, useWindowDimensions, View } from 'react-native';
+import { Image, Text, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import SignUp from '../components/SignUp';
@@ -69,6 +69,44 @@ const drawerIcon = (name: IconName) =>
 
 const hiddenItem = { display: 'none' as const };
 
+const PRIMARY_ROUTES = ['Home', 'Services', 'Map', 'Listings', 'ListingCreate', 'Jobs', 'Messages', 'SignIn', 'SignUp'];
+
+function GroupedDrawerContent(props: any) {
+	const { state, descriptors, navigation } = props;
+	const focusedKey = state.routes[state.index].key;
+	const visible = state.routes.filter((route: any) => {
+		const style = descriptors[route.key].options.drawerItemStyle;
+		return !(style && style.display === 'none');
+	});
+	const item = (route: any) => {
+		const { options } = descriptors[route.key];
+		return (
+			<DrawerItem
+				key={route.key}
+				label={options.title ?? route.name}
+				icon={options.drawerIcon}
+				focused={route.key === focusedKey}
+				onPress={() => navigation.navigate(route.name)}
+			/>
+		);
+	};
+	return (
+		<DrawerContentScrollView {...props}>
+			<View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}>
+				<Image
+					source={require('../assets/images/shield-icon.webp')}
+					style={{ width: 32, height: 32, marginRight: 10 }}
+					accessibilityLabel="Safety Net"
+				/>
+				<Text style={{ fontSize: 17, fontWeight: '700', color: color.text }}>Safety Net</Text>
+			</View>
+			{visible.filter((r: any) => PRIMARY_ROUTES.includes(r.name)).map(item)}
+			<View style={{ height: 1, backgroundColor: color.line, marginVertical: 8, marginHorizontal: 16 }} />
+			{visible.filter((r: any) => !PRIMARY_ROUTES.includes(r.name)).map(item)}
+		</DrawerContentScrollView>
+	);
+}
+
 function RootNavigator() {
 	const authUser = React.useContext(AuthUserContext);
 	const tour = useTourGate();
@@ -91,6 +129,7 @@ function RootNavigator() {
 		<Drawer.Navigator
 			initialRouteName="Home"
 			screenOptions={{ headerShown: true, drawerType }}
+			drawerContent={(props) => <GroupedDrawerContent {...props} />}
 		>
 			<Drawer.Screen
 				name='Home'

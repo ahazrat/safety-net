@@ -44,14 +44,14 @@ const SignedOutHome = ({ navigation }) => {
 	<Screen>
 		<Image
 			source={require('../../assets/images/shield-icon.webp')}
-			style={{ width: 96, height: 96, marginBottom: 16 }}
+			style={{ width: 96, height: 96, marginBottom: 16, alignSelf: 'center' }}
 			accessibilityLabel="Safety Net"
 		/>
 		<Text variant='headlineMedium' style={[{ textAlign: 'center', color: color.text }, type.display]}>Hire a neighbor</Text>
 		<Text style={{ marginBottom: 16, textAlign: 'center' }}>
 			Private contracts. A public map of jobs and risk.
 		</Text>
-		<View style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+		<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginBottom: 16 }}>
 			<Button
 				testID="tour-request"
 				mode='contained'
@@ -76,7 +76,7 @@ const SignedOutHome = ({ navigation }) => {
 		<Text style={{ alignSelf: 'stretch', marginBottom: space.sm, color: color.textMuted }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
-		<EmptyRoster navigation={navigation} showMapLink onReplay={replayTour} />
+		<EmptyRoster navigation={navigation} showMapLink showPost={false} onReplay={replayTour} />
 		<HomeMap navigation={navigation} />
 		<Button compact style={{ marginTop: 8 }} onPress={() => navigation.navigate('Map')}>Open the map</Button>
 		<Button compact style={{ marginTop: 4 }} onPress={replayTour}>Replay tour</Button>
@@ -101,7 +101,7 @@ const SignedInHome = ({ navigation }) => {
 		<Text style={{ marginTop: 16, marginBottom: 8 }}>
 			Chicago reports by community area (last 30 days). Circles are counts, not individual incidents.
 		</Text>
-		<EmptyRoster navigation={navigation} showMapLink onReplay={replayTour} />
+		<EmptyRoster navigation={navigation} showMapLink showPost={false} onReplay={replayTour} />
 		<HomeMap navigation={navigation} />
 		<Button compact style={{ marginTop: 12 }} onPress={replayTour}>Replay tour</Button>
 	</View>
